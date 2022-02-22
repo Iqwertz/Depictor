@@ -1,0 +1,15 @@
+assets/image2gcode/java/
+assets/image2gcode/gcode/
+rawimages
+bgremoved
+savedGcodes
+node_modules/
+
+*.nc
+.vscode/symbols.json
+removeBGAPIKey.txt
+Depictor-Backend.zip
+data/logs/log.txt
+.vscode/symbols.json
+data/settings.json
+.vscode/symbols.json

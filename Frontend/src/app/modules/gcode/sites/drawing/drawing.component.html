@@ -1,0 +1,11 @@
+<div class="navbar">
+    <app-navbar></app-navbar>
+</div>
+<div class="drawing-container">
+    <!-- <app-gcode-renderer></app-gcode-renderer> -->
+    <app-canvas-gcode-renderer></app-canvas-gcode-renderer>
+    <app-drawing-progress-bar [progress]="drawingProgress"></app-drawing-progress-bar>
+    <app-stop-drawing-button *ngIf="isDrawing"></app-stop-drawing-button>
+    <div class="not-drawing" *ngIf="!isDrawing">ready to draw!</div>
+</div>
+<app-settings-button></app-settings-button>

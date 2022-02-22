@@ -1,0 +1,12 @@
+.webcam-container {
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.363);
+}
+.close {
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  font-size: 2em;
+  color: rgb(255, 0, 0);
+  cursor: pointer;
+}

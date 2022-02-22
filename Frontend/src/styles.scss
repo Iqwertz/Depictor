@@ -1,0 +1,43 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@200&display=swap");
+body {
+    background: url("assets/depictorBGBig.png") no-repeat center center fixed;
+    background-size: contain;
+    // background-color: #fff;
+    margin: 0;
+    padding: 0;
+    font-family: "Josefin Sans", sans-serif;
+}
+
+video {
+    border-radius: 15px;
+    box-shadow: -5px 5px 10px #000;
+    background-color: #000;
+}
+
+.snackbar-note {
+    font-family: "Josefin Sans", sans-serif !important;
+    color: #000 !important; // green
+    background-color: #fff !important;
+    border: 2px solid #fbff00 !important;
+    .mat-simple-snackbar-action {
+        color: #ff9090 !important;
+    }
+}
+
+.snackbar-error {
+    font-family: "Josefin Sans", sans-serif !important;
+    color: #000 !important; // green
+    background-color: #fff !important;
+    border: 2px solid #ff1100 !important;
+    .mat-simple-snackbar-action {
+        color: #ff9090 !important;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    body {
+        background-size: cover;
+    }
+}

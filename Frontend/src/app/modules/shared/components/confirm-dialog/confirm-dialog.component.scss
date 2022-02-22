@@ -1,0 +1,41 @@
+.confirm-dialog {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 150px;
+    background-color: #fff;
+    border: 2px solid #000;
+    border-radius: 15px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: column;
+    font-size: 2em;
+    z-index: 30;
+    .buttons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-flow: row;
+        .button {
+            margin: 15px;
+            padding: 10px 30px;
+            font-size: 0.8em;
+            border: 2px solid #000;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .button:hover {
+            border: 2px dashed #000;
+        }
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .confirm-dialog {
+        width: 70vw;
+    }
+}

@@ -1,0 +1,24 @@
+.camera-trigger {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 5px 5px 10px #000;
+  bottom: 10px;
+  left: calc(50% - 30px);
+  cursor: pointer;
+
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+  .camera-trigger {
+    left: auto;
+    right: 10px;
+    top: calc(50% - 30px);
+  }
+}

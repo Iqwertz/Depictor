@@ -1,0 +1,17 @@
+.retake {
+    font-size: 2em;
+    width: 300px;
+    padding: 10px 30px;
+    cursor: pointer;
+    background-color: rgb(212, 153, 75);
+    border-radius: 15px;
+    margin: 10px;
+    text-align: center;
+}
+
+@media screen and (max-width: 700px) {
+    .retake {
+        width: 200px;
+        font-size: 1.5em;
+    }
+}

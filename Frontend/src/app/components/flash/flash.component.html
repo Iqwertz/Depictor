@@ -1,0 +1,5 @@
+<div
+  class="flash"
+  [@showFlash]="isFlash ? 'set' : 'clear'"
+  (@showFlash.done)="onFlashDone($event)"
+></div>

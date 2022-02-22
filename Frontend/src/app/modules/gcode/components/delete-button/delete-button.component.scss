@@ -1,0 +1,18 @@
+.delete {
+    font-size: 2em;
+    padding: 10px 0;
+    width: 200px;
+    background-color: rgb(255, 102, 0);
+    border-radius: 15px;
+    box-shadow: 8px 8px 10px #000;
+    text-align: center;
+    margin: 5px;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 700px) {
+    .delete {
+        font-size: 1.5em;
+        width: 130px;
+    }
+}

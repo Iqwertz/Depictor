@@ -1,0 +1,35 @@
+/* .open-camera-button {
+  font-size: 2em;
+  padding: 5px 10px;
+  background-color: rgb(97, 255, 208);
+  box-shadow: 4px 4px 5px #000;
+  border-radius: 10px;
+  cursor: pointer;
+}
+ */
+
+.bn9 {
+    padding: 4px;
+    outline: 0;
+    font-size: 2em;
+    font-family: "Josefin Sans", sans-serif;
+    color: rgb(0, 0, 0);
+    background: -webkit-gradient( linear, left top, right top, from(#fdde5c), color-stop(#f8ab5e), color-stop(#f56a62), color-stop(#a176c8), color-stop(#759beb), color-stop(#65beb3), to(#70db96));
+    background: linear-gradient( 45deg, #fdde5c, #f8ab5e, #f56a62, #a176c8, #759beb, #65beb3, #70db96);
+    border-radius: 22px;
+    border: 0;
+    box-shadow: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.bn9>span {
+    display: block;
+    padding: 14px 15px 10px 15px;
+    background: #ffffff;
+    border-radius: 20px;
+}
+
+.bn9:hover {
+    transform: translate(-3px, -3px);
+}

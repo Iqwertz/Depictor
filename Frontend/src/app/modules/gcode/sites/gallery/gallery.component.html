@@ -1,0 +1,31 @@
+<app-loading></app-loading>
+
+<div class="navbar">
+    <app-navbar></app-navbar>
+</div>
+<!-- <div class="close-button" (click)="close()">
+    <fa-icon [icon]="faTimes"></fa-icon>
+</div> -->
+<div class="header-container">
+    <div class="header">
+        <h1>Gallery</h1>
+    </div>
+</div>
+<div class="gallery-container">
+    <ng-container *ngFor="let entry of gallery">
+        <div class="image-container" (click)="loadGcodeById(entry.name)">
+            <div class="hover-bg"></div>
+            <img [src]="'data:image/jpg;base64,' + entry.image" />
+        </div>
+    </ng-container>
+
+    <div class="loading-container">
+        <div class="lds-ring" *ngIf="!loadedAll">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+<app-settings-button></app-settings-button>

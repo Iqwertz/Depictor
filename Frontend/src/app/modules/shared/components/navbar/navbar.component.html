@@ -1,0 +1,7 @@
+<div class="navbar">
+    <ng-container *ngFor="let entry of navBarEntrys; last as isLast">
+        <div (click)="routeTo(entry.routeTo)" class="nav-element" [ngClass]="{ active: entry.active, bar: !isLast }">
+            {{ entry.name }}
+        </div>
+    </ng-container>
+</div>

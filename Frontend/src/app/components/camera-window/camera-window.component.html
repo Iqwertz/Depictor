@@ -1,0 +1,25 @@
+<div
+  class="webcam-container"
+  [@openClose]="isOpen ? 'open' : 'closed'"
+  (@openClose.done)="onWindowAniDone($event)"
+  (@openClose.start)="onWindowAniStart($event)"
+>
+  <webcam
+    [height]="screenHeight - 20"
+    [width]="screenWidth - 20"
+    [trigger]="cameraService.triggerObservable"
+    (imageCapture)="cameraService.handleImage($event)"
+    *ngIf="cameraService.showWebcam"
+    [allowCameraSwitch]="cameraService.allowCameraSwitch"
+    [switchCamera]="cameraService.nextWebcamObservable"
+    [imageQuality]="1"
+    (cameraSwitched)="cameraService.cameraWasSwitched($event)"
+    (initError)="cameraService.handleInitError($event)"
+    class="webcam"
+  ></webcam>
+  <app-camera-trigger></app-camera-trigger>
+  <div class="close" (click)="closeWindow()">
+    <fa-icon [icon]="faClose"></fa-icon>
+  </div>
+</div>
+<app-flash></app-flash>

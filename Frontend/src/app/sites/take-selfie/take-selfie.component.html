@@ -1,0 +1,19 @@
+<div class="selfie-display" *ngIf="cameraService.base64Image">
+    <app-selfie-display></app-selfie-display>
+</div>
+<div class="camera-window-container" *ngIf="enableCameraAPI">
+    <app-camera-window></app-camera-window>
+</div>
+<div class="open-camera" *ngIf="!cameraService.showWebcam">
+    <app-open-camera-button></app-open-camera-button>
+</div>
+<div class="snapshot-controls" *ngIf="cameraService.base64Image">
+    <app-retake-selfie-button></app-retake-selfie-button>
+    <app-remove-bg-checkbox (buttonChange)="setRBG($event)"></app-remove-bg-checkbox>
+    <app-submit-selfie (clicked)="postSelfie()"></app-submit-selfie>
+</div>
+<app-loading></app-loading>
+<div class="navbar">
+    <app-navbar></app-navbar>
+</div>
+<app-settings-button></app-settings-button>

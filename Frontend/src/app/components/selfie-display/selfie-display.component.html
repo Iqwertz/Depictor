@@ -1,0 +1,7 @@
+<div
+  class="selfie-container"
+  *ngIf="cameraService.base64Image"
+  [@resizeSelfie]="isBig ? 'big' : 'small'"
+>
+  <img [src]="cameraService.base64Image" />
+</div>
