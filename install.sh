@@ -1,4 +1,4 @@
-#!/bin/rm
+#!/bin/bash
 
 echo -e "\x1B[96m starting Depictor install \x1B[0m"
 
