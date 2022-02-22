@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/rm
 
 echo -e "\x1B[96m starting Depictor install \x1B[0m"
 
@@ -10,7 +10,7 @@ echo -e "\x1B[96m installing Apache server  \x1B[0m"
 sudo apt-get install apache2 -y
 echo -e "\x1B[96m downloading latest Depictor Frontend Build \x1B[0m"
 sudo rm -r /var/www/html/index.html
-sudo wget "https://github.com/Iqwertz/Depictor/releases/latest/download/Depictor-Build.zip" -O "/var/www/html/latest.zip"
+sudo wget "https://github.com/Iqwertz/Depictor/releases/latest/download/Depictor-Frontend-Build.zip" -O "/var/www/html/latest.zip"
 sudo unzip /var/www/html/latest.zip -d /var/www/html/
 sudo rm /var/www/html/latest.zip
 
@@ -37,16 +37,13 @@ sudo cp gcode-cli /usr/bin/
 cd
 
 echo -e "\x1B[96m downloading latest Depictor Backend releases \x1B[0m"
-LOCATION=$(curl -s https://api.github.com/repos/Iqwertz/Depictor-Backend/releases/latest \
-| grep "tag_name" \
-| awk '{print "https://github.com/Iqwertz/Depictor-Backend/archive/" substr($2, 2, length($2)-3) ".zip"}') \
-; curl -L -o depictorbackend.zip $LOCATION
-unzip depictorbackend.zip
-rm depictorbackend.zip
-cd Depictor-Backend-*
+sudo wget "https://github.com/Iqwertz/Depictor/releases/latest/download/Depictor-Backend.zip"
+sudo unzip Depictor-Backend.zip
+sudo rm Depictor-Backend.zip
+cd Depictor-Backend
 mv * ../
 cd ../
-rm -r Depictor-Backend-*
+rm -r Depictor-Backend
 echo -e "\x1B[96m installing Node modules \x1B[0m"
 npm i
 

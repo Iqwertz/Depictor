@@ -20,6 +20,7 @@ import {
 } from "remove.bg";
 import { Request, Response } from "express";
 import { enviroment } from "./enviroment";
+import { version } from "./version";
 
 const kill = require("tree-kill");
 let execFile = require("child_process").execFile;
@@ -523,10 +524,7 @@ post: /update
 description: updates the system
 
 expected request: 
-  {
-    version: string,
-    production: boolean;
-  }
+  {}
   
 returns: 
   unsuccessful 
@@ -543,39 +541,11 @@ app.post("/update", (req: Request, res: Response) => {
   let updateBackend = false;
 
   axios
-    .get("https://api.github.com/repos/iqwertz/depictor/tags")
+    .get("https://api.github.com/repos/iqwertz/Depictor/tags")
     .then((response: any) => {
-      if (response.data[0].name != req.body.version && req.body.production) {
-        log("Starting Frontend Update");
-        //when new version detected
-        execFile("./scripts/updateFrontend.sh", function (err: any, data: any) {
-          //update frontend
-          if (err) {
-            log("Error " + err);
-            return;
-          } else {
-            log("Updated Frontend");
-            checkAndUpdateBackend();
-          }
-        });
-      } else {
-        log("No Frontend Update found - Searching for Backend Update");
-        checkAndUpdateBackend(); //try to update backend
-      }
-    });
-  res.json({});
-});
-
-/**
- * checks if a new backenversion is available and executes the update script if so
- */
-function checkAndUpdateBackend() {
-  axios
-    .get("https://api.github.com/repos/iqwertz/Depictor-Backend/tags")
-    .then((response: any) => {
-      if (response.data[0].name != enviroment.version.tag) {
-        log("found Backend Update - Starting Update");
-        execFile("./scripts/updateBackend.sh", function (err: any, data: any) {
+      if (response.data[0].name != version.tag) {
+        log("found Update - Starting Update");
+        execFile("./scripts/update.sh", function (err: any, data: any) {
           if (err) {
             log("Error " + err);
             return;
@@ -585,7 +555,8 @@ function checkAndUpdateBackend() {
         log("no updates found");
       }
     });
-}
+  res.json({});
+});
 
 /*
 post: /getVersion
@@ -602,7 +573,7 @@ returns:
 */
 app.post("/getVersion", (req: Request, res: Response) => {
   log("post: getVersion");
-  res.json(enviroment.version);
+  res.json(version);
 });
 
 /*

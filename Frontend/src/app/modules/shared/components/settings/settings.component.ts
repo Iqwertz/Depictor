@@ -120,15 +120,6 @@ export class SettingsComponent implements OnInit {
     this.http
       .get('https://api.github.com/repos/iqwertz/depictor/tags')
       .subscribe((res: any) => {
-        if (res[0].name != environment.version) {
-          this.updatesAvailable = true;
-          this.availableUpdateVersion = res[0].name;
-        }
-      });
-
-    this.http
-      .get('https://api.github.com/repos/iqwertz/Depictor-Backend/tags')
-      .subscribe((res: any) => {
         if (
           res[0].name != this.backendVersion.tag &&
           this.backendVersion.production

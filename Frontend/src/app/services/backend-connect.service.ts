@@ -141,10 +141,7 @@ export class BackendConnectService {
 
   update() {
     this.http
-      .post('http://' + this.ip + '/update', {
-        version: environment.version,
-        production: environment.production,
-      })
+      .post('http://' + this.ip + '/update', {})
       .subscribe((res: any) => {
         //optional Error handling
       });

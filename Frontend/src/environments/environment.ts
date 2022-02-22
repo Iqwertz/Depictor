@@ -4,7 +4,6 @@
 
 export const environment = {
   production: false,
-  version: 'v1.4.0', //this has to match the tag name of the release in a release
   ip: '192.168.0.52:3001', //'localhost:3001',
   defaultPort: '3001',
   appStateCheckInterval: 4000,
