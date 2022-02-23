@@ -34,11 +34,11 @@ echo -e "\x1B[96m building gcode-cli \x1B[0m"
 cd gcode-cli
 make
 sudo cp gcode-cli /usr/bin/
-cd
+cd ../
 
 echo -e "\x1B[96m downloading latest Depictor Backend releases \x1B[0m"
 sudo wget "https://github.com/Iqwertz/Depictor/releases/latest/download/Depictor-Backend.zip"
-sudo unzip Depictor-Backend.zip
+sudo unzip Depictor-Backend.zip -d ./Depictor-Backend/
 sudo rm Depictor-Backend.zip
 cd Depictor-Backend
 mv * ../

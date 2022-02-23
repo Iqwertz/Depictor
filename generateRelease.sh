@@ -16,8 +16,8 @@ read vn
 
 echo "Building Frontend"
 cd Frontend
-npm i
-ng build
+#npm i
+#ng build
 cd ../
 powershell Compress-Archive ".\Frontend\dist\Depictor\*" "Depictor-Frontend-Build.zip"
  
@@ -31,8 +31,12 @@ rm -r ./buildTemp/data
 rm -r ./buildTemp/assets/image2gcode/windows
 
 cat > ./buildTemp/src/version.ts << ENDOFFILE
-'export const version = { tag: "$vn", production: true };'
+export const version = { tag: "$vn", production: true };
 ENDOFFILE
+
+cd buildTemp/
+find . -name '*.sh' |xargs dos2unix
+cd ../
 
 powershell Compress-Archive ".\buildTemp\*" "Depictor-Backend.zip"
 rm -r buildTemp

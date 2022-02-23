@@ -14,14 +14,14 @@ echo start Backend Update
 
 shopt -s extglob
 rm -r ./!("data")
-wget "https://github.com/Iqwertz/Depictor/releases/latest/download/Depictor-Backend.zip"
-unzip Depictor-Backend.zip
-rm Depictor-Backend.zip
+sudo wget "https://github.com/Iqwertz/Depictor/releases/latest/download/Depictor-Backend.zip"
+sudo unzip Depictor-Backend.zip -d ./Depictor-Backend/
+sudo rm Depictor-Backend.zip
 cd Depictor-Backend
 mv * ../
 cd ../
 rm -r Depictor-Backend
-sudo npm i
+npm i
 sudo chmod +x chmodScripts.sh
 sudo ./chmodScripts.sh
 
