@@ -47,9 +47,10 @@ rm -r Depictor-Backend
 echo -e "\x1B[96m installing Node modules \x1B[0m"
 npm i
 
-echo -e "\x1B[96m chmodExecutables \x1B[0m"
+echo -e "\x1B[96m setting chmod flags \x1B[0m"
 sudo chmod +x chmodScripts.sh
 sudo ./chmodScripts.sh
+sudo find ./ -type d -exec chmod 755 {} \;
 
 echo -e "\x1B[96m installing PM2 \x1B[0m"
 sudo npm install pm2 -g

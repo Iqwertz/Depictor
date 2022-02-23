@@ -16,8 +16,8 @@ read vn
 
 echo "Building Frontend"
 cd Frontend
-#npm i
-#ng build
+npm i
+ng build
 cd ../
 powershell Compress-Archive ".\Frontend\dist\Depictor\*" "Depictor-Frontend-Build.zip"
  
@@ -36,6 +36,7 @@ ENDOFFILE
 
 cd buildTemp/
 find . -name '*.sh' |xargs dos2unix
+dos2unix ./assets/image2gcode/linux/Drawbot_stripped
 cd ../
 
 powershell Compress-Archive ".\buildTemp\*" "Depictor-Backend.zip"
