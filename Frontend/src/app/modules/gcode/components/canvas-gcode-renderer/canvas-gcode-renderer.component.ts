@@ -235,7 +235,7 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
         biggest[1] = cords[1];
       }
     }
-
+    console.log(biggest);
     return biggest;
   }
 

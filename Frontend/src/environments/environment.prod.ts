@@ -14,6 +14,7 @@ export const environment = {
   },
   defaultSettings: {
     endGcode: 'M05;\nG01X0Y0;',
+    startGcode: '$H\nG92X0Y0Z0\nF2000\nG21\nG90\nM05',
     penDownCommand: 'M03S500;',
     avgTimePerLine: 0.096755719, //in s
     maxImageFileSize: 0.05, //in MB

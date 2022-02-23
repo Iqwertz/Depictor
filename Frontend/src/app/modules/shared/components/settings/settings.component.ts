@@ -26,6 +26,7 @@ import { LoadingService } from '../../services/loading.service';
 
 export interface Settings {
   endGcode: string;
+  startGcode: string;
   penDownCommand: string;
   avgTimePerLine: number;
   maxImageFileSize: number;

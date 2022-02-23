@@ -190,7 +190,11 @@ export class BackendConnectService {
       .post('http://' + this.ip + '/changeSettings', {})
       .subscribe((res: any) => {
         if (res.settings) {
-          this.store.dispatch(new SetSettings(res.settings));
+          let mergedSettings = {
+            ...environment.defaultSettings,
+            ...res.settings,
+          };
+          this.store.dispatch(new SetSettings(mergedSettings));
         }
       });
   }

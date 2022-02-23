@@ -80,13 +80,16 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     if (nr == 0) {
       nr = -1;
     }
+
+    ///////////////////remove the first 6 lines of the gcode and replace them with the start gcode after join -> not clean at all but currently to lazy to recompile java
+    gcodeArray.splice(0, 6);
     let strippedGcode: string = gcodeArray.slice(0, nr).join('\n');
-    console.log(strippedGcode);
     strippedGcode = this.applyOffset(
       strippedGcode,
       environment.gcodeRendererDefault.drawingOffset
     );
-    console.log(strippedGcode);
+    console.log(this.settings.startGcode);
+    strippedGcode = this.settings.startGcode + '\n' + strippedGcode;
     strippedGcode += this.settings.endGcode;
     console.log(strippedGcode);
     this.backendConnectService.postGcode(strippedGcode);
