@@ -16,8 +16,8 @@ read vn
 
 echo "Building Frontend"
 cd Frontend
-#npm i
-#ng build
+npm i
+ng build
 cd ../
 powershell Compress-Archive ".\Frontend\dist\Depictor\*" "Depictor-Frontend-Build.zip"
  

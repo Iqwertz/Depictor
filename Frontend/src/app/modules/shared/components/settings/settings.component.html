@@ -89,6 +89,20 @@
 
     <div class="setting-line">
         <div class="label small">
+            Start gcode
+            <div class="tooltip">
+                <fa-icon [icon]="faInfo"></fa-icon>
+                <div class="content">
+                    This gcode gets appended at the start of every gcode that gets drawen.
+                </div>
+            </div>
+        </div>
+        <textarea class="action-textinput area" [(ngModel)]="settings.startGcode"></textarea>
+        <div class="action-button" (click)="setSettings()"><b>Set</b></div>
+    </div>
+
+    <div class="setting-line">
+        <div class="label small">
             End gcode
             <div class="tooltip">
                 <fa-icon [icon]="faInfo"></fa-icon>
