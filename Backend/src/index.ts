@@ -36,6 +36,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 let useBGApi: boolean = enviroment.removeBGSettings.enableApi; //used during dev. to limit api calls
 let isBGRemoveAPIKey: boolean = false;
+let isUpdating: boolean = false; //used to determin ongoing update and avoid double updatess
 let skipGenerateGcode: boolean = enviroment.skipGenerateGcode; //use the last gcode - used for faster development
 const outputDir = `./data/bgremoved/`;
 let removedBgBase64: string = "";
@@ -537,9 +538,11 @@ app.post("/update", (req: Request, res: Response) => {
   log("post: update");
   log("checking for new versions");
 
-  let updateFrontend = false;
-  let updateBackend = false;
-
+  if (isUpdating) {
+    res.json({ err: "update_ongoing" });
+    return;
+  }
+  isUpdating = true;
   axios
     .get("https://api.github.com/repos/iqwertz/Depictor/tags")
     .then((response: any) => {

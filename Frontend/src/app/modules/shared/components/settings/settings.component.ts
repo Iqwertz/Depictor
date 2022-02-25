@@ -136,9 +136,9 @@ export class SettingsComponent implements OnInit {
   }
 
   update() {
-    this.backendConnectService.update();
     this.loadingService.isLoading = true;
     this.loadingService.loadingText = 'updating! Don`t turn off system';
+    this.backendConnectService.update();
     setTimeout(() => {
       window.location.reload();
     }, 120000);

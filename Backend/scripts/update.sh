@@ -22,7 +22,11 @@ mv * ../
 cd ../
 rm -r Depictor-Backend
 npm i
+
+echo -e "\x1B[96m setting chmod flags \x1B[0m"
 sudo chmod +x chmodScripts.sh
 sudo ./chmodScripts.sh
+sudo find ./ -type d -exec chmod 755 {} \;
+sudo chmod -R a+rw ./*
 
 sudo reboot
