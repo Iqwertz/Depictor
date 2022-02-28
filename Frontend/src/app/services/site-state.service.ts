@@ -104,7 +104,7 @@ export class SiteStateService {
         this.serverOnline = true;
 
         if (res.state == 'idle') {
-          //this.loadingService.isLoading = false;
+          this.loadingService.isLoading = false;
           this.router.navigate(['start']);
         } else if (
           res.state == 'processingImage' ||
