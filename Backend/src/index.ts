@@ -151,7 +151,7 @@ returns:
   @StateResponse
 */
 app.post("/checkProgress", (req: Request, res: Response) => {
-  log("post: checkProgress");
+  //log("post: checkProgress");
 
   checkBGremoveAPIkey();
 
@@ -259,7 +259,7 @@ returns:
     }
 */
 app.post("/getDrawingProgress", (req: Request, res: Response) => {
-  log("post: getDrawingProgress");
+  //log("post: getDrawingProgress");
   if (isDrawing) {
     //check if drawing
     res.json({ data: drawingProgress }); //return progress
@@ -336,10 +336,13 @@ app.post("/stop", (req: Request, res: Response) => {
   kill(currentDrawingProcessPID); //kill the drawing process
   setTimeout(() => {
     //Home after some timeout because kill() needs some time
-    execFile("./scripts/home.sh", function (err: any, data: any) {
-      log(err);
-      console.log(data);
-    });
+    exec(
+      "sudo -u $SUDO_USER ./scripts/home.sh",
+      function (err: any, data: any) {
+        log(err);
+        console.log(data);
+      }
+    );
   }, 2000);
 });
 
@@ -548,12 +551,16 @@ app.post("/update", (req: Request, res: Response) => {
     .then((response: any) => {
       if (response.data[0].name != version.tag) {
         log("found Update - Starting Update");
-        execFile("sudo ./scripts/update.sh", function (err: any, data: any) {
-          if (err) {
-            log("Error " + err);
-            return;
+        execFile(
+          "sudo",
+          ["./scripts/update.sh"],
+          function (err: any, data: any) {
+            if (err) {
+              log("Error " + err);
+              return;
+            }
           }
-        });
+        );
       } else {
         log("no updates found");
       }
@@ -648,7 +655,7 @@ app.post("/home", (req: Request, res: Response) => {
     res.json({ err: "drawing" });
     return;
   }
-  execFile("./scripts/home.sh", function (err: any, data: any) {
+  exec("sudo -u $SUDO_USER ./scripts/home.sh", function (err: any, data: any) {
     log(err);
   });
 });
@@ -711,7 +718,8 @@ function drawGcode(gcode: string) {
       if (isLinux) {
         //check if os is Linux
         let startTime = new Date().getTime(); //save start time
-        let launchcommand: string = "./scripts/launchGcodeCli.sh"; //command to launch the programm
+        let launchcommand: string =
+          "sudo -u $SUDO_USER ./scripts/launchGcodeCli.sh"; //command to launch the programm
 
         appState = "idle";
         isDrawing = true; //update maschine drawing state
@@ -733,7 +741,7 @@ function drawGcode(gcode: string) {
           isDrawing = false;
         });
 
-        const launchProcess = execFile(
+        const launchProcess = exec(
           //execute launchcommand
           launchcommand,
           function (err: any, data: any) {
@@ -933,20 +941,23 @@ function executeGcode(gcode: string) {
 
   log(gcode);
   fse.outputFileSync("./assets/gcodes/temp.gcode", gcode, "utf8");
-  execFile("./scripts/execTemp.sh", function (err: any, data: any) {
-    fs.unlink("./assets/gcodes/temp.gcode", (err: any) => {
-      //delete preview image
+  exec(
+    "sudo -u $SUDO_USER ./scripts/execTemp.sh",
+    function (err: any, data: any) {
+      fs.unlink("./assets/gcodes/temp.gcode", (err: any) => {
+        //delete preview image
+        if (err) {
+          log("Error " + err);
+          return;
+        }
+      });
+
       if (err) {
         log("Error " + err);
         return;
       }
-    });
-
-    if (err) {
-      log("Error " + err);
-      return;
     }
-  });
+  );
 }
 
 /**
