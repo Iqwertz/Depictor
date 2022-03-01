@@ -548,7 +548,7 @@ app.post("/update", (req: Request, res: Response) => {
     .then((response: any) => {
       if (response.data[0].name != version.tag) {
         log("found Update - Starting Update");
-        execFile("./scripts/update.sh", function (err: any, data: any) {
+        execFile("sudo ./scripts/update.sh", function (err: any, data: any) {
           if (err) {
             log("Error " + err);
             return;
