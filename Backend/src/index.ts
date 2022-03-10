@@ -13,11 +13,7 @@
 const express = require("express");
 const fs = require("fs");
 const fse = require("fs-extra");
-import {
-  RemoveBgResult,
-  RemoveBgError,
-  removeBackgroundFromImageBase64,
-} from "remove.bg";
+import { RemoveBgResult, RemoveBgError, removeBackgroundFromImageBase64 } from "remove.bg";
 import { Request, Response } from "express";
 import { enviroment } from "./enviroment";
 import { version } from "./version";
@@ -44,12 +40,7 @@ let removedBgBase64: string = "";
 const isLinux: boolean = process.platform === "linux";
 console.log("Detected Linux: ", isLinux);
 
-type AppStates =
-  | "idle"
-  | "removingBg"
-  | "processingImage"
-  | "rawGcodeReady"
-  | "error"; //possible states of the server
+type AppStates = "idle" | "removingBg" | "processingImage" | "rawGcodeReady" | "error"; //possible states of the server
 
 interface StateResponse {
   state: AppStates;
@@ -196,10 +187,7 @@ app.post("/getGeneratedGcode", (req: Request, res: Response) => {
     }
 
     /////read gcode
-    let rawGcode = fs.readFileSync(
-      img2gcodePath + "gcode/gcode_image.nc",
-      "utf8"
-    );
+    let rawGcode = fs.readFileSync(img2gcodePath + "gcode/gcode_image.nc", "utf8");
 
     res.json({ state: appState, isDrawing: isDrawing, data: rawGcode }); //return gcode and appstate information
   } else {
@@ -336,13 +324,10 @@ app.post("/stop", (req: Request, res: Response) => {
   kill(currentDrawingProcessPID); //kill the drawing process
   setTimeout(() => {
     //Home after some timeout because kill() needs some time
-    exec(
-      "sudo -u $SUDO_USER ./scripts/home.sh",
-      function (err: any, data: any) {
-        log(err);
-        console.log(data);
-      }
-    );
+    exec("sudo -u $SUDO_USER ./scripts/home.sh", function (err: any, data: any) {
+      log(err);
+      console.log(data);
+    });
   }, 2000);
 });
 
@@ -390,7 +375,9 @@ expected request:
   
 returns: 
   unsuccessful: 
-    undefined
+    {
+      err: string
+    }
    successful:
     {
       data: GcodeEntry[]
@@ -399,6 +386,11 @@ returns:
 app.post("/getGcodeGallery", (req: Request, res: Response) => {
   log("post: getGcodeGallery");
   let gallery: GcodeEntry[] = [];
+
+  if (!fs.existsSync("data/savedGcodes/")) {
+    res.json({ err: "no_entry" });
+    return;
+  }
 
   fs.readdirSync("data/savedGcodes/").forEach((file: any) => {
     //read all saved gcode files
@@ -477,16 +469,11 @@ returns:
 */
 app.post("/setBGRemoveAPIKey", (req: Request, res: Response) => {
   log("post: setBGRemoveAPIKey");
-  fse.outputFile(
-    "removeBGAPIKey.txt",
-    req.body.key,
-    "utf8",
-    function (err: any, data: any) {
-      if (err) {
-        log("Error " + err);
-      }
+  fse.outputFile("removeBGAPIKey.txt", req.body.key, "utf8", function (err: any, data: any) {
+    if (err) {
+      log("Error " + err);
     }
-  );
+  });
 
   res.json({});
 });
@@ -546,25 +533,19 @@ app.post("/update", (req: Request, res: Response) => {
     return;
   }
   isUpdating = true;
-  axios
-    .get("https://api.github.com/repos/iqwertz/Depictor/tags")
-    .then((response: any) => {
-      if (response.data[0].name != version.tag) {
-        log("found Update - Starting Update");
-        execFile(
-          "sudo",
-          ["./scripts/update.sh"],
-          function (err: any, data: any) {
-            if (err) {
-              log("Error " + err);
-              return;
-            }
-          }
-        );
-      } else {
-        log("no updates found");
-      }
-    });
+  axios.get("https://api.github.com/repos/iqwertz/Depictor/tags").then((response: any) => {
+    if (response.data[0].name != version.tag) {
+      log("found Update - Starting Update");
+      execFile("sudo", ["./scripts/update.sh"], function (err: any, data: any) {
+        if (err) {
+          log("Error " + err);
+          return;
+        }
+      });
+    } else {
+      log("no updates found");
+    }
+  });
   res.json({});
 });
 
@@ -606,20 +587,15 @@ app.post("/changeSettings", (req: Request, res: Response) => {
 
   if (req.body.settings) {
     log(req.body.settings);
-    fse.outputFileSync(
-      "data/settings.json",
-      JSON.stringify(req.body.settings),
-      "utf8",
-      function (err: any, data: any) {
-        if (err) {
-          log(err);
-          res.json({});
-          return;
-        } else {
-          log("successfully saved settings");
-        }
+    fse.outputFileSync("data/settings.json", JSON.stringify(req.body.settings), "utf8", function (err: any, data: any) {
+      if (err) {
+        log(err);
+        res.json({});
+        return;
+      } else {
+        log("successfully saved settings");
       }
-    );
+    });
   }
 
   if (fs.existsSync("data/settings.json")) {
@@ -718,8 +694,7 @@ function drawGcode(gcode: string) {
       if (isLinux) {
         //check if os is Linux
         let startTime = new Date().getTime(); //save start time
-        let launchcommand: string =
-          "sudo -u $SUDO_USER ./scripts/launchGcodeCli.sh"; //command to launch the programm
+        let launchcommand: string = "sudo -u $SUDO_USER ./scripts/launchGcodeCli.sh"; //command to launch the programm
 
         appState = "idle";
         isDrawing = true; //update maschine drawing state
@@ -752,8 +727,7 @@ function drawGcode(gcode: string) {
             if (!err) {
               //when exited with out errors log the printing time and amount of lines to drawingTimesLog.txt. This file is used to determin an time/line estimation for the fronted
               let timeDiff: number = new Date().getTime() - startTime;
-              let lines: number =
-                gcode.length - gcode.replace(/\n/g, "").length + 1;
+              let lines: number = gcode.length - gcode.replace(/\n/g, "").length + 1;
 
               fse.outputFile(
                 "data/logs/drawingTimesLog.txt",
@@ -941,23 +915,20 @@ function executeGcode(gcode: string) {
 
   log(gcode);
   fse.outputFileSync("./assets/gcodes/temp.gcode", gcode, "utf8");
-  exec(
-    "sudo -u $SUDO_USER ./scripts/execTemp.sh",
-    function (err: any, data: any) {
-      fs.unlink("./assets/gcodes/temp.gcode", (err: any) => {
-        //delete preview image
-        if (err) {
-          log("Error " + err);
-          return;
-        }
-      });
-
+  exec("sudo -u $SUDO_USER ./scripts/execTemp.sh", function (err: any, data: any) {
+    fs.unlink("./assets/gcodes/temp.gcode", (err: any) => {
+      //delete preview image
       if (err) {
         log("Error " + err);
         return;
       }
+    });
+
+    if (err) {
+      log("Error " + err);
+      return;
     }
-  );
+  });
 }
 
 /**
