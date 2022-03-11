@@ -69,6 +69,20 @@
     </div>
 
     <div class="setting-line">
+        <div class="label small">
+            Gcode scaling
+            <div class="tooltip">
+                <fa-icon [icon]="faInfo"></fa-icon>
+                <div class="content">
+                    The highest generated gcode values are x200, y162. If this is too big or small on your plotter adjust this value to scale the gcode.
+                </div>
+            </div>
+        </div>
+        <input type="number" class="action-textinput" [(ngModel)]="settings.gcodeScale" />
+        <div class="action-button" (click)="setSettings()"><b>Set</b></div>
+    </div>
+
+    <div class="setting-line">
         <div class="label">Home pen</div>
         <div class="action-button" (click)="home()"><b>Home</b></div>
     </div>

@@ -22,6 +22,7 @@ export const environment = {
     penDownCommand: 'M03S500;',
     avgTimePerLine: 0.096755719, //in s
     maxImageFileSize: 0.05, //in MB
+    gcodeScale: 1,
   },
 };
 

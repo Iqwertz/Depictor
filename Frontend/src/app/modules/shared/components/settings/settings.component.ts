@@ -30,6 +30,7 @@ export interface Settings {
   penDownCommand: string;
   avgTimePerLine: number;
   maxImageFileSize: number;
+  gcodeScale: number;
 }
 
 @Component({

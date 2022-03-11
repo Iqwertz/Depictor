@@ -47,3 +47,7 @@ The install will take a few minutes and then successfully installed Depictor! Yo
 
 ## Supported Raspberry Pi models 
 The project was developed and tested with an Raspberry Pi 3B but should work on every official model. However it is not recommended to use an Raspberry Pi zero due to its limited processing power (the image conversion will take 15+ min)
+
+
+### Set up scale:
+Max values are: 200, 162

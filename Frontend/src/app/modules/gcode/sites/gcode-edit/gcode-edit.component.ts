@@ -75,7 +75,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     let gcodeArray: string[] = serverGcode.split('\n');
 
     gcodeArray = this.replacePenDownCommand(gcodeArray);
-    console.log(gcodeArray);
+    gcodeArray = this.scaleGcode(gcodeArray);
     let nr = this.notRenderdLines * -1;
     if (nr == 0) {
       nr = -1;
@@ -88,10 +88,8 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
       strippedGcode,
       environment.gcodeRendererDefault.drawingOffset
     );
-    console.log(this.settings.startGcode);
     strippedGcode = this.settings.startGcode + '\n' + strippedGcode;
     strippedGcode += this.settings.endGcode;
-    console.log(strippedGcode);
     this.backendConnectService.postGcode(strippedGcode);
     this.router.navigate(['gcode', 'drawing']);
   }
@@ -100,6 +98,19 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     for (let i = 0; i < gcode.length; i++) {
       if (gcode[i].includes('M03')) {
         gcode[i] = this.settings.penDownCommand;
+      }
+    }
+    return gcode;
+  }
+
+  scaleGcode(gcode: string[]): string[] {
+    for (let i = 0; i < gcode.length; i++) {
+      let command = gcode[i];
+      if (command.startsWith('G1')) {
+        let parameter = this.getG1Parameter(command);
+        parameter[0] = parameter[0] * this.settings.gcodeScale;
+        parameter[1] = parameter[1] * this.settings.gcodeScale;
+        gcode[i] = 'G1 X' + parameter[0] + 'Y' + parameter[1];
       }
     }
     return gcode;
@@ -114,7 +125,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
         let parameter = this.getG1Parameter(command);
         parameter[0] += offset[0];
         parameter[1] += offset[1];
-        gcodeArray[i] = 'G1 X' + parameter[0] + 'Y ' + parameter[1];
+        gcodeArray[i] = 'G1 X' + parameter[0] + 'Y' + parameter[1];
       }
     }
 
