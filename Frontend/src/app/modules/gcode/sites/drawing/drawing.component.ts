@@ -55,10 +55,6 @@ export class DrawingComponent implements OnInit, AfterViewInit {
           this.renderer?.renderGcode(this.gcodeViewerService.gcodeFile, {
             notRenderdLines: 0,
             drawing: true,
-            drawingOffset: [
-              environment.gcodeRendererDefault.drawingOffset[0] * -1,
-              environment.gcodeRendererDefault.drawingOffset[1] * -1,
-            ],
           });
         }
       },

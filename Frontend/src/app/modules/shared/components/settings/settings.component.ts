@@ -31,6 +31,7 @@ export interface Settings {
   avgTimePerLine: number;
   maxImageFileSize: number;
   gcodeScale: number;
+  drawingOffset: number[];
 }
 
 @Component({

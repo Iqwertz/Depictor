@@ -75,7 +75,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     let gcodeArray: string[] = serverGcode.split('\n');
 
     gcodeArray = this.replacePenDownCommand(gcodeArray);
-    gcodeArray = this.scaleGcode(gcodeArray);
+    gcodeArray = this.scaleGcode(gcodeArray, this.settings.gcodeScale);
     let nr = this.notRenderdLines * -1;
     if (nr == 0) {
       nr = -1;
@@ -86,7 +86,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     let strippedGcode: string = gcodeArray.slice(0, nr).join('\n');
     strippedGcode = this.applyOffset(
       strippedGcode,
-      environment.gcodeRendererDefault.drawingOffset
+      this.settings.drawingOffset
     );
     strippedGcode = this.settings.startGcode + '\n' + strippedGcode;
     strippedGcode += this.settings.endGcode;
@@ -103,13 +103,13 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     return gcode;
   }
 
-  scaleGcode(gcode: string[]): string[] {
+  scaleGcode(gcode: string[], scale: number): string[] {
     for (let i = 0; i < gcode.length; i++) {
       let command = gcode[i];
       if (command.startsWith('G1')) {
         let parameter = this.getG1Parameter(command);
-        parameter[0] = parameter[0] * this.settings.gcodeScale;
-        parameter[1] = parameter[1] * this.settings.gcodeScale;
+        parameter[0] = parameter[0] * scale;
+        parameter[1] = parameter[1] * scale;
         gcode[i] = 'G1 X' + parameter[0] + 'Y' + parameter[1];
       }
     }

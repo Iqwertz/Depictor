@@ -119,6 +119,9 @@
                 max-height: 30px;
                 resize: none;
             }
+            &.short {
+                width: 50px;
+            }
         }
     }
     .version {
@@ -140,6 +143,9 @@
             }
             .action-textinput {
                 max-width: 20vw;
+                &.short {
+                    width: 30px;
+                }
             }
         }
         .version {

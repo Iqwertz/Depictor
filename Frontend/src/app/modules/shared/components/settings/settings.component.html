@@ -83,6 +83,14 @@
     </div>
 
     <div class="setting-line">
+        <div class="label small">Gcode offset</div>
+        X:
+        <input type="number" class="action-textinput short" [(ngModel)]="settings.drawingOffset[0]" /> Y:
+        <input type="number" class="action-textinput short" [(ngModel)]="settings.drawingOffset[1]" />
+        <div class="action-button" (click)="setSettings()"><b>Set</b></div>
+    </div>
+
+    <div class="setting-line">
         <div class="label">Home pen</div>
         <div class="action-button" (click)="home()"><b>Home</b></div>
     </div>

@@ -17,7 +17,6 @@ export interface GcodeRendererConfigInput {
   notRenderdLines?: number;
   gcodeScale?: number;
   drawing?: boolean;
-  drawingOffset?: number[];
 }
 
 export interface GcodeRendererConfig {
@@ -27,7 +26,6 @@ export interface GcodeRendererConfig {
   notRenderdLines: number;
   gcodeScale: number;
   drawing: boolean;
-  drawingOffset: number[];
 }
 
 @Component({
@@ -62,7 +60,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     strokeColor: '',
     strokeColorPassive: '',
     strokeWidth: 0,
-    drawingOffset: [0, 0],
   };
 
   constructor(private gcodeViewerService: GcodeViewerService) {}
@@ -94,9 +91,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
         this.rendererConfigInput.strokeWidth ||
         environment.gcodeRendererDefault.strokeWidth,
       drawing: this.rendererConfigInput.drawing || false,
-      drawingOffset:
-        this.rendererConfigInput.drawingOffset ||
-        environment.gcodeRendererDefault.drawingOffset,
     };
 
     this.height = window.innerHeight - 250;
@@ -136,8 +130,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
       strokeWidth:
         config.strokeWidth || environment.gcodeRendererDefault.strokeWidth,
       drawing: config.drawing || false,
-      drawingOffset:
-        config.drawingOffset || environment.gcodeRendererDefault.drawingOffset,
     };
 
     this.render();
@@ -196,13 +188,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
           this.bounds[0] * this.rendererConfig.gcodeScale) /
         2;
     }
-
-    this.offset[0] +=
-      this.rendererConfig.drawingOffset[0] *
-      (this.rendererConfig.gcodeScale / 2);
-    this.offset[1] +=
-      this.rendererConfig.drawingOffset[1] *
-      (this.rendererConfig.gcodeScale / 2);
 
     let color: string = this.rendererConfig.strokeColor;
     if (this.rendererConfig.drawing) {
