@@ -1,12 +1,14 @@
-# Depictor
-## About it
+
+# About it
 **Depictor** is a software that runs on a Raspberry Pi. It provides a simple and clean web interface to easily generate and draw images on an 2d plotter. A huge thanks goes to [Scott-Cooper](https://github.com/Scott-Cooper), for creating the  [Drawbot_image_to_gcode_v2](https://github.com/Scott-Cooper/Drawbot_image_to_gcode_v2) which is used to convert the images to beautiful gcode.
 
 
-The idea behind this project is to have an plotter hanging on the wall and visitor have the possibilty to scan a qr-code for a website where they can take a selfie and watch it being drawen.
+<!-- The idea behind this project is to have an plotter hanging on the wall and visitor have the possibilty to scan a qr-code for a website where they can take a selfie and watch it being drawen. -->
 
-## Installing
+# Install & Setup
+I couldn't test this guide with a lot of people, so if something isn't clear or doesn't work, please create a new Issue or write an email to juliushussl@gmail.com
 
+## Install
 ### Material
 - Raspberry pi
 - min. 4GB micro sd card
@@ -52,10 +54,16 @@ Before you try to draw your first image, you propably have to adjust these three
 In this textfield you can paste some gcode that gets appended to the gcode file before drawing it. Before starting your first printer please adjust the feedrate (default 4000) and the homing command for your plotter. 
 
 ### Gcode scaling
-The maximum values of the generated gcode are X200, Y162. Therefore the pen of your plotter should point at the bottom left boint of 
-Max values are: 200, 162
+The maximum values of the generated gcode are X200, Y162. If you move your plotter to this point the pen should be at the boarder of the a4 paper you want to draw on. If this is not the case you have to adjust the scaling of the generated gcode: 
+
+To calculate the correct scaling for your plotter move your plotter to (0,0). Now place one corner of the A4 paper under the pen. Also the longer side of the paper should be along the x-axis.
+Now move the y axis to the other corner of the A4 Paper. Now divide the y coordinate of this point by 162. The result is the correct scaling. Enter it into the "_Gcode scaling_" field in the settings. 
+
+When the pen is  if the drawen picture is not in the center of the paper you can shift the image by adjusting the "_Gcode offset_" setting.
 
 ### Pen down command
+As the name says this is the command that is used to lower the pen during drawing. If this command is diffrent on your plotter plotter please change it here.
+(Note: Currently the pen up command is always "_M05_"! I will add an option to change this in the future. If it is important to you please create an issue)
 
-## Supported Raspberry Pi models 
-The project was developed and tested with an Raspberry Pi 3B but should work on every official model. However it is not recommended to use an Raspberry Pi zero due to its limited processing power (the image conversion will take 15+ min)
+# Supported Raspberry Pi models 
+The project was developed and tested with an Raspberry Pi 3B but should work on every official model. However it is not recommended to use an Raspberry Pi zero due to its limited processing power (the image conversion will take 15+ min).

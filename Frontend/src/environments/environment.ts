@@ -22,7 +22,7 @@ export const environment = {
     avgTimePerLine: 0.096755719, //in s
     maxImageFileSize: 0.05, //in MB
     gcodeScale: 1,
-    drawingOffset: [25, 0],
+    drawingOffset: [0, 0],
   },
 };
 
