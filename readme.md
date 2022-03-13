@@ -1,6 +1,7 @@
 
-![Logo](images/LogoWithBg.png)
-![Logo](images/DepictorTextNoBorder.png)
+<p align="center">
+  <img width="200" style="border-radius: 100px" src="images/LogoWithBg.png">
+</p>
 
 # Depictor
 
