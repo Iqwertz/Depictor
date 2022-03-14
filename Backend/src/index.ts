@@ -347,14 +347,14 @@ returns:
 app.post("/delete", (req: Request, res: Response) => {
   log("post: delete");
 
-  fs.unlink("assets/savedGcodes/" + req.body.id + ".nc", (err: any) => {
+  fs.unlink("data/savedGcodes/" + req.body.id + ".nc", (err: any) => {
     //delete gcode
     if (err) {
       log("Error " + err);
       return;
     }
   });
-  fs.unlink("assets/savedGcodes/" + req.body.id + ".png", (err: any) => {
+  fs.unlink("data/savedGcodes/" + req.body.id + ".png", (err: any) => {
     //delete preview image
     if (err) {
       log("Error " + err);
