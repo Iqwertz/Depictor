@@ -34,6 +34,10 @@ Insert gif or link to demo
 ## Screenshots
 
 ![Screenshot](images/landingPage.png)
+![gif](images/gcodeSlider.gif)
+![Screenshot](images/gallery.png)
+![Screenshot](images/drawing.png)
+![Screenshot](images/settings.png)
 
 
 ## Installation & Setup
