@@ -10,12 +10,31 @@
 ![commits](https://img.shields.io/github/commit-activity/m/iqwertz/depictor)
 
 
-
 Depictor is a web app that runs on a Raspberry Pi. It provides a simple and clean web interface to easily generate and draw images on an 2d plotter.
 It features automatic background removal, custom gcode settings, print time estimates, gallery with previous prints and many more features.
 
+# Table of contents
 
-## Features
+   * [Features](#features)
+   * [Demo](#demo)
+   * [Screenshots](#screenshots)
+   * Installation & Setup
+     * [Material](#material)
+     * [Quick install instructions](#quick-install-instructions)
+     * [Detailed install instructions](#detailed-install-instructions)
+     * [Setup](#setup)
+       * [Start gcode](#start-gcode)
+       * [Gcode scaling](#gcode-scaling)
+       * [Start gcode](#start-gcode)
+       * [Pen down command](#pen-down-command)
+       * [Enable automatic background removal](#enable-automatic-background-removal)
+   * [Supported Raspberry Pi models ](#supported-raspberry-pi-models)
+   * [Acknowledgements](#acknowledgements)
+   * [License](#license)
+   * [Run Locally](#run-locally)
+   * [Support](#support)
+
+# Features
 
 
 - Modern and responsive web interface
@@ -26,12 +45,12 @@ It features automatic background removal, custom gcode settings, print time esti
 - One click updates
 
 
-## Demo
+# Demo
 
 Insert gif or link to demo
 
 
-## Screenshots
+# Screenshots
 
 ![Screenshot](images/landingPage.png)
 ![gif](images/gcodeSlider.gif)
@@ -40,17 +59,16 @@ Insert gif or link to demo
 ![Screenshot](images/settings.png)
 
 
-## Installation & Setup
+# Installation & Setup
 I couldn't test this guide with a lot of people, so if something isn't clear or doesn't work, please create a new Issue or write an email to juliushussl@gmail.com.
 
-## Install
-### Material
+## Material
 - Raspberry pi
 - min. 4GB micro sd card
 - plotter that works with grbl (other non grbl plotter should also work in theory if they support the standard gcode set)
 - a cable to connect the plotter and rpi over usb
 
-### Quick install instructions:
+## Quick install instructions:
 If you are already familiar with rpis these are the simplified quick install instructions:
 - install a raspbian os light image on the rpi.
 - ssh into the rpi.
@@ -64,7 +82,7 @@ If you are already familiar with rpis these are the simplified quick install ins
 - Open a browser and enter the ip of your rpi in the browser to access the web interface. If everything was successfull you now should see the depictor landing page! 
 - (Before you start your first drawing you should check out the 'Setup' section)
 
-### Detailed install instructions:
+## Detailed install instructions:
 ### Insalling raspbian
 To install raspbian on an sd card I recommend to use the Raspberry Pi imager. You can download it here: [www.raspberrypi.com/software/](https://www.raspberrypi.com/software/).
 After installing raspberrypi imager and opening it up choose raspberry PI OS Lite (32-bit) as the os. Then select the correct sd-card and set the following settings (of course you have to change the username and password and set the correct wifi credentials):
@@ -94,10 +112,10 @@ The install will take a few minutes. After it finished you successfully have ins
 ## Setup
 Before you try to draw your first image, you propably have to adjust these three settings (all of them can be found in the settings tab in the top right):
 
-### Start gcode
+### **Start gcode**
 In this textfield you can paste some gcode that gets appended to the gcode file before drawing it. Before starting your first printer please adjust the feedrate (default 4000) and the homing command for your plotter. 
 
-### Gcode scaling
+### **Gcode scaling**
 The maximum values of the generated gcode are X200, Y162. If you move your plotter to this point the pen should be at the boarder of the a4 paper you want to draw on. If this is not the case you have to adjust the scaling of the generated gcode: 
 
 To calculate the correct scaling for your plotter move your plotter to (0,0). Now place one corner of the A4 paper under the pen. Also the longer side of the paper should be along the x-axis.
@@ -105,11 +123,11 @@ Now move the y axis to the other corner of the A4 Paper. Note down the y coordin
 
 When the pen is  if the drawen picture is not in the center of the paper you can shift the image by adjusting the "_Gcode offset_" setting.
 
-### Pen down command
+### **Pen down command**
 As the name says this is the command that is used to lower the pen during drawing. If this command is diffrent on your plotter plotter please change it here.
 (Note: Currently the pen up command is always "_M05_"! I will add an option to change this in the future. If it is important to you please create an issue)
 
-### Enable automatic Background removal:
+### **Enable automatic background removal**
 The background remove function uses the [remove.bg](https://www.remove.bg/) api. To enable it you have to get an API key:
 - Register on [remove.bg](https://www.remove.bg/)
 - Go to the api settings: https://www.remove.bg/de/dashboard#api-key
@@ -119,29 +137,22 @@ The background remove function uses the [remove.bg](https://www.remove.bg/) api.
 (Note: When using the free version of the api you can only convert 50 pictures a month. If you need more you can buy more on the [remove.bg](https://www.remove.bg/) website)
  
 
-## Supported Raspberry Pi models 
+# Supported Raspberry Pi models 
 The project was developed and tested with an Raspberry Pi 3B but should work on every official model. However it is not recommended to use an Raspberry Pi zero due to its limited processing power (the image conversion will take 15+ min).
     
-## Acknowledgements
+# Acknowledgements
 
  - Huge thanks to [Scott-Cooper](https://github.com/Scott-Cooper), for creating the  [Drawbot_image_to_gcode_v2](https://github.com/Scott-Cooper/Drawbot_image_to_gcode_v2) which is used to convert the images to beautiful gcode.
  - [gcode-cli](https://github.com/hzeller)
  - [remove.bg](https://www.remove.bg/de)
 
 
-## License
+# License
 
 [GPL-3.0 License](https://choosealicense.com/licenses/gpl-3.0/)
 
 
-## Tech Stack
-
-**Client:** Angular, Scss
-
-**Server:** Node, Express, Java, c
-
-
-## Run Locally
+# Run Locally
 
 Clone the project
 
@@ -149,39 +160,37 @@ Clone the project
   git clone https://github.com/Iqwertz/Depictor.git
 ```
 
-### run backend
-Go to the projects backend directory
+## Start the backend server
+Go to the projects backend directory:
 
 ```bash
   cd Depictor/Backend
 ```
 
-Install backend dependencies 
+Install backend dependencies :
 
 ```bash
   npm i
 ```
 
-Start backend server:
+Start the backend server:
 
 ```bash
   npm run start
 ```
-
 or
-
 ```bash
   nodemon
 ```
 
-### run frontend
-Go to the projects frontend directory
+## Serve frontend
+Go to the projects frontend directory:
 
 ```bash
   cd Depictor/Frontend
 ```
 
-Install frontend dependencies 
+Install frontend dependencies:
 
 ```bash
   npm i
@@ -203,7 +212,7 @@ To generate a new release run
 ```
 
 
-## Support
+# Support
 
 For support, email juliushussl@gmail.com .
 
