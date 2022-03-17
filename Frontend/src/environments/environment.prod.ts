@@ -19,5 +19,6 @@ export const environment = {
     maxImageFileSize: 0.05, //in MB
     gcodeScale: 1,
     drawingOffset: [0, 0],
+    gcodeDisplayTransform: [true, false, true],
   },
 };

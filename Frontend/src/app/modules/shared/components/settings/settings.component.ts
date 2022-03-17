@@ -32,6 +32,7 @@ export interface Settings {
   maxImageFileSize: number;
   gcodeScale: number;
   drawingOffset: number[];
+  gcodeDisplayTransform: boolean[]; //boolean array consisting of three values: [0] when true switche x any y, [1] when true invert x, [2] when true invert y
 }
 
 @Component({

@@ -9,6 +9,9 @@ import {
 import { Subject } from 'rxjs';
 import { GcodeViewerService } from '../../services/gcode-viewer.service';
 import { environment } from '../../../../../environments/environment';
+import { AppState } from 'src/app/store/app.state';
+import { Settings } from '../../../shared/components/settings/settings.component';
+import { Select } from '@ngxs/store';
 
 export interface GcodeRendererConfigInput {
   strokeColor?: string;
@@ -67,9 +70,16 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
   @ViewChild('canvas')
   canvas: ElementRef<HTMLCanvasElement> | null = null;
 
+  @Select(AppState.settings) settings$: any;
+  settings: Settings = environment.defaultSettings;
+
   public ctx: CanvasRenderingContext2D | null = null;
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.settings$.subscribe((settings: Settings) => {
+      this.settings = settings;
+    });
+  }
 
   ngAfterViewInit(): void {
     if (!this.canvas) {
@@ -117,7 +127,12 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
   }
 
   renderGcode(file: string, config: GcodeRendererConfigInput) {
-    this.gcodeFile = file;
+    this.gcodeFile = this.transformGcode(
+      file,
+      this.settings.gcodeDisplayTransform
+    );
+    console.log('transformed');
+
     this.rendererConfig = {
       gcodeScale:
         config.gcodeScale || environment.gcodeRendererDefault.gcodeScale,
@@ -162,6 +177,7 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     if (!this.canvas) {
       return;
     }
+
     //   scales the gcode to fit window and centers it
     this.bounds = this.getBiggestValue(this.gcodeFile);
 
@@ -308,6 +324,43 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     this.ctx.restore();
     this.ctx.fillStyle = '#fff';
     this.ctx.fillRect(0, 0, this.width, this.height);
+  }
+
+  transformGcode(gcode: string, transform: boolean[]): string {
+    let bounds: number[] = [];
+    if (transform[1] || transform[2]) {
+      //only calculate the biggest gcode value when needed
+      bounds = this.getBiggestValue(gcode);
+    }
+
+    let gcodeArray: string[] = gcode.split('\n');
+    for (let i = 0; i < gcodeArray.length; i++) {
+      let command = gcodeArray[i];
+      if (command.startsWith('G1')) {
+        let parameter = this.getG1Parameter(command);
+
+        if (transform[1]) {
+          //invert x
+          parameter[0] = bounds[0] / 2 + (bounds[0] / 2 - parameter[0]);
+        }
+
+        if (transform[2]) {
+          //invert y
+          parameter[1] = bounds[1] / 2 + (bounds[1] / 2 - parameter[1]);
+        }
+
+        if (transform[0]) {
+          //switch x and y
+          let temp = parameter[0];
+          parameter[0] = parameter[1];
+          parameter[1] = temp;
+        }
+
+        gcodeArray[i] = 'G1 X' + parameter[0] + 'Y' + parameter[1];
+      }
+    }
+
+    return gcodeArray.join('\n');
   }
 
   getG1Parameter(command: string): number[] {

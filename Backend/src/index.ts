@@ -97,21 +97,7 @@ app.post("/newPicture", (req: Request, res: Response) => {
       log("removing bg");
       removeBg(req.body.img); //remove background with removebg //this function will call convertBase64ToGcode asynchronous
     } else {
-      log("removebg skipped");
-      removedBgBase64 = req.body.img; //set the removedBgBase64 Image without bgremove
-      fse.outputFile(
-        //update the current picture
-        outputDir + "bgremoved-current.jpg",
-        req.body.img,
-        "base64",
-        function (err: any, data: any) {
-          if (err) {
-            log("Error: " + err);
-          }
-        }
-      );
-
-      convertBase64ToGcode(removedBgBase64); //convert the image to gcode
+      skipRemoveBg(req.body.img);
     }
 
     fse.outputFile(
@@ -324,7 +310,7 @@ app.post("/stop", (req: Request, res: Response) => {
   kill(currentDrawingProcessPID); //kill the drawing process
   setTimeout(() => {
     //Home after some timeout because kill() needs some time
-    exec("sudo -u $SUDO_USER ./scripts/home.sh", function (err: any, data: any) {
+    exec("./scripts/home.sh", function (err: any, data: any) {
       log(err);
       console.log(data);
     });
@@ -631,7 +617,7 @@ app.post("/home", (req: Request, res: Response) => {
     res.json({ err: "drawing" });
     return;
   }
-  exec("sudo -u $SUDO_USER ./scripts/home.sh", function (err: any, data: any) {
+  exec("./scripts/home.sh", function (err: any, data: any) {
     log(err);
   });
 });
@@ -694,7 +680,7 @@ function drawGcode(gcode: string) {
       if (isLinux) {
         //check if os is Linux
         let startTime = new Date().getTime(); //save start time
-        let launchcommand: string = "sudo -u $SUDO_USER ./scripts/launchGcodeCli.sh"; //command to launch the programm
+        let launchcommand: string = "./scripts/launchGcodeCli.sh"; //command to launch the programm
 
         appState = "idle";
         isDrawing = true; //update maschine drawing state
@@ -759,7 +745,7 @@ function drawGcode(gcode: string) {
 /**
  *removeBg()
  * uses the removeBg api (https://www.remove.bg/de/tools-api) to remove the background of a picture and start to convert the picture to gcode when succesful
- * todo: handle error when image bg couldnt be converted
+ * todo: send user alert why image background couldnt be remove
  *
  * @param {string} base64img
  */
@@ -769,6 +755,7 @@ function removeBg(base64img: string) {
   checkBGremoveAPIkey();
   if (!isBGRemoveAPIKey) {
     log("cant remove bg - no apiKey");
+    skipRemoveBg(base64img);
     return;
   }
   const apiKey = fs.readFileSync("removeBGAPIKey.txt", "utf8");
@@ -805,7 +792,32 @@ function removeBg(base64img: string) {
     })
     .catch((errors: Array<RemoveBgError>) => {
       log(JSON.stringify(errors)); //log errors
+      skipRemoveBg(base64img);
     });
+}
+
+/**
+ *skipRemoveBg
+ *skips the remove Bg process and starts converting the picture
+ *
+ * @param {string} base64img
+ */
+function skipRemoveBg(base64img: string) {
+  log("removebg skipped");
+  removedBgBase64 = base64img; //set the removedBgBase64 Image without bgremove
+  fse.outputFile(
+    //update the current picture
+    outputDir + "bgremoved-current.jpg",
+    base64img,
+    "base64",
+    function (err: any, data: any) {
+      if (err) {
+        log("Error: " + err);
+      }
+    }
+  );
+
+  convertBase64ToGcode(removedBgBase64); //convert the image to gcode
 }
 
 /**
@@ -915,7 +927,7 @@ function executeGcode(gcode: string) {
 
   log(gcode);
   fse.outputFileSync("./assets/gcodes/temp.gcode", gcode, "utf8");
-  exec("sudo -u $SUDO_USER ./scripts/execTemp.sh", function (err: any, data: any) {
+  exec("./scripts/execTemp.sh", function (err: any, data: any) {
     fs.unlink("./assets/gcodes/temp.gcode", (err: any) => {
       //delete preview image
       if (err) {
