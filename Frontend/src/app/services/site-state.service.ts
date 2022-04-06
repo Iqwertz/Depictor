@@ -93,6 +93,7 @@ export class SiteStateService {
   }
 
   checkServerState() {
+    console.time('load');
     this.backendConnectService.checkProgress().subscribe(
       (res: StateResponse) => {
         this.appState = res;
@@ -104,6 +105,8 @@ export class SiteStateService {
         this.serverOnline = true;
 
         if (res.state == 'idle') {
+          console.log('turned off');
+          console.timeEnd('load');
           this.loadingService.isLoading = false;
           this.router.navigate(['start']);
         } else if (

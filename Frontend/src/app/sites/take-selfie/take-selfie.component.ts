@@ -38,5 +38,6 @@ export class TakeSelfieComponent implements OnInit {
     this.store.dispatch(new SetAutoRouting(true));
     this.loadingService.isLoading = true;
     this.loadingService.loadingText = 'loading...';
+    this.siteStateService.checkServerState();
   }
 }
