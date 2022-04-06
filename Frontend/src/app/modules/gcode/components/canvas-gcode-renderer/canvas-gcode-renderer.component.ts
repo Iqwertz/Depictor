@@ -106,6 +106,7 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     this.height = window.innerHeight - 250;
     this.width = window.innerWidth / 2;
     if (window.innerWidth < 700) {
+      window.innerHeight - 350;
       this.width = window.innerWidth - 20;
     }
 

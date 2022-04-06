@@ -26,3 +26,9 @@
     justify-content: center;
     z-index: 35;
 }
+
+@media screen and (max-width: 700px) {
+    .gcode-container {
+        padding-top: 40px;
+    }
+}

@@ -46,3 +46,9 @@
     flex-flow: column;
     z-index: 1;
 }
+
+@media screen and (max-width: 700px) {
+    .snapshot-controls {
+        justify-content: end;
+    }
+}

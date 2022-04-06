@@ -24,11 +24,13 @@ let exec = require("child_process").exec;
 const { spawn } = require("child_process");
 let Tail = require("tail").Tail;
 const axios = require("axios");
+let zip = require("express-easy-zip");
 
 var cors = require("cors");
 const app = express();
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use(zip());
 
 let useBGApi: boolean = enviroment.removeBGSettings.enableApi; //used during dev. to limit api calls
 let isBGRemoveAPIKey: boolean = false;
@@ -649,6 +651,25 @@ app.post("/executeGcode", (req: Request, res: Response) => {
   res.json({});
 });
 
+/*
+get: /zipData
+
+description: zips the data folder and response with it
+*/
+app.get("/zipData", async function (req: any, res: any) {
+  log("get: zipData");
+  var dirPath = "./data";
+  await res.zip({
+    files: [
+      {
+        path: dirPath,
+        name: "DepictorData",
+      },
+    ],
+    filename: "DepictorData " + new Date().toDateString() + ".zip",
+  });
+});
+
 httpServer!.listen(enviroment.port, () => {
   //start http server
   log("started Server");
@@ -941,6 +962,10 @@ function executeGcode(gcode: string) {
       return;
     }
   });
+}
+
+async function zipDataFolder() {
+  await zip("./data", "archive.zip");
 }
 
 /**
