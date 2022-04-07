@@ -9,6 +9,7 @@ import { StateResponse } from './site-state.service';
 import { environment } from '../../environments/environment';
 import { Settings } from '../modules/shared/components/settings/settings.component';
 import { SetSettings } from '../store/app.action';
+import { map, catchError } from 'rxjs/operators';
 
 export interface BackendVersion {
   tag: string;
@@ -197,5 +198,21 @@ export class BackendConnectService {
           this.store.dispatch(new SetSettings(mergedSettings));
         }
       });
+  }
+
+  getSettings(): Observable<any> {
+    return this.http.post('http://' + this.ip + '/changeSettings', {}).pipe(
+      map((res: any) => {
+        console.log(res);
+        if (res.settings) {
+          res.settings = {
+            ...environment.defaultSettings,
+            ...res.settings,
+          };
+        }
+
+        return res.settings;
+      })
+    );
   }
 }

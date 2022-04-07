@@ -1,5 +1,5 @@
 <div class="settings-container">
-    <div class="close" (click)="close.emit()">
+    <div class="close" (click)="closeSettings()">
         <fa-icon [icon]="faTimes"></fa-icon>
     </div>
     <h1>Settings</h1>
@@ -168,6 +168,17 @@
     <div class="version">
         Version: {{ backendVersion.tag }} {{ backendVersion.production ? "" : "Development" }}
     </div>
+
+    <div class="button-group">
+        <div class="action-button save-control cancle" (click)="closeSettings()">
+            <b>Cancle</b>
+        </div>
+        <div class="action-button save-control save" (click)="saveChanges()">
+            <b>Save</b>
+        </div>
+    </div>
 </div>
 
 <app-confirm-dialog #dialog (yes)="shutdown()"></app-confirm-dialog>
+
+<app-confirm-dialog #deleteSaved [text]="'You have unsaved changes! Do you want to save them?'" (no)="close.emit()" (yes)="saveChanges()"></app-confirm-dialog>

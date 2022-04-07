@@ -1,5 +1,5 @@
 <div class="confirm-dialog" *ngIf="showDialog">
-    Are you sure?
+    {{ text }}
     <div class="buttons">
         <div class="button cancle" (click)="no.emit(); showDialog = false">No</div>
         <div class="button confirm" (click)="yes.emit(); showDialog = false">

@@ -49,6 +49,9 @@ export class SettingsComponent implements OnInit {
   @ViewChild('dialog', { static: false })
   confirmDialog: ConfirmDialogComponent | undefined;
 
+  @ViewChild('deleteSaved', { static: false })
+  confirmCancleSave: ConfirmDialogComponent | undefined;
+
   faPowerOff = faPowerOff;
   faTimes = faTimes;
 
@@ -134,8 +137,22 @@ export class SettingsComponent implements OnInit {
       });
   }
 
+  saveChanges() {
+    this.backendConnectService.setSettings(this.settings);
+  }
+
   setSettings() {
     this.backendConnectService.setSettings(this.settings);
+  }
+
+  closeSettings() {
+    this.backendConnectService.getSettings().subscribe((res: any) => {
+      console.log(this.settings);
+      console.log(res);
+      if (JSON.stringify(res) !== JSON.stringify(this.settings)) {
+        console.log('changed');
+      }
+    });
   }
 
   update() {
