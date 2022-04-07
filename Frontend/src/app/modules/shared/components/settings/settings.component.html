@@ -138,7 +138,7 @@
     </div>
 
     <div class="divider">
-        <div class="label">Updates</div>
+        <div class="label">Updates & Data</div>
     </div>
 
     <div class="setting-line">
@@ -151,6 +151,20 @@
         </div>
     </div>
 
+    <div class="setting-line">
+        <div class="label small">
+            Download data
+            <div class="tooltip">
+                <fa-icon [icon]="faInfo"></fa-icon>
+                <div class="content">
+                    Zips all data and downloads it locally. This includes all images, gcodes, logs and the system settings.
+                </div>
+            </div>
+        </div>
+        <a href="/zipData" [href]="'http://' + ip + '/zipData'" download>
+            <div class="action-button"><b>Download</b></div>
+        </a>
+    </div>
     <div class="version">
         Version: {{ backendVersion.tag }} {{ backendVersion.production ? "" : "Development" }}
     </div>
