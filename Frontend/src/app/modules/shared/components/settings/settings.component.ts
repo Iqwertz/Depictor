@@ -64,6 +64,8 @@ export class SettingsComponent implements OnInit {
   @Select(AppState.settings) settings$: any;
   settings: Settings = environment.defaultSettings;
 
+  settingsBefore: Settings = environment.defaultSettings;
+
   backendVersion: BackendVersion = {
     tag: 'NAN',
     production: false,
@@ -81,6 +83,7 @@ export class SettingsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log('ini');
     this.ip$.subscribe((ip: string) => {
       this.ip = ip;
     });
@@ -93,6 +96,8 @@ export class SettingsComponent implements OnInit {
     this.settings$.subscribe((settings: Settings) => {
       this.settings = settings;
     });
+
+    this.getIniSettings();
   }
 
   shutdown() {
@@ -137,22 +142,37 @@ export class SettingsComponent implements OnInit {
       });
   }
 
-  saveChanges() {
-    this.backendConnectService.setSettings(this.settings);
+  checkChanges() {
+    this.backendConnectService.getSettings().subscribe((res: any) => {
+      if (JSON.stringify(res) !== JSON.stringify(this.settings)) {
+        this.confirmCancleSave?.show();
+      } else {
+        this.close.emit();
+      }
+    });
+  }
+
+  getIniSettings() {
+    this.backendConnectService.getSettings().subscribe((res: any) => {
+      this.settingsBefore = res;
+    });
   }
 
   setSettings() {
     this.backendConnectService.setSettings(this.settings);
   }
 
-  closeSettings() {
-    this.backendConnectService.getSettings().subscribe((res: any) => {
-      console.log(this.settings);
-      console.log(res);
-      if (JSON.stringify(res) !== JSON.stringify(this.settings)) {
-        console.log('changed');
-      }
-    });
+  discardSettings() {
+    this.backendConnectService.syncSettings();
+    this.close.emit();
+  }
+
+  compareSettings(s1: Settings, s2: Settings) {
+    if (JSON.stringify(s1) !== JSON.stringify(s2)) {
+      return false;
+    }
+
+    return true;
   }
 
   update() {

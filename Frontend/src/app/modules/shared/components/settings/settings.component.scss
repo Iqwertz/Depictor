@@ -8,13 +8,15 @@
     border: 3px solid #000;
     border-radius: 10px;
     padding-bottom: 40px;
+    height: calc(95vh - 40px);
+    overflow-y: hidden;
     .settings-container {
         display: flex;
         align-items: center;
         flex-flow: column;
         width: 700px;
         overflow-y: scroll;
-        height: calc(95vh - 40px);
+        height: 95vh;
         h1 {
             font-size: 3em;
         }
@@ -104,11 +106,13 @@
         .version {
             bottom: 2px;
             left: 5px;
+            margin-bottom: 95px;
         }
     }
     .save-container {
         display: flex;
         align-items: center;
+        justify-content: center;
         flex-flow: column;
         position: absolute;
         width: 100%;
@@ -116,6 +120,7 @@
         border-top: 3px solid #000;
         bottom: 0;
         background-color: #fff;
+        border-radius: 0 0 10px 10px;
     }
 }
 
@@ -161,25 +166,30 @@ a {
 }
 
 @media screen and (max-width: 700px) {
-    .settings-container {
+    .pop-up-container {
         width: 95vw;
-        .setting-line {
-            padding: 5px 0;
-            .label {
-                font-size: 25px;
-                &.small {
-                    font-size: 18px;
+        overflow-x: hidden;
+        .settings-container {
+            width: 95vw;
+            .setting-line {
+                padding: 5px 0;
+                .label {
+                    font-size: 25px;
+                    &.small {
+                        font-size: 18px;
+                    }
+                }
+                .action-textinput {
+                    max-width: 20vw;
+                    &.short {
+                        width: 30px;
+                    }
                 }
             }
-            .action-textinput {
-                max-width: 20vw;
-                &.short {
-                    width: 30px;
-                }
+            .version {
+                font-size: 12px;
+                margin-bottom: 105px;
             }
-        }
-        .version {
-            font-size: 12px;
         }
     }
 }

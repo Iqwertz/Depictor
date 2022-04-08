@@ -1,6 +1,6 @@
 <div class="pop-up-container">
     <div class="settings-container">
-        <div class="close" (click)="closeSettings()">
+        <div class="close" (click)="checkChanges()">
             <fa-icon [icon]="faTimes"></fa-icon>
         </div>
         <h1>Settings</h1>
@@ -48,7 +48,6 @@
                 </div>
             </div>
             <input type="number" class="action-textinput" [(ngModel)]="settings.avgTimePerLine" />
-            <div class="action-button" (click)="setSettings()"><b>Set</b></div>
         </div>
 
         <div class="setting-line">
@@ -62,7 +61,6 @@
                 </div>
             </div>
             <input type="number" class="action-textinput" [(ngModel)]="settings.maxImageFileSize" />
-            <div class="action-button" (click)="setSettings()"><b>Set</b></div>
         </div>
 
         <div class="divider">
@@ -80,7 +78,6 @@
                 </div>
             </div>
             <input type="number" class="action-textinput" [(ngModel)]="settings.gcodeScale" />
-            <div class="action-button" (click)="setSettings()"><b>Set</b></div>
         </div>
 
         <div class="setting-line">
@@ -88,7 +85,6 @@
             X:
             <input type="number" class="action-textinput short" [(ngModel)]="settings.drawingOffset[0]" /> Y:
             <input type="number" class="action-textinput short" [(ngModel)]="settings.drawingOffset[1]" />
-            <div class="action-button" (click)="setSettings()"><b>Set</b></div>
         </div>
 
         <div class="setting-line">
@@ -107,7 +103,6 @@
         <div class="setting-line">
             <div class="label small">Pen down command</div>
             <input type="text" class="action-textinput" [(ngModel)]="settings.penDownCommand" />
-            <div class="action-button" (click)="setSettings()"><b>Set</b></div>
         </div>
 
         <div class="setting-line">
@@ -121,7 +116,6 @@
                 </div>
             </div>
             <textarea class="action-textinput area" [(ngModel)]="settings.startGcode"></textarea>
-            <div class="action-button" (click)="setSettings()"><b>Set</b></div>
         </div>
 
         <div class="setting-line">
@@ -135,7 +129,6 @@
                 </div>
             </div>
             <textarea class="action-textinput area" [(ngModel)]="settings.endGcode"></textarea>
-            <div class="action-button" (click)="setSettings()"><b>Set</b></div>
         </div>
 
         <div class="divider">
@@ -171,12 +164,12 @@
         </div>
     </div>
 
-    <div class="save-container">
+    <div class="save-container" *ngIf="!compareSettings(settingsBefore, settings)">
         <div class="button-group">
-            <div class="action-button save-control cancle" (click)="closeSettings()">
+            <div class="action-button save-control cancle" (click)="discardSettings()">
                 <b>Cancle</b>
             </div>
-            <div class="action-button save-control save" (click)="saveChanges()">
+            <div class="action-button save-control save" (click)="setSettings(); close.emit()">
                 <b>Save</b>
             </div>
         </div>
@@ -185,4 +178,4 @@
 
 <app-confirm-dialog #dialog (yes)="shutdown()"></app-confirm-dialog>
 
-<app-confirm-dialog #deleteSaved [text]="'You have unsaved changes! Do you want to save them?'" (no)="close.emit()" (yes)="saveChanges()"></app-confirm-dialog>
+<app-confirm-dialog #deleteSaved [text]="'You have unsaved changes! Do you want to save them?'" [buttons]="['Discard', 'Save']" (no)="discardSettings()" (yes)="setSettings(); close.emit()"></app-confirm-dialog>
