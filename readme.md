@@ -49,7 +49,7 @@ The image conversion is based on the [Drawbot_image_to_gcode_v2](https://github.
 
 # Demo
 
-Insert gif or link to demo
+(In production)
 
 
 # Screenshots
