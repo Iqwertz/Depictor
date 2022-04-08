@@ -1,180 +1,184 @@
-<div class="settings-container">
-    <div class="close" (click)="closeSettings()">
-        <fa-icon [icon]="faTimes"></fa-icon>
-    </div>
-    <h1>Settings</h1>
-
-    <div class="divider">
-        <div class="label">General</div>
-    </div>
-    <div class="setting-line">
-        <div class="label">Shutdown</div>
-        <div class="action-button" (click)="confirmDialog!.show()">
-            <fa-icon [icon]="faPowerOff"></fa-icon>
+<div class="pop-up-container">
+    <div class="settings-container">
+        <div class="close" (click)="closeSettings()">
+            <fa-icon [icon]="faTimes"></fa-icon>
         </div>
-    </div>
+        <h1>Settings</h1>
 
-    <div class="setting-line">
-        <div class="label small">
-            BgRemove API key
-            <div class="tooltip">
-                <fa-icon [icon]="faInfo"></fa-icon>
-                <div class="content">
-                    API Key for the remove.bg api. If you want to be able to automatically remove the background of your pictures you have to provide an api key.
-                    <br />
-                    <br /> To get one go to https://www.remove.bg/ and create an accout than go to https://www.remove.bg/de/dashboard#api-key and copy the key.
-                </div>
+        <div class="divider">
+            <div class="label">General</div>
+        </div>
+        <div class="setting-line">
+            <div class="label">Shutdown</div>
+            <div class="action-button" (click)="confirmDialog!.show()">
+                <fa-icon [icon]="faPowerOff"></fa-icon>
             </div>
         </div>
-        <input type="text" class="action-textinput" [(ngModel)]="bgRemoveApiKey" />
-        <div class="action-button" (click)="setBgRemoveApiKey()"><b>Set</b></div>
-    </div>
 
-    <div class="setting-line">
-        <div class="label">API endpoint</div>
-        <input type="text" class="action-textinput" [(ngModel)]="ip" />
-        <div class="action-button" (click)="setNewIp()"><b>Set</b></div>
-    </div>
-
-    <div class="setting-line">
-        <div class="label small">
-            Time per line
-            <div class="tooltip">
-                <fa-icon [icon]="faInfo"></fa-icon>
-                <div class="content">
-                    The average time in seconds it takes to draw one line. This value is used in the time estimations, adjust it if they are not correct.
+        <div class="setting-line">
+            <div class="label small">
+                BgRemove API key
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        API Key for the remove.bg api. If you want to be able to automatically remove the background of your pictures you have to provide an api key.
+                        <br />
+                        <br /> To get one go to https://www.remove.bg/ and create an accout than go to https://www.remove.bg/de/dashboard#api-key and copy the key.
+                    </div>
                 </div>
             </div>
+            <input type="text" class="action-textinput" [(ngModel)]="bgRemoveApiKey" />
+            <div class="action-button" (click)="setBgRemoveApiKey()"><b>Set</b></div>
         </div>
-        <input type="number" class="action-textinput" [(ngModel)]="settings.avgTimePerLine" />
-        <div class="action-button" (click)="setSettings()"><b>Set</b></div>
-    </div>
 
-    <div class="setting-line">
-        <div class="label small">
-            Image size (MB)
-            <div class="tooltip">
-                <fa-icon [icon]="faInfo"></fa-icon>
-                <div class="content">
-                    The size to which an uploaded image gets compressed. Attention: to high file sizes can crash the programm on an rasperry pie!
+        <div class="setting-line">
+            <div class="label">API endpoint</div>
+            <input type="text" class="action-textinput" [(ngModel)]="ip" />
+            <div class="action-button" (click)="setNewIp()"><b>Set</b></div>
+        </div>
+
+        <div class="setting-line">
+            <div class="label small">
+                Time per line
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        The average time in seconds it takes to draw one line. This value is used in the time estimations, adjust it if they are not correct.
+                    </div>
                 </div>
             </div>
+            <input type="number" class="action-textinput" [(ngModel)]="settings.avgTimePerLine" />
+            <div class="action-button" (click)="setSettings()"><b>Set</b></div>
         </div>
-        <input type="number" class="action-textinput" [(ngModel)]="settings.maxImageFileSize" />
-        <div class="action-button" (click)="setSettings()"><b>Set</b></div>
-    </div>
 
-    <div class="divider">
-        <div class="label">Plotter controlls</div>
-    </div>
-
-    <div class="setting-line">
-        <div class="label small">
-            Gcode scaling
-            <div class="tooltip">
-                <fa-icon [icon]="faInfo"></fa-icon>
-                <div class="content">
-                    The highest generated gcode values are x200, y162. If this is too big or small on your plotter adjust this value to scale the gcode.
+        <div class="setting-line">
+            <div class="label small">
+                Image size (MB)
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        The size to which an uploaded image gets compressed. Attention: to high file sizes can crash the programm on an rasperry pie!
+                    </div>
                 </div>
             </div>
+            <input type="number" class="action-textinput" [(ngModel)]="settings.maxImageFileSize" />
+            <div class="action-button" (click)="setSettings()"><b>Set</b></div>
         </div>
-        <input type="number" class="action-textinput" [(ngModel)]="settings.gcodeScale" />
-        <div class="action-button" (click)="setSettings()"><b>Set</b></div>
+
+        <div class="divider">
+            <div class="label">Plotter controlls</div>
+        </div>
+
+        <div class="setting-line">
+            <div class="label small">
+                Gcode scaling
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        The highest generated gcode values are x200, y162. If this is too big or small on your plotter adjust this value to scale the gcode.
+                    </div>
+                </div>
+            </div>
+            <input type="number" class="action-textinput" [(ngModel)]="settings.gcodeScale" />
+            <div class="action-button" (click)="setSettings()"><b>Set</b></div>
+        </div>
+
+        <div class="setting-line">
+            <div class="label small">Gcode offset</div>
+            X:
+            <input type="number" class="action-textinput short" [(ngModel)]="settings.drawingOffset[0]" /> Y:
+            <input type="number" class="action-textinput short" [(ngModel)]="settings.drawingOffset[1]" />
+            <div class="action-button" (click)="setSettings()"><b>Set</b></div>
+        </div>
+
+        <div class="setting-line">
+            <div class="label">Home pen</div>
+            <div class="action-button" (click)="home()"><b>Home</b></div>
+        </div>
+
+        <div class="setting-line">
+            <div class="label">Move pen</div>
+            <div class="button-group">
+                <div class="action-button" (click)="penUp()"><b>Up</b></div>
+                <div class="action-button" (click)="penDown()"><b>Down</b></div>
+            </div>
+        </div>
+
+        <div class="setting-line">
+            <div class="label small">Pen down command</div>
+            <input type="text" class="action-textinput" [(ngModel)]="settings.penDownCommand" />
+            <div class="action-button" (click)="setSettings()"><b>Set</b></div>
+        </div>
+
+        <div class="setting-line">
+            <div class="label small">
+                Start gcode
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        This gcode gets appended at the start of every gcode that gets drawen.
+                    </div>
+                </div>
+            </div>
+            <textarea class="action-textinput area" [(ngModel)]="settings.startGcode"></textarea>
+            <div class="action-button" (click)="setSettings()"><b>Set</b></div>
+        </div>
+
+        <div class="setting-line">
+            <div class="label small">
+                End gcode
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        This gcode gets appended at the end of every gcode that gets drawen.
+                    </div>
+                </div>
+            </div>
+            <textarea class="action-textinput area" [(ngModel)]="settings.endGcode"></textarea>
+            <div class="action-button" (click)="setSettings()"><b>Set</b></div>
+        </div>
+
+        <div class="divider">
+            <div class="label">Updates & Data</div>
+        </div>
+
+        <div class="setting-line">
+            <div class="label small">Available updates</div>
+            <div class="label small wide" *ngIf="!updatesAvailable">
+                <b>System is on newest version</b>
+            </div>
+            <div class="action-button" *ngIf="updatesAvailable" (click)="update()">
+                <b>{{ availableUpdateVersion }}</b>
+            </div>
+        </div>
+
+        <div class="setting-line">
+            <div class="label small">
+                Download data
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        Zips all data and downloads it locally. This includes all images, gcodes, logs and the system settings.
+                    </div>
+                </div>
+            </div>
+            <a href="/zipData" [href]="'http://' + ip + '/zipData'" download>
+                <div class="action-button"><b>Download</b></div>
+            </a>
+        </div>
+        <div class="version">
+            Version: {{ backendVersion.tag }} {{ backendVersion.production ? "" : "Development" }}
+        </div>
     </div>
 
-    <div class="setting-line">
-        <div class="label small">Gcode offset</div>
-        X:
-        <input type="number" class="action-textinput short" [(ngModel)]="settings.drawingOffset[0]" /> Y:
-        <input type="number" class="action-textinput short" [(ngModel)]="settings.drawingOffset[1]" />
-        <div class="action-button" (click)="setSettings()"><b>Set</b></div>
-    </div>
-
-    <div class="setting-line">
-        <div class="label">Home pen</div>
-        <div class="action-button" (click)="home()"><b>Home</b></div>
-    </div>
-
-    <div class="setting-line">
-        <div class="label">Move pen</div>
+    <div class="save-container">
         <div class="button-group">
-            <div class="action-button" (click)="penUp()"><b>Up</b></div>
-            <div class="action-button" (click)="penDown()"><b>Down</b></div>
-        </div>
-    </div>
-
-    <div class="setting-line">
-        <div class="label small">Pen down command</div>
-        <input type="text" class="action-textinput" [(ngModel)]="settings.penDownCommand" />
-        <div class="action-button" (click)="setSettings()"><b>Set</b></div>
-    </div>
-
-    <div class="setting-line">
-        <div class="label small">
-            Start gcode
-            <div class="tooltip">
-                <fa-icon [icon]="faInfo"></fa-icon>
-                <div class="content">
-                    This gcode gets appended at the start of every gcode that gets drawen.
-                </div>
+            <div class="action-button save-control cancle" (click)="closeSettings()">
+                <b>Cancle</b>
             </div>
-        </div>
-        <textarea class="action-textinput area" [(ngModel)]="settings.startGcode"></textarea>
-        <div class="action-button" (click)="setSettings()"><b>Set</b></div>
-    </div>
-
-    <div class="setting-line">
-        <div class="label small">
-            End gcode
-            <div class="tooltip">
-                <fa-icon [icon]="faInfo"></fa-icon>
-                <div class="content">
-                    This gcode gets appended at the end of every gcode that gets drawen.
-                </div>
+            <div class="action-button save-control save" (click)="saveChanges()">
+                <b>Save</b>
             </div>
-        </div>
-        <textarea class="action-textinput area" [(ngModel)]="settings.endGcode"></textarea>
-        <div class="action-button" (click)="setSettings()"><b>Set</b></div>
-    </div>
-
-    <div class="divider">
-        <div class="label">Updates & Data</div>
-    </div>
-
-    <div class="setting-line">
-        <div class="label small">Available updates</div>
-        <div class="label small wide" *ngIf="!updatesAvailable">
-            <b>System is on newest version</b>
-        </div>
-        <div class="action-button" *ngIf="updatesAvailable" (click)="update()">
-            <b>{{ availableUpdateVersion }}</b>
-        </div>
-    </div>
-
-    <div class="setting-line">
-        <div class="label small">
-            Download data
-            <div class="tooltip">
-                <fa-icon [icon]="faInfo"></fa-icon>
-                <div class="content">
-                    Zips all data and downloads it locally. This includes all images, gcodes, logs and the system settings.
-                </div>
-            </div>
-        </div>
-        <a href="/zipData" [href]="'http://' + ip + '/zipData'" download>
-            <div class="action-button"><b>Download</b></div>
-        </a>
-    </div>
-    <div class="version">
-        Version: {{ backendVersion.tag }} {{ backendVersion.production ? "" : "Development" }}
-    </div>
-
-    <div class="button-group">
-        <div class="action-button save-control cancle" (click)="closeSettings()">
-            <b>Cancle</b>
-        </div>
-        <div class="action-button save-control save" (click)="saveChanges()">
-            <b>Save</b>
         </div>
     </div>
 </div>

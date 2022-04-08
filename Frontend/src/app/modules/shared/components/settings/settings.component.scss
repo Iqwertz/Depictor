@@ -1,108 +1,121 @@
-.settings-container {
+.pop-up-container {
     position: absolute;
     left: 50%;
     top: 20px;
     transform: translateX(-50%);
-    width: 700px;
-    height: calc(95vh - 40px);
     z-index: 40;
     background-color: #fff;
     border: 3px solid #000;
-    display: flex;
-    align-items: center;
-    flex-flow: column;
     border-radius: 10px;
     padding-bottom: 40px;
-    overflow-y: scroll;
-    h1 {
-        font-size: 3em;
-    }
-    .close {
-        position: fixed;
-        top: 10px;
-        right: 15px;
-        font-size: 2em;
-        cursor: pointer;
-    }
-    .divider {
-        margin: 50px 0 20px 0;
-        height: 0px;
-        border: 1px dashed #000;
-        width: 90%;
+    .settings-container {
         display: flex;
         align-items: center;
-        justify-content: center;
-        .label {
-            padding: 0 15px;
+        flex-flow: column;
+        width: 700px;
+        overflow-y: scroll;
+        height: calc(95vh - 40px);
+        h1 {
+            font-size: 3em;
+        }
+        .close {
+            position: fixed;
+            top: 10px;
+            right: 15px;
             font-size: 2em;
-            background-color: #fff;
-            width: fit-content;
+            cursor: pointer;
+        }
+        .divider {
+            margin: 50px 0 20px 0;
+            height: 0px;
+            border: 1px dashed #000;
+            width: 90%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            .label {
+                padding: 0 15px;
+                font-size: 2em;
+                background-color: #fff;
+                width: fit-content;
+            }
+        }
+        .setting-line {
+            width: 90%;
+            height: 50px;
+            border-bottom: 2px solid #000;
+            margin-bottom: 6px;
+            padding-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 30px;
+            .label {
+                width: 250px;
+                display: flex;
+                .tooltip {
+                    fa-icon {
+                        margin-left: 4px;
+                        font-size: 0.6em;
+                    }
+                    .content {
+                        visibility: hidden;
+                        opacity: 0;
+                        position: absolute;
+                        font-size: 0.6em;
+                        width: 200px;
+                        background-color: #000;
+                        border-radius: 5px;
+                        color: #fff;
+                        padding: 8px;
+                        transform: translate(25px, -27px);
+                        box-shadow: 2px 2px 3px #000;
+                        transition: 0.4s;
+                        overflow-wrap: break-word;
+                        overflow-x: hidden;
+                        max-height: 200px;
+                    }
+                    fa-icon:hover~.content {
+                        visibility: visible;
+                        opacity: 1;
+                    }
+                }
+                &.small {
+                    font-size: 25px;
+                }
+                &.wide {
+                    width: 300px;
+                }
+            }
+            .action-textinput {
+                font-family: "Josefin Sans", sans-serif !important;
+                padding: 6px 5px 4px;
+                font-size: 22px;
+                border: 2px dotted #000;
+                &.area {
+                    max-height: 30px;
+                    resize: none;
+                }
+                &.short {
+                    width: 50px;
+                }
+            }
+        }
+        .version {
+            bottom: 2px;
+            left: 5px;
         }
     }
-    .setting-line {
-        width: 90%;
-        height: 50px;
-        border-bottom: 2px solid #000;
-        margin-bottom: 6px;
-        padding-bottom: 5px;
+    .save-container {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        font-size: 30px;
-        .label {
-            width: 250px;
-            display: flex;
-            .tooltip {
-                fa-icon {
-                    margin-left: 4px;
-                    font-size: 0.6em;
-                }
-                .content {
-                    visibility: hidden;
-                    opacity: 0;
-                    position: absolute;
-                    font-size: 0.6em;
-                    width: 200px;
-                    background-color: #000;
-                    border-radius: 5px;
-                    color: #fff;
-                    padding: 8px;
-                    transform: translate(25px, -27px);
-                    box-shadow: 2px 2px 3px #000;
-                    transition: 0.4s;
-                    overflow-wrap: break-word;
-                    overflow-x: hidden;
-                    max-height: 200px;
-                }
-                fa-icon:hover~.content {
-                    visibility: visible;
-                    opacity: 1;
-                }
-            }
-            &.small {
-                font-size: 25px;
-            }
-            &.wide {
-                width: 300px;
-            }
-        }
-        .action-textinput {
-            font-family: "Josefin Sans", sans-serif !important;
-            padding: 6px 5px 4px;
-            font-size: 22px;
-            border: 2px dotted #000;
-            &.area {
-                max-height: 30px;
-                resize: none;
-            }
-            &.short {
-                width: 50px;
-            }
-        }
-    }
-    .version {
-        bottom: 2px;
-        left: 5px;
+        flex-flow: column;
+        position: absolute;
+        width: 100%;
+        height: 80px;
+        border-top: 3px solid #000;
+        bottom: 0;
+        background-color: #fff;
     }
 }
 
@@ -129,7 +142,7 @@
     &.save-control {
         font-size: 26px;
         padding: 10px 24px 6px 22px;
-        margin: 20px 10px 0 10px;
+        margin: 0px 10px 0 10px;
         &.save {
             border-style: solid;
         }

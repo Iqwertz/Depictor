@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cd Backend
 npm run start-dev &
 cd ../
