@@ -20,7 +20,7 @@ The image conversion is based on the [Drawbot_image_to_gcode_v2](https://github.
    * [Features](#features)
    * [Demo](#demo)
    * [Screenshots](#screenshots)
-   * [Installation & Setup](#Installation & Setup)
+   * [Installation & Setup](#Installation-&-Setup)
      * [Material](#material)
      * [Quick install instructions](#quick-install-instructions)
      * [Detailed install instructions](#detailed-install-instructions)
