@@ -12,6 +12,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
     flex-flow: column;
     font-size: 2em;
     z-index: 45;
@@ -36,6 +37,8 @@
 
 @media screen and (max-width: 800px) {
     .confirm-dialog {
+        font-size: 1.1em;
         width: 70vw;
+        height: 105px;
     }
 }
