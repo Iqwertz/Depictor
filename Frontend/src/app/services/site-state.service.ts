@@ -14,6 +14,7 @@ export type AppStates =
   | 'removingBg'
   | 'processingImage'
   | 'rawGcodeReady'
+  | 'updating'
   | 'error';
 
 export interface StateResponse {
@@ -103,6 +104,9 @@ export class SiteStateService {
         this.serverOnline = true;
 
         if (res.state == 'idle') {
+          if (this.lastAppState == 'updating') {
+            window.location.reload();
+          }
           this.loadingService.isLoading = false;
           this.router.navigate(['start']);
         } else if (
@@ -121,6 +125,10 @@ export class SiteStateService {
           } else if (this.gcodeViewerService.gcodeFile.length <= 5) {
             this.getGeneratedGcode();
           }
+        } else if (res.state == 'updating') {
+          this.loadingService.isLoading = true;
+          this.loadingService.loadingText = 'updating! Don`t turn off system';
+          this.router.navigate(['start']);
         } else if (res.state == 'error') {
           console.error('Something went wrong on the server!');
         }

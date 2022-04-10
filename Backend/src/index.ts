@@ -5,7 +5,6 @@
 //description: ...
 //
 //author: Julius Hussl
-//repo: ...
 //
 ///////////////////////////////////////////////////
 
@@ -34,7 +33,6 @@ app.use(zip());
 
 let useBGApi: boolean = enviroment.removeBGSettings.enableApi; //used during dev. to limit api calls
 let isBGRemoveAPIKey: boolean = false;
-let isUpdating: boolean = false; //used to determin ongoing update and avoid double updatess
 let skipGenerateGcode: boolean = enviroment.skipGenerateGcode; //use the last gcode - used for faster development
 const outputDir = `./data/bgremoved/`;
 let removedBgBase64: string = "";
@@ -42,7 +40,7 @@ let removedBgBase64: string = "";
 const isLinux: boolean = process.platform === "linux";
 console.log("Detected Linux: ", isLinux);
 
-type AppStates = "idle" | "removingBg" | "processingImage" | "rawGcodeReady" | "error"; //possible states of the server
+type AppStates = "idle" | "removingBg" | "processingImage" | "rawGcodeReady" | "updating" | "error"; //possible states of the server
 
 interface StateResponse {
   state: AppStates;
@@ -516,17 +514,18 @@ app.post("/update", (req: Request, res: Response) => {
   log("post: update");
   log("checking for new versions");
 
-  if (isUpdating) {
+  if (appState == "updating") {
     res.json({ err: "update_ongoing" });
     return;
   }
-  isUpdating = true;
+  appState = "updating";
   axios.get("https://api.github.com/repos/iqwertz/Depictor/tags").then((response: any) => {
     if (response.data[0].name != version.tag) {
       log("found Update - Starting Update");
       execFile("sudo", ["./scripts/update.sh"], function (err: any, data: any) {
         if (err) {
           log("Error " + err);
+          appState = "error";
           return;
         }
       });

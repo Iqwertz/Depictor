@@ -83,7 +83,6 @@ export class SettingsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('ini');
     this.ip$.subscribe((ip: string) => {
       this.ip = ip;
     });
@@ -176,11 +175,7 @@ export class SettingsComponent implements OnInit {
   }
 
   update() {
-    this.loadingService.isLoading = true;
-    this.loadingService.loadingText = 'updating! Don`t turn off system';
     this.backendConnectService.update();
-    setTimeout(() => {
-      window.location.reload();
-    }, 120000);
+    this.close.emit();
   }
 }
