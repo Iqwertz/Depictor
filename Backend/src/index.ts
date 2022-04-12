@@ -12,6 +12,7 @@
 const express = require("express");
 const fs = require("fs");
 const fse = require("fs-extra");
+const winston = require("winston");
 import { RemoveBgResult, RemoveBgError, removeBackgroundFromImageBase64 } from "remove.bg";
 import { Request, Response } from "express";
 import { enviroment } from "./enviroment";
@@ -963,10 +964,7 @@ function executeGcode(gcode: string) {
   });
 }
 
-async function zipDataFolder() {
-  await zip("./data", "archive.zip");
-}
-
+////////////////////logger/////////////////////////
 /**
  *log a messag to log.txt
  *
@@ -984,5 +982,38 @@ function log(message: string) {
     (err: any) => {
       if (err) console.log(err);
     }
+  );
+}
+
+const logger = winston.createLogger({
+  level: "info",
+  format: winston.format.combine(
+    winston.format.timestamp({
+      format: "YYYY-MM-DD HH:mm:ss",
+    }),
+    winston.format.errors({ stack: true }),
+    winston.format.splat(),
+    winston.format.json()
+  ),
+  defaultMeta: { service: "user-service" },
+  transports: [
+    //
+    // - Write all logs with importance level of `error` or less to `error.log`
+    // - Write all logs with importance level of `info` or less to `combined.log`
+    //
+    new winston.transports.File({ filename: "data/logs/error.log", level: "error" }),
+    new winston.transports.File({ filename: "data/logs/combined.log" }),
+  ],
+});
+
+//
+// If we're not in production then log to the `console` with the format:
+// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
+//
+if (!version.production) {
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
   );
 }
