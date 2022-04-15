@@ -13,7 +13,7 @@ export class CameraTriggerComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  triggerImage() {
+  triggerImage(): void {
     this.cameraService.triggerSnapshot();
     this.cameraService.setFlash();
     this.cameraService.toggleCameraWindow();
