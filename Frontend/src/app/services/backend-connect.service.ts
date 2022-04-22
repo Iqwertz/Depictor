@@ -46,9 +46,10 @@ export class BackendConnectService {
    *sends a post request with the image saved in cameraService to the backend.
    *
    * @param {boolean} removeBg true when the background of the image should get removed
+   * @param {boolean} useBoarder true when a smoothing boarder should be applied onto the image
    * @memberof BackendConnectService
    */
-  postSelfie(removeBg: boolean) {
+  postSelfie(removeBg: boolean, useBoarder: boolean) {
     if (this.cameraService.base64Image) {
       //check if there is a image
       let img = this.cameraService.base64Image.split('base64,')[1];
@@ -58,6 +59,7 @@ export class BackendConnectService {
           //post image data with parameter
           img: img,
           removeBg: removeBg,
+          addBoarder: useBoarder,
         })
         .subscribe((res) => {
           console.log(res);

@@ -73,6 +73,7 @@ description: when the post request is made with an valid request body the pictur
 expected request: 
   {
     removeBg: boolean //use removeBg to removeBackground
+    addBoarder: boolean //apply a smoothing boarder to the image
     img: string //an base64 encoded picture
   }
   
@@ -92,6 +93,11 @@ app.post("/newPicture", (req: Request, res: Response) => {
     res.json({ err: "not_ready: " + appState }); //return error if not
   } else {
     appState = "removingBg"; //update appState
+    if (req.body.addBoarder) {
+      setBoarder(true);
+    } else {
+      setBoarder(false);
+    }
     if (useBGApi && req.body.removeBg) {
       //check if removeBG API should be used
       log("removing bg");
@@ -932,6 +938,42 @@ function checkBGremoveAPIkey() {
     isBGRemoveAPIKey = false;
   } else {
     isBGRemoveAPIKey = true;
+  }
+}
+
+/**
+ *enables or disables the boarder in the img to gcode converter by replacing the border image with an empty white image
+ *
+ * @param {boolean} useBoarder
+ */
+function setBoarder(isBoarder: boolean) {
+  const boarderImageFolderPath: string = isLinux
+    ? "./assets/image2gcode/linux/data/boarder/"
+    : "./assets/image2gcode/windows/data/boarder/";
+  const emptyImagePath: string = "./assets/image2gcode/boarder/empty.png";
+  const boarderImagePaths: string[] = ["./assets/image2gcode/boarder/b11.png", "./assets/image2gcode/boarder/b1.png"];
+
+  for (let imgPath of boarderImagePaths) {
+    let fileName = imgPath.split(/[\\\/]/).pop();
+    console.log(fileName);
+    /* fs.unlink(boarderImageFolderPath + fileName, (err: any) => {
+      if (err) {
+        log("Error " + err);
+      }
+    }); */
+    if (isBoarder) {
+      fse.copy(imgPath, boarderImageFolderPath + fileName, (err: any) => {
+        if (err) {
+          log("Error " + err);
+        }
+      });
+    } else {
+      fse.copy(emptyImagePath, boarderImageFolderPath + fileName, (err: any) => {
+        if (err) {
+          log("Error " + err);
+        }
+      });
+    }
   }
 }
 

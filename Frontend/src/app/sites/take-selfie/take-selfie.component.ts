@@ -16,20 +16,25 @@ export class TakeSelfieComponent implements OnInit {
     public cameraService: CameraServiceService,
     private connectService: BackendConnectService,
     private store: Store,
-    private siteStateService: SiteStateService,
+    public siteStateService: SiteStateService,
     private loadingService: LoadingService
   ) {}
 
   enableCameraAPI: boolean = environment.useCameraAPI;
 
   removeBg: boolean = false;
+  useBoarder: boolean = true;
 
   setRBG(val: boolean) {
     this.removeBg = val;
   }
 
+  setBoarder(val: boolean) {
+    this.useBoarder = val;
+  }
+
   postSelfie() {
-    this.connectService.postSelfie(this.removeBg);
+    this.connectService.postSelfie(this.removeBg, this.useBoarder);
   }
 
   ngOnInit(): void {

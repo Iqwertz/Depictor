@@ -23,6 +23,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from './modules/shared/shared.module';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { CheckboxChipComponent } from './components/checkbox-chip/checkbox-chip.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     SubmitSelfieComponent,
     ConnectingComponent,
     RemoveBgCheckboxComponent,
+    CheckboxChipComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,17 @@
+.container {
+    border: 2px solid #000;
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 6px;
+    font-size: 1.3em;
+    text-align: center;
+    width: 220px;
+    margin: 3px 0;
+     ::ng-deep .mat-checkbox {
+        font-family: "Josefin Sans", sans-serif;
+        ;
+    }
+     ::ng-deep .mat-checkbox-frame {
+        border-color: rgb(61, 61, 61)
+    }
+}
