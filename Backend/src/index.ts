@@ -86,16 +86,16 @@ returns:
     {}
 */
 app.post("/newPicture", (req: Request, res: Response) => {
-  log("post: newPicture");
+  logger.http("post: newPicture");
   if (appState != "idle") {
     //check if maschine is ready
-    log("req denied: not in idle");
+    logger.warn("req denied: not in idle");
     res.json({ err: "not_ready: " + appState }); //return error if not
   } else {
     appState = "removingBg"; //update appState
     if (useBGApi && req.body.removeBg) {
       //check if removeBG API should be used
-      log("removing bg");
+      logger.info("starting removing bg process");
       removeBg(req.body.img); //remove background with removebg //this function will call convertBase64ToGcode asynchronous
     } else {
       skipRemoveBg(req.body.img);
@@ -108,7 +108,7 @@ app.post("/newPicture", (req: Request, res: Response) => {
       "base64",
       function (err: any, data: any) {
         if (err) {
-          log("Error: " + err);
+          logger.error("Error: " + err);
         }
       }
     );
@@ -129,7 +129,7 @@ returns:
   @StateResponse
 */
 app.post("/checkProgress", (req: Request, res: Response) => {
-  //log("post: checkProgress");
+  logger.http("post: checkProgress");
 
   checkBGremoveAPIkey();
 
@@ -164,7 +164,7 @@ returns:
     }
 */
 app.post("/getGeneratedGcode", (req: Request, res: Response) => {
-  log("post: getGeneratedGcode");
+  logger.http("post: getGeneratedGcode");
   if (appState == "rawGcodeReady") {
     //check if gcode is ready
     /////get the correct path depending on os
@@ -204,7 +204,7 @@ returns:
     }
 */
 app.post("/getDrawenGcode", (req: Request, res: Response) => {
-  log("post: getDrawenGcode");
+  logger.http("post: getDrawenGcode");
   if (isDrawing) {
     //check if maschine is drawing
     let rawGcode = fs.readFileSync("assets/gcodes/gcode.nc", "utf8"); //read gcode
@@ -234,7 +234,7 @@ returns:
     }
 */
 app.post("/getDrawingProgress", (req: Request, res: Response) => {
-  //log("post: getDrawingProgress");
+  logger.http("post: getDrawingProgress");
   if (isDrawing) {
     //check if drawing
     res.json({ data: drawingProgress }); //return progress
@@ -265,7 +265,7 @@ returns:
     }
 */
 app.post("/postGcode", (req: Request, res: Response) => {
-  log("post: postGcode");
+  logger.http("post: postGcode");
   if (!isDrawing && appState != "error") {
     //check if maschine is not drawing and maschine is ready
     let gcode: string = req.body.gcode;
@@ -288,7 +288,7 @@ returns:
   {}
 */
 app.post("/cancle", (req: Request, res: Response) => {
-  log("post: cancle");
+  logger.http("post: cancle");
   appState = "idle";
   drawingProgress = 0;
 });
@@ -305,15 +305,16 @@ returns:
   {}
 */
 app.post("/stop", (req: Request, res: Response) => {
-  log("post: stop");
+  logger.http("post: stop");
   appState = "idle"; //reset appState
   drawingProgress = 0; //reset drawing progress
   kill(currentDrawingProcessPID); //kill the drawing process
   setTimeout(() => {
     //Home after some timeout because kill() needs some time
     exec("./scripts/home.sh", function (err: any, data: any) {
-      log(err);
-      console.log(data);
+      if(err){
+      logger.error(err);
+      }
     });
   }, 2000);
 });
@@ -332,19 +333,19 @@ returns:
   {}
 */
 app.post("/delete", (req: Request, res: Response) => {
-  log("post: delete");
+  logger.http("post: delete");
 
   fs.unlink("data/savedGcodes/" + req.body.id + ".nc", (err: any) => {
     //delete gcode
     if (err) {
-      log("Error " + err);
+      logger.error("Error " + err);
       return;
     }
   });
   fs.unlink("data/savedGcodes/" + req.body.id + ".png", (err: any) => {
     //delete preview image
     if (err) {
-      log("Error " + err);
+      logger.error("Error " + err);
       return;
     }
   });
@@ -371,7 +372,7 @@ returns:
     }
 */
 app.post("/getGcodeGallery", (req: Request, res: Response) => {
-  log("post: getGcodeGallery");
+  logger.http("post: getGcodeGallery");
   let gallery: GcodeEntry[] = [];
 
   if (!fs.existsSync("data/savedGcodes/")) {
@@ -424,7 +425,7 @@ returns:
     }
 */
 app.post("/getGcodeById", (req: Request, res: Response) => {
-  log("post: getGcodeById");
+  logger.http("post: getGcodeById");
   fs.readFile(
     //try to read gcode file
     "data/savedGcodes/" + req.body.id + ".nc",
@@ -432,7 +433,7 @@ app.post("/getGcodeById", (req: Request, res: Response) => {
     (err: any, data: string) => {
       if (err) {
         //check for error
-        log("Error " + err);
+        logger.error("Error " + err);
         res.json({ err: "not_found" }); //return notfound error when no file was found
         return;
       }
@@ -455,10 +456,10 @@ returns:
   {}
 */
 app.post("/setBGRemoveAPIKey", (req: Request, res: Response) => {
-  log("post: setBGRemoveAPIKey");
+  logger.http("post: setBGRemoveAPIKey");
   fse.outputFile("removeBGAPIKey.txt", req.body.key, "utf8", function (err: any, data: any) {
     if (err) {
-      log("Error " + err);
+      logger.error("Error " + err);
     }
   });
 
@@ -481,18 +482,19 @@ returns:
     {}
 */
 app.post("/shutdown", (req: Request, res: Response) => {
-  log("post: shutdown");
+  logger.http("post: shutdown");
 
   if (isDrawing) {
-    log("shutdown aborted! Machine is drawing");
+    logger.warn("shutdown aborted! Machine is drawing");
     res.json({ err: "drawing" });
     return;
   }
   res.json({});
   exec("sudo shutdown now", function (error: any, stdout: any, stderr: any) {
-    log(error);
-    log(stdout);
-    log(stderr);
+    if(error){
+      logger.error(error);
+    }
+    logger.debug(stdout);
   });
 });
 
@@ -512,26 +514,26 @@ returns:
     {}
 */
 app.post("/update", (req: Request, res: Response) => {
-  log("post: update");
-  log("checking for new versions");
+  logger.http("post: update");
 
   if (appState == "updating") {
+    logger.warn("cant update - update is already in progress")
     res.json({ err: "update_ongoing" });
     return;
   }
   appState = "updating";
   axios.get("https://api.github.com/repos/iqwertz/Depictor/tags").then((response: any) => {
     if (response.data[0].name != version.tag) {
-      log("found Update - Starting Update");
+      logger.info("found Update - Starting Update");
       execFile("sudo", ["./scripts/update.sh"], function (err: any, data: any) {
         if (err) {
-          log("Error " + err);
+          logger.error("Error " + err);
           appState = "error";
           return;
         }
       });
     } else {
-      log("no updates found");
+      logger.warn("no updates found");
     }
   });
   res.json({});
@@ -551,7 +553,7 @@ returns:
     }
 */
 app.post("/getVersion", (req: Request, res: Response) => {
-  log("post: getVersion");
+  logger.http("post: getVersion");
   res.json(version);
 });
 
@@ -571,17 +573,16 @@ returns:
     {settings: object}
 */
 app.post("/changeSettings", (req: Request, res: Response) => {
-  log("post: changeSettings");
+  logger.http("post: changeSettings");
 
   if (req.body.settings) {
-    log(req.body.settings);
     fse.outputFileSync("data/settings.json", JSON.stringify(req.body.settings), "utf8", function (err: any, data: any) {
       if (err) {
-        log(err);
+        logger.error(err);
         res.json({});
         return;
       } else {
-        log("successfully saved settings");
+        logger.info("successfully saved settings");
       }
     });
   }
@@ -589,9 +590,9 @@ app.post("/changeSettings", (req: Request, res: Response) => {
   if (fs.existsSync("data/settings.json")) {
     let settings = fs.readFileSync("data/settings.json", "utf8");
     res.json({ settings: JSON.parse(settings) });
-    log("found settings");
+    logger.info("found settings");
   } else {
-    log("no settings found");
+    logger.warn("no settings found");
     res.json({});
   }
 });
@@ -612,15 +613,17 @@ returns:
     {}
 */
 app.post("/home", (req: Request, res: Response) => {
-  log("post: home");
+  logger.http("post: home");
 
   if (isDrawing) {
-    log("cant home! Machine is drawing");
+    logger.warn("cant home! Machine is drawing");
     res.json({ err: "drawing" });
     return;
   }
   exec("./scripts/home.sh", function (err: any, data: any) {
-    log(err);
+    if(err){
+    logger.error(err);
+    }
   });
 });
 
@@ -640,10 +643,10 @@ returns:
     {}
 */
 app.post("/executeGcode", (req: Request, res: Response) => {
-  log("post: executeGcode");
+  logger.http("post: executeGcode");
 
   if (isDrawing) {
-    log("cant execute Gcode! Machine is drawing");
+    logger.warn("cant execute Gcode! Machine is drawing");
     res.json({ err: "drawing" });
     return;
   }
@@ -657,7 +660,7 @@ get: /zipData
 description: zips the data folder and response with it
 */
 app.get("/zipData", async function (req: any, res: any) {
-  log("get: zipData");
+  logger.http("get: zipData");
   var dirPath = "./data";
   await res.zip({
     files: [
@@ -672,8 +675,9 @@ app.get("/zipData", async function (req: any, res: any) {
 
 httpServer!.listen(enviroment.port, () => {
   //start http server
-  log("started Server");
-  log("listening on *:" + enviroment.port);
+  logger.info("started Server");
+  logger.info("listening on *:" + enviroment.port);
+  logger.info("Detected Linux: " + isLinux);
 });
 
 /**
@@ -685,7 +689,7 @@ httpServer!.listen(enviroment.port, () => {
  * @param {string} gcode the gcode th draw
  */
 function drawGcode(gcode: string) {
-  log("start drawing");
+  logger.info("start drawing");
   fse.outputFile(
     //save the gcode file //this file will be used by the gcodesender
     "assets/gcodes/gcode.nc",
@@ -694,7 +698,7 @@ function drawGcode(gcode: string) {
     function (err: any, data: any) {
       if (err) {
         //guard clause for errors
-        log("Error " + err);
+        logger.error("Error " + err);
         return;
       }
 
@@ -718,8 +722,7 @@ function drawGcode(gcode: string) {
 
         tail.on("error", function (error: any) {
           //stop drawing when an error occured
-          log("Error during drawing: ");
-          log(error);
+          logger.error("Error during drawing: " + error);
           isDrawing = false;
         });
 
@@ -728,7 +731,7 @@ function drawGcode(gcode: string) {
           launchcommand,
           function (err: any, data: any) {
             //after process exits
-            log(data.toString());
+            logger.debug(data.toString());
 
             isDrawing = false; //update drawing state
             if (!err) {
@@ -741,7 +744,7 @@ function drawGcode(gcode: string) {
                 lines + "," + timeDiff + "\n",
                 { flag: "a" },
                 (err: any) => {
-                  if (err) log(err);
+                  if (err) logger.error(err);
                 }
               );
 
@@ -749,7 +752,7 @@ function drawGcode(gcode: string) {
               appState = "idle";
               drawingProgress = 0;
             } else {
-              log("Error " + err);
+              logger.error(err);
               //appState = "error";
             }
           }
@@ -757,7 +760,7 @@ function drawGcode(gcode: string) {
 
         currentDrawingProcessPID = launchProcess.pid; //set the currentProcessId
       } else {
-        log("drawing cancled - os not Linux");
+        logger.warn("drawing cancled - os not Linux");
       }
     }
   );
@@ -775,13 +778,13 @@ function removeBg(base64img: string) {
 
   checkBGremoveAPIkey();
   if (!isBGRemoveAPIKey) {
-    log("cant remove bg - no apiKey");
+    logger.warn("cant remove bg - no apiKey");
     skipRemoveBg(base64img);
     return;
   }
   const apiKey = fs.readFileSync("removeBGAPIKey.txt", "utf8");
 
-  log("sending picture to removeBG API");
+  logger.info("sending picture to removeBG API");
   removeBackgroundFromImageBase64({
     //send to api with settings
     base64img,
@@ -804,7 +807,7 @@ function removeBg(base64img: string) {
         "base64",
         function (err: any, data: any) {
           if (err) {
-            log("Error " + err);
+            logger.error(err);
           }
         }
       );
@@ -812,7 +815,7 @@ function removeBg(base64img: string) {
       convertBase64ToGcode(removedBgBase64); //convert image to gcode
     })
     .catch((errors: Array<RemoveBgError>) => {
-      log(JSON.stringify(errors)); //log errors
+      logger.error(JSON.stringify(errors)); //log errors
       skipRemoveBg(base64img);
     });
 }
@@ -824,7 +827,7 @@ function removeBg(base64img: string) {
  * @param {string} base64img
  */
 function skipRemoveBg(base64img: string) {
-  log("removebg skipped");
+  logger.info("removebg skipped");
   removedBgBase64 = base64img; //set the removedBgBase64 Image without bgremove
   fse.outputFile(
     //update the current picture
@@ -833,7 +836,7 @@ function skipRemoveBg(base64img: string) {
     "base64",
     function (err: any, data: any) {
       if (err) {
-        log("Error: " + err);
+        logger.error("Error: " + err);
       }
     }
   );
@@ -848,7 +851,7 @@ function skipRemoveBg(base64img: string) {
  * @param {string} base64
  */
 function convertBase64ToGcode(base64: string) {
-  log("start converting image to gcode");
+  logger.info("start converting image to gcode");
   appState = "processingImage"; //update appState
 
   /////set basepath based on os
@@ -864,7 +867,7 @@ function convertBase64ToGcode(base64: string) {
     "base64",
     function (err: any, data: any) {
       if (err) {
-        log("Error " + err);
+        logger.error(err);
       }
 
       //fs.unlinkSync(img2gcodePath + "gcode/gcode_image.nc");  //needs try catch
@@ -877,16 +880,16 @@ function convertBase64ToGcode(base64: string) {
 
       if (!skipGenerateGcode) {
         //skip generate process (used during dev to skip long processing time)
-        log("lauching i2g");
+        logger.info("lauching i2g");
         execFile(
           launchcommand,
 
           function (err: any, data: any) {
             //launch converter
             if (err) {
-              log("Error " + err);
+              logger.error(err);
             }
-            log(data.toString());
+            logger.debug(data.toString());
 
             if (!err) {
               //check for errors
@@ -899,7 +902,7 @@ function convertBase64ToGcode(base64: string) {
                 "data/savedGcodes/" + fName + ".nc",
                 (err: any) => {
                   if (err) {
-                    log("Error " + err);
+                    logger.error(err);
                   }
                 }
               );
@@ -910,8 +913,7 @@ function convertBase64ToGcode(base64: string) {
                 "data/savedGcodes/" + fName + ".png",
                 (err: any) => {
                   if (err) {
-                    log(err);
-                    console.log("Error Found:", err);
+                    logger.error(err);
                   }
                 }
               );
@@ -921,7 +923,7 @@ function convertBase64ToGcode(base64: string) {
           }
         );
       } else {
-        log("skipping gcode generation");
+        logger.info("skipping gcode generation");
         appState = "rawGcodeReady"; //update appState
       }
     }
@@ -946,45 +948,25 @@ function executeGcode(gcode: string) {
     return;
   }
 
-  log(gcode);
+  logger.info("Executing custom gcode: " + gcode);
   fse.outputFileSync("./assets/gcodes/temp.gcode", gcode, "utf8");
   exec("./scripts/execTemp.sh", function (err: any, data: any) {
     fs.unlink("./assets/gcodes/temp.gcode", (err: any) => {
       //delete preview image
       if (err) {
-        log("Error " + err);
+        logger.error(err);
         return;
       }
     });
 
     if (err) {
-      log("Error " + err);
+      logger.error(err);
       return;
     }
   });
 }
 
 ////////////////////logger/////////////////////////
-/**
- *log a messag to log.txt
- *
- * @param {string} message
- */
-function log(message: string) {
-  if (!message) {
-    return;
-  }
-  console.log(message);
-  fse.outputFile(
-    "data/logs/log.txt",
-    new Date().toISOString() + ": " + message + "\n \n",
-    { flag: "a" },
-    (err: any) => {
-      if (err) console.log(err);
-    }
-  );
-}
-
 const logger = winston.createLogger({
   level: "info",
   format: winston.format.combine(
@@ -996,13 +978,17 @@ const logger = winston.createLogger({
     winston.format.json()
   ),
   defaultMeta: { service: "user-service" },
+  exitOnError: false,
   transports: [
     //
     // - Write all logs with importance level of `error` or less to `error.log`
     // - Write all logs with importance level of `info` or less to `combined.log`
     //
     new winston.transports.File({ filename: "data/logs/error.log", level: "error" }),
-    new winston.transports.File({ filename: "data/logs/combined.log" }),
+    new winston.transports.File({ filename: "data/logs/warn.log", level: "warn" }),
+    new winston.transports.File({ filename: "data/logs/info.log", level: "info" }),
+    new winston.transports.File({ filename: "data/logs/http.log", level: "http" }),
+    new winston.transports.File({ filename: "data/logs/debug.log", level: "debug" }),
   ],
 });
 
