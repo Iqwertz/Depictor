@@ -30,7 +30,8 @@
         "fs-extra": "^10.0.0",
         "remove.bg": "^1.3.0",
         "tail": "^2.2.4",
-        "tree-kill": "^1.2.2"
+        "tree-kill": "^1.2.2",
+        "winston": "^3.7.2"
     },
     "devDependencies": {
         "ts-node": "^10.7.0",
