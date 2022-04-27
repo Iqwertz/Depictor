@@ -958,7 +958,6 @@ function setBoarder(isBoarder: boolean) {
 
   for (let imgPath of boarderImagePaths) {
     let fileName = imgPath.split(/[\\\/]/).pop();
-    console.log(fileName);
     /* fs.unlink(boarderImageFolderPath + fileName, (err: any) => {
       if (err) {
         log("Error " + err);
@@ -967,13 +966,13 @@ function setBoarder(isBoarder: boolean) {
     if (isBoarder) {
       fse.copy(imgPath, boarderImageFolderPath + fileName, (err: any) => {
         if (err) {
-          log("Error " + err);
+          logger.error("Error " + err);
         }
       });
     } else {
       fse.copy(emptyImagePath, boarderImageFolderPath + fileName, (err: any) => {
         if (err) {
-          log("Error " + err);
+          logger.error("Error " + err);
         }
       });
     }
