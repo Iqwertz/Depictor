@@ -24,8 +24,9 @@
         "@angular/router": "~12.2.0",
         "@fortawesome/angular-fontawesome": "^0.9.0",
         "@fortawesome/fontawesome-svg-core": "^1.2.35",
-        "@fortawesome/free-regular-svg-icons": "^5.15.3",
-        "@fortawesome/free-solid-svg-icons": "^6.1.1",
+        "@fortawesome/free-regular-svg-icons": "^6.1.1",
+        "@fortawesome/free-solid-svg-icons": "^5.15.3",
+
         "@ngxs/store": "^3.7.2",
         "@types/browser-image-compression": "^1.0.9",
         "@types/webpack-bundle-analyzer": "^4.4.1",
