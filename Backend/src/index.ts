@@ -39,7 +39,6 @@ const outputDir = `./data/bgremoved/`;
 let removedBgBase64: string = "";
 
 const isLinux: boolean = process.platform === "linux";
-console.log("Detected Linux: ", isLinux);
 
 type AppStates = "idle" | "removingBg" | "processingImage" | "rawGcodeReady" | "updating" | "error"; //possible states of the server
 
@@ -576,6 +575,7 @@ app.post("/changeSettings", (req: Request, res: Response) => {
   logger.http("post: changeSettings");
 
   if (req.body.settings) {
+    logger.debug(JSON.stringify(req.body.settings))
     fse.outputFileSync("data/settings.json", JSON.stringify(req.body.settings), "utf8", function (err: any, data: any) {
       if (err) {
         logger.error(err);
