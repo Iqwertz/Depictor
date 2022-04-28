@@ -24,6 +24,8 @@ import { FormsModule } from '@angular/forms';
 import { SharedModule } from './modules/shared/shared.module';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CheckboxChipComponent } from './components/checkbox-chip/checkbox-chip.component';
+import { DragndropComponent } from './components/dragndrop/dragndrop.component';
+/* import { NgxFileDropModule } from 'ngx-file-drop'; */
 
 @NgModule({
   declarations: [
@@ -39,6 +41,7 @@ import { CheckboxChipComponent } from './components/checkbox-chip/checkbox-chip.
     ConnectingComponent,
     RemoveBgCheckboxComponent,
     CheckboxChipComponent,
+    DragndropComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,7 +55,7 @@ import { CheckboxChipComponent } from './components/checkbox-chip/checkbox-chip.
     FormsModule,
     NgxsModule.forRoot([AppState]),
     SharedModule,
-    MatSnackBarModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent],
