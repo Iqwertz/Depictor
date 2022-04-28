@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-/* import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop'; */
+import { Component, OnInit, HostListener } from '@angular/core';
+import { faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-dragndrop',
@@ -8,54 +8,41 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DragndropComponent implements OnInit {
 
+    uploadIcon = faCloudArrowUp;
+  dropzoneHovered = false;
+
   constructor() { }
 
   ngOnInit(): void {
-  }/*
-public files: NgxFileDropEntry[] = [];
+  }
 
-  public dropped(files: NgxFileDropEntry[]) {
-    this.files = files;
-    for (const droppedFile of files) {
-
-      // Is it a file?
-      if (droppedFile.fileEntry.isFile) {
-        const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
-        fileEntry.file((file: File) => {
-
-          // Here you can access the real file
-          console.log(droppedFile.relativePath, file);
-
-          /**
-          // You could upload it like this:
-          const formData = new FormData()
-          formData.append('logo', file, relativePath)
-
-          // Headers
-          const headers = new HttpHeaders({
-            'security-token': 'mytoken'
-          })
-
-          this.http.post('https://mybackend.com/api/upload/sanitize-and-save-logo', formData, { headers: headers, responseType: 'blob' })
-          .subscribe(data => {
-            // Sanitized logo returned from backend
-          })
-          **/
-/*
-        });
-      } else {
-        // It was a directory (empty directories are added, otherwise only files)
-        const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
-        console.log(droppedFile.relativePath, fileEntry);
-      }
+    @HostListener("window:dragleave", ["$event"])
+  onDragLeave(e:any) {
+    if (!e.fromElement) {  // this will ensure that you are not in the browser anymore
+      this.dropzoneHovered = false;
     }
   }
 
-  public fileOver(event: any){
-    console.log(event);
+    @HostListener("window:dragenter", ["$event"])
+  onDragEnter(e:any) {
+    if (!e.fromElement) {  // this will ensure that you are not in the browser anymore
+      this.dropzoneHovered = true;
+    }
+  }
+      @HostListener("window:drop", ["$event"])
+ onDropSuccess(event: any){
+    event.preventDefault();
+    this.dropzoneHovered = false;
+if (!event.fromElement) {  // this will ensure that you are not in the browser anymore
+    this.onFileChange(event.dataTransfer.files);    // notice the "dataTransfer" used instead of "target"
+    }
   }
 
-  public fileLeave(event: any){
-    console.log(event);
-  } */
+  onDragOver(event:any) {
+    event.preventDefault();
+}
+
+  private onFileChange(files: File[]) {
+  console.log(files)
+  }
 }

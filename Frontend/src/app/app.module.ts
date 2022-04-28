@@ -25,7 +25,6 @@ import { SharedModule } from './modules/shared/shared.module';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CheckboxChipComponent } from './components/checkbox-chip/checkbox-chip.component';
 import { DragndropComponent } from './components/dragndrop/dragndrop.component';
-/* import { NgxFileDropModule } from 'ngx-file-drop'; */
 
 @NgModule({
   declarations: [
