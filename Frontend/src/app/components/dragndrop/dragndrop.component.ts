@@ -1,5 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
+import { CameraServiceService } from '../../services/camera-service.service';
+import { FileUploadService } from '../../services/file-upload.service';
 
 @Component({
   selector: 'app-dragndrop',
@@ -11,7 +13,7 @@ export class DragndropComponent implements OnInit {
     uploadIcon = faCloudArrowUp;
   dropzoneHovered = false;
 
-  constructor() { }
+  constructor(private fileUploadService: FileUploadService) { }
 
   ngOnInit(): void {
   }
@@ -23,26 +25,25 @@ export class DragndropComponent implements OnInit {
     }
   }
 
-    @HostListener("window:dragenter", ["$event"])
+  @HostListener("window:dragenter", ["$event"])
   onDragEnter(e:any) {
     if (!e.fromElement) {  // this will ensure that you are not in the browser anymore
       this.dropzoneHovered = true;
     }
   }
-      @HostListener("window:drop", ["$event"])
- onDropSuccess(event: any){
+
+  @HostListener("window:drop", ["$event"])
+  onDropSuccess(event: any){
     event.preventDefault();
+    event.stopPropagation();
     this.dropzoneHovered = false;
-if (!event.fromElement) {  // this will ensure that you are not in the browser anymore
-    this.onFileChange(event.dataTransfer.files);    // notice the "dataTransfer" used instead of "target"
+    if (!event.fromElement) {  // this will ensure that you are not in the browser anymore
+      this.fileUploadService.parseImageUpload(event.dataTransfer.files[0])
     }
   }
 
+  @HostListener("window:dragover", ["$event"])
   onDragOver(event:any) {
     event.preventDefault();
-}
-
-  private onFileChange(files: File[]) {
-  console.log(files)
   }
 }

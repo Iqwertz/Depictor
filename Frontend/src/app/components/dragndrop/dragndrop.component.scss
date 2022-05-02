@@ -25,11 +25,17 @@
             flex-flow: column;
             align-items: center;
             justify-content: center;
+            text-align: center;
             color: #fff;
             font-size: 2em;
             fa-icon {
                 margin: 20px;
                 font-size: 3em;
+            }
+            .accepted-file-types {
+                margin: 10px;
+                font-size: 0.8em;
+                color: rgb(216, 216, 216);
             }
         }
     }
