@@ -6,6 +6,7 @@ import { LoadingService } from '../modules/shared/services/loading.service';
 import { AppState } from '../store/app.state';
 import { Select } from '@ngxs/store';
 import { Settings } from '../modules/shared/components/settings/settings.component';
+import { SnackbarService } from './snackbar.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,15 +17,21 @@ export class FileUploadService {
 
   constructor(
     private cameraService: CameraServiceService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private snackbarService: SnackbarService
   ) {
     this.settings$.subscribe((settings: Settings) => {
       this.settings = settings;
     });
   }
 
-  parseImageUpload($event: any) {
-    this.blobToBase64($event.target.files[0]).then(
+  parseImageUpload(file: File) {
+    if(!this.isFileImage(file)){
+      this.snackbarService.error("Error: Filetype is not supported");
+      return;
+    }
+
+    this.blobToBase64(file).then(
       (result: string | ArrayBuffer | null) => {
         if (typeof result === 'string') {
           this.loadingService.isLoading = true;
@@ -44,10 +51,16 @@ export class FileUploadService {
                   });
               });
             });
+        }else{
+          this.snackbarService.error("There was an error when uploading the image")
         }
       }
     );
   }
+
+  private isFileImage(file:File) {
+    return file && file['type'].split('/')[0] === 'image';
+}
 
   setUploadedImage(b64Data: string) {
     this.cameraService.base64Image = b64Data;

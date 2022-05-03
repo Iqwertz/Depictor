@@ -1,0 +1,21 @@
+<!-- <div class="center">
+    <ngx-file-drop dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)" (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)">
+        <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+            Optional custom content that replaces the the entire default content.
+            <button type="button" (click)="openFileSelector()">Browse Files</button>
+        </ng-template>
+    </ngx-file-drop>
+
+</div> -->
+
+<div class="overlay" [ngClass]="{visible: dropzoneHovered, hidden: !dropzoneHovered}" (drop)="onDropSuccess($event)" (dragover)="onDragOver($event)">
+    <div class="border">
+        <div class="message">
+            <fa-icon [icon]="uploadIcon"></fa-icon>
+            Drag & Drop to Upload File
+            <div class="accepted-file-types">
+                <i>(.png, .jpeg)</i>
+            </div>
+        </div>
+    </div>
+</div>
