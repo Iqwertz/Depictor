@@ -46,7 +46,10 @@ export class FileUploadService {
     this.blobToText(file).then((result: string | ArrayBuffer | null) => {
       if (typeof result === 'string') {
         this.gcodeViewerService.gcodeId = '';
-        this.gcodeViewerService.setGcodeFile(result, 'upload');
+        this.gcodeViewerService.setGcodeFile(
+          this.gcodeViewerService.standartizeGcode(result),
+          'upload'
+        );
         this.store.dispatch(new SetAutoRouting(false));
         this.router.navigate(['gcode', 'editGcode']);
       }
