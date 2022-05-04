@@ -41,6 +41,6 @@ export class OpenCameraButtonComponent implements OnInit {
 
   uploadFile($event: any) {
     this.loadingService.isLoading = false;
-    this.fileUploadService.parseImageUpload($event.target.files[0]);
+    this.fileUploadService.parseFile($event.target.files[0]);
   }
 }

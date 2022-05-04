@@ -38,7 +38,7 @@ export class DragndropComponent implements OnInit {
     event.stopPropagation();
     this.dropzoneHovered = false;
     if (!event.fromElement) {  // this will ensure that you are not in the browser anymore
-      this.fileUploadService.parseImageUpload(event.dataTransfer.files[0])
+      this.fileUploadService.parseFile(event.dataTransfer.files[0])
     }
   }
 

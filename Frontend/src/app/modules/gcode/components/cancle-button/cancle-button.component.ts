@@ -27,7 +27,7 @@ export class CancleButtonComponent implements OnInit {
     this.gcodeViewerService.maxLines = 0;
     this.cameraService.webcamImage = null;
     this.cameraService.base64Image = null;
-    if (this.gcodeViewerService.isGeneratedGcode) {
+    if (this.gcodeViewerService.gcodeType == 'generated') {
       this.backendConnectService.cancle();
     }
     this.store.dispatch(new SetAutoRouting(false));

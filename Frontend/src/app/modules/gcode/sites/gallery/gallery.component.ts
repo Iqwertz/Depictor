@@ -93,7 +93,7 @@ export class GalleryComponent implements OnInit {
         console.log(data.err);
       } else {
         this.gcodeViewerService.gcodeId = id;
-        this.gcodeViewerService.setGcodeFile(data.data, false);
+        this.gcodeViewerService.setGcodeFile(data.data, 'gallery');
         this.router.navigate(['gcode', 'editGcode']);
       }
     });
