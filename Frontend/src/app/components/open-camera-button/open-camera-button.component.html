@@ -4,7 +4,7 @@
 
 <a *ngIf="!cameraService.showWebcam && !cameraService.base64Image" (click)="open()"><button class="bn9">
     <span
-      ><b>Take a selfie!</b
+      ><b>{{buttonText}}</b
       ><!-- <fa-icon [icon]="faCamera"></fa-icon
     > --></span
     >
