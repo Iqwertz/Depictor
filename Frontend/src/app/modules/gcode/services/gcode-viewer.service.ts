@@ -28,8 +28,9 @@ export class GcodeViewerService {
    *  Cleanups:
    *    - All G0 Commands are converted to G1
    *    - Lines beginnig with 'X' or 'Y' get appended with 'G1' (some gcode generators only genereate 'G1' for the first instruction)
-   *    - Strip away Feedrates
+   *    - Strip away Feedrates and Z coordinates
    *    - Remove G1 Commands without parameter
+   *    - transform gcode to remove all negativ positions
    *
    * @param {string} gcode
    * @memberof CanvasGcodeRendererComponent
@@ -37,7 +38,10 @@ export class GcodeViewerService {
   standartizeGcode(gcode: string): string {
     let gcodeArray: string[] = gcode.split(/\r?\n/);
     let lastCommandParams: number[] = [0, 0];
+    let biggestNegativ: number[] = [0, 0];
+
     for (let i = 0; i < gcodeArray.length; i++) {
+      //loop over every command and apply corrections
       let command = gcodeArray[i];
       if (command.startsWith('G0')) {
         command = 'G1' + command.slice(2);
@@ -45,6 +49,10 @@ export class GcodeViewerService {
 
       if (command.startsWith('G1') && command.includes('F')) {
         command = command.split('F')[0];
+      }
+
+      if (command.startsWith('G1') && command.includes('Z')) {
+        command = command.split('Z')[0];
       }
 
       if (
@@ -61,10 +69,29 @@ export class GcodeViewerService {
 
       if (command.startsWith('G1')) {
         lastCommandParams = this.getG1Parameter(command, lastCommandParams);
+        if (biggestNegativ[0] > lastCommandParams[0]) {
+          biggestNegativ[0] = lastCommandParams[0];
+        }
+        if (biggestNegativ[1] > lastCommandParams[1]) {
+          biggestNegativ[1] = lastCommandParams[1];
+        }
       }
 
       gcodeArray[i] = command;
     }
+
+    for (let i = 0; i < gcodeArray.length; i++) {
+      //loop over every command and transform it by the Negativ offset
+      let command = gcodeArray[i];
+      if (command.startsWith('G1')) {
+        let params = this.getG1Parameter(command, [0, 0]);
+        params[0] += Math.abs(biggestNegativ[0]);
+        params[1] += Math.abs(biggestNegativ[1]);
+        gcodeArray[i] = 'G1X' + params[0] + 'Y' + params[1];
+      }
+    }
+
+    console.log(biggestNegativ);
 
     return gcodeArray.join('\n');
   }

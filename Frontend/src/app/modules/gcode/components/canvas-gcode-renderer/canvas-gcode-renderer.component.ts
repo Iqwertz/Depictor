@@ -296,10 +296,8 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
         }
         lastCommandParameter = parameter;
       } else if (command.startsWith('M05') || command.startsWith('M5')) {
-        console.log('penup');
         isPenDown = false;
       } else if (command.startsWith('M03') || command.startsWith('M3')) {
-        console.log('pendown');
         isPenDown = true;
       }
     }
