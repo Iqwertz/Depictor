@@ -181,8 +181,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     //   scales the gcode to fit window and centers it
     this.bounds = this.getBiggestValue(this.gcodeFile);
 
-    console.log(this.bounds);
-
     this.offset = [0, 0];
 
     if (
@@ -209,8 +207,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     if (this.rendererConfig.drawing) {
       color = this.rendererConfig.strokeColorPassive;
     }
-
-    console.log(this.rendererConfig);
 
     //renders gcode
     this.drawGcode(
@@ -278,7 +274,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     this.ctx.beginPath();
     for (let i = 0; i < renderedLines; i++) {
       let command: string = commands[i];
-
       if (command.startsWith('G1') || command.startsWith('G0')) {
         let parameter: number[] = this.getG1Parameter(
           command,
@@ -301,7 +296,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
         isPenDown = true;
       }
     }
-
     this.ctx.stroke();
 
     /*     console.log(this.canvas?.nativeElement.toDataURL('image/png'));
