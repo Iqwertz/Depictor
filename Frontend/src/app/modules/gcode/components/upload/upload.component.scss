@@ -1,0 +1,19 @@
+.upload {
+    font-size: 2em;
+    padding: 10px 0;
+    width: 200px;
+    background-color: #fff;
+    border: 3px solid rgb(0, 136, 255);
+    border-radius: 15px;
+    box-shadow: 8px 8px 10px #000;
+    text-align: center;
+    margin: 5px;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 700px) {
+    .upload {
+        font-size: 1.5em;
+        width: 130px;
+    }
+}
