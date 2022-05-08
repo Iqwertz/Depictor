@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { CanvasGcodeRendererComponent } from '../../components/canvas-gcode-renderer/canvas-gcode-renderer.component';
 import { AppState } from '../../../../store/app.state';
 import { Settings } from '../../../shared/components/settings/settings.component';
+import { SnackbarService } from '../../../../services/snackbar.service';
 @Component({
   templateUrl: './gcode-edit.component.html',
   styleUrls: ['./gcode-edit.component.scss'],
@@ -19,7 +20,8 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     private backendConnectService: BackendConnectService,
     private siteStateService: SiteStateService,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private snackbarService: SnackbarService
   ) {}
 
   @ViewChild(CanvasGcodeRendererComponent) renderer:
@@ -66,6 +68,19 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     this.estimatedSeconds =
       (this.gcodeViewerService.maxLines - nRL) * this.settings.avgTimePerLine;
     this.notRenderdLines = nRL;
+  }
+
+  upload() {
+    let screenshot = this.renderer?.captureScreenshot();
+    if (!screenshot) {
+      this.snackbarService.error('Error: Couldn`t generate preview Image');
+      return;
+    }
+    this.backendConnectService.uploadGcodeToGallery(
+      screenshot,
+      this.gcodeViewerService.gcodeFile
+    );
+    console.log('uplaoded');
   }
 
   startDraw() {

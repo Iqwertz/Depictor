@@ -338,4 +338,15 @@ export class BackendConnectService {
       })
     );
   }
+
+  uploadGcodeToGallery(screenshot: string, gcode: string) {
+    this.http
+      .post('http://' + this.ip + '/uploadGalleryEntry', {
+        preview: screenshot,
+        gcode: gcode,
+      })
+      .subscribe((res: any) => {
+        //optional error handling
+      });
+  }
 }

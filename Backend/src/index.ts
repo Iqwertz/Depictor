@@ -317,8 +317,8 @@ app.post("/stop", (req: Request, res: Response) => {
   setTimeout(() => {
     //Home after some timeout because kill() needs some time
     exec("./scripts/home.sh", function (err: any, data: any) {
-      if(err){
-      logger.error(err);
+      if (err) {
+        logger.error(err);
       }
     });
   }, 2000);
@@ -448,6 +448,55 @@ app.post("/getGcodeById", (req: Request, res: Response) => {
 });
 
 /*
+post: /uploadGalleryEntry
+
+description: upload a custom gcode to the gallery
+
+expected request: 
+  {
+    preview: string,
+    gcode: string
+  }
+
+*/
+app.post("/uploadGalleryEntry", (req: Request, res: Response) => {
+  logger.http("post: uploadGalleryEntry");
+
+  let fName: number = Date.now();
+  let b64Preview: string = req.body.preview.replace(/^data:image\/png;base64,/, "");
+
+  fse.outputFile(
+    //save the gcode file //this file will be used by the gcodesender
+    "data/savedGcodes/g" + fName + ".nc",
+    req.body.gcode,
+    "utf8",
+    function (err: any, data: any) {
+      if (err) {
+        //guard clause for errors
+        logger.error("Error " + err);
+        return;
+      }
+    }
+  );
+
+  fse.outputFile(
+    //save the gcode file //this file will be used by the gcodesender
+    "data/savedGcodes/g" + fName + ".png",
+    b64Preview,
+    "base64",
+    function (err: any, data: any) {
+      if (err) {
+        //guard clause for errors
+        logger.error("Error " + err);
+        return;
+      }
+    }
+  );
+
+  res.json({});
+});
+
+/*
 post: /setBGRemoveAPIKey
 
 description: sets the removeBG Api key by writing it to removeBGAPIKey.txt
@@ -496,7 +545,7 @@ app.post("/shutdown", (req: Request, res: Response) => {
   }
   res.json({});
   exec("sudo shutdown now", function (error: any, stdout: any, stderr: any) {
-    if(error){
+    if (error) {
       logger.error(error);
     }
     logger.debug(stdout);
@@ -522,7 +571,7 @@ app.post("/update", (req: Request, res: Response) => {
   logger.http("post: update");
 
   if (appState == "updating") {
-    logger.warn("cant update - update is already in progress")
+    logger.warn("cant update - update is already in progress");
     res.json({ err: "update_ongoing" });
     return;
   }
@@ -581,7 +630,7 @@ app.post("/changeSettings", (req: Request, res: Response) => {
   logger.http("post: changeSettings");
 
   if (req.body.settings) {
-    logger.debug(JSON.stringify(req.body.settings))
+    logger.debug(JSON.stringify(req.body.settings));
     fse.outputFileSync("data/settings.json", JSON.stringify(req.body.settings), "utf8", function (err: any, data: any) {
       if (err) {
         logger.error(err);
@@ -627,8 +676,8 @@ app.post("/home", (req: Request, res: Response) => {
     return;
   }
   exec("./scripts/home.sh", function (err: any, data: any) {
-    if(err){
-    logger.error(err);
+    if (err) {
+      logger.error(err);
     }
   });
 });

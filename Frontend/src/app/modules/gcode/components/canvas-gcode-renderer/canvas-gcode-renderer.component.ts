@@ -370,4 +370,8 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     y = parseFloat(command.substring(Yindex + 1, command.length).trim());
     return [x, y];
   }
+
+  captureScreenshot(): string | undefined {
+    return this.canvas?.nativeElement.toDataURL('image/png');
+  }
 }
