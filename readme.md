@@ -100,7 +100,7 @@ After the imager finished the write process remove the micro-sd card and put it 
 
 ### Installing Depictor
 To install Depictor on your rpi you have to ssh into it. 
-To do so open a terminal and type in _ssh pi@depictor_ (if you changed your username replace _pi_ with your username).
+To do so open a terminal and type in _ssh pi@depictor.local_ (if you changed your username replace _pi_ with your username).
 There may be some warning... just accept it by typing _yes_ and then enter your password.
 If every thing was successfull the last line in the terminal should be: _pi@depictor:~ $_
 Now paste these three commands: 
