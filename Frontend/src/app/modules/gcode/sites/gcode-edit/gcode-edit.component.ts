@@ -10,6 +10,7 @@ import { CanvasGcodeRendererComponent } from '../../components/canvas-gcode-rend
 import { AppState } from '../../../../store/app.state';
 import { Settings } from '../../../shared/components/settings/settings.component';
 import { SnackbarService } from '../../../../services/snackbar.service';
+import { LoadingService } from '../../../shared/services/loading.service';
 @Component({
   templateUrl: './gcode-edit.component.html',
   styleUrls: ['./gcode-edit.component.scss'],
@@ -21,7 +22,8 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     private siteStateService: SiteStateService,
     private store: Store,
     private router: Router,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private loadingService: LoadingService
   ) {}
 
   @ViewChild(CanvasGcodeRendererComponent) renderer:
@@ -70,22 +72,28 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     this.notRenderdLines = nRL;
   }
 
-  upload() {
+  upload(redirect: boolean) {
+    this.loadingService.isLoading = true;
+    this.loadingService.loadingText = 'uploading gcode';
     let screenshot = this.renderer?.captureScreenshot();
     if (!screenshot) {
+      this.loadingService.isLoading = false;
       this.snackbarService.error('Error: Couldn`t generate preview Image');
       return;
     }
     this.backendConnectService.uploadGcodeToGallery(
       screenshot,
-      this.gcodeViewerService.gcodeFile
+      this.gcodeViewerService.gcodeFile,
+      redirect
     );
-    console.log('uplaoded');
   }
 
   startDraw() {
     this.store.dispatch(new SetAutoRouting(true));
 
+    if (this.gcodeViewerService.gcodeType == 'upload') {
+      this.upload(false);
+    }
     let serverGcode: string = this.gcodeViewerService.gcodeFile;
     let gcodeArray: string[] = serverGcode.split('\n');
 
@@ -97,7 +105,9 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     }
 
     ///////////////////remove the first 6 lines of the gcode and replace them with the start gcode after join -> not clean at all but currently to lazy to recompile java
-    gcodeArray.splice(0, 6);
+    if (this.gcodeViewerService.gcodeType != 'upload') {
+      gcodeArray.splice(0, 6);
+    }
     let strippedGcode: string = gcodeArray.slice(0, nr).join('\n');
     strippedGcode = this.applyOffset(
       strippedGcode,

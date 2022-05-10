@@ -13,6 +13,19 @@ export class SnackbarService {
   /**
    *Trigger a snackbar with the snackbar-note class and set the given message
    *
+   * @param {string} message text of the success message
+   * @memberof AlertService
+   */
+  success(message: string) {
+    this._snackBar.open(message, 'X', {
+      duration: this.duration,
+      panelClass: 'snackbar-success',
+    });
+  }
+
+  /**
+   *Trigger a snackbar with the snackbar-note class and set the given message
+   *
    * @param {string} message text of the notification
    * @memberof AlertService
    */

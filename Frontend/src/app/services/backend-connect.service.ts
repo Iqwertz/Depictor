@@ -16,6 +16,8 @@ import { environment } from '../../environments/environment';
 import { Settings } from '../modules/shared/components/settings/settings.component';
 import { SetSettings } from '../store/app.action';
 import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { SnackbarService } from './snackbar.service';
 
 export interface BackendVersion {
   tag: string; //version tag is used to check if a newer version is available
@@ -34,7 +36,9 @@ export class BackendConnectService {
     private cameraService: CameraServiceService,
     private http: HttpClient,
     private loadingService: LoadingService,
-    private store: Store
+    private store: Store,
+    private router: Router,
+    private snackbarService: SnackbarService
   ) {
     this.ip$.subscribe((ip: string) => {
       this.ip = ip;
@@ -339,13 +343,19 @@ export class BackendConnectService {
     );
   }
 
-  uploadGcodeToGallery(screenshot: string, gcode: string) {
+  uploadGcodeToGallery(screenshot: string, gcode: string, redirect: boolean) {
     this.http
       .post('http://' + this.ip + '/uploadGalleryEntry', {
         preview: screenshot,
         gcode: gcode,
       })
       .subscribe((res: any) => {
+        if (redirect) {
+          this.loadingService.isLoading = false;
+          this.router.navigate(['gcode', 'gallery']);
+        }
+
+        this.snackbarService.notification('uploaded gcode');
         //optional error handling
       });
   }
