@@ -42,6 +42,7 @@ export class GcodeViewerService {
     let lastCommandParams: number[] = [0, 0];
     let biggestNegativ: number[] = [0, 0];
     let lastG1Index: number = 0;
+    const scaleToDrawingArea: boolean = true;
 
     for (let i = 0; i < gcodeArray.length; i++) {
       //loop over every command and apply corrections

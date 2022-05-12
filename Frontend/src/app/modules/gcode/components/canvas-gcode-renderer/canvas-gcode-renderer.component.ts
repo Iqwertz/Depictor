@@ -180,6 +180,7 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
 
     //   scales the gcode to fit window and centers it
     this.bounds = this.getBiggestValue(this.gcodeFile);
+    console.log(this.bounds);
 
     this.offset = [0, 0];
 

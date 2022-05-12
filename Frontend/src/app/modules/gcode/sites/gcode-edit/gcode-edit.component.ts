@@ -75,7 +75,9 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
   upload(redirect: boolean) {
     this.loadingService.isLoading = true;
     this.loadingService.loadingText = 'uploading gcode';
+    this.sliderUpdated(0);
     let screenshot = this.renderer?.captureScreenshot();
+    this.sliderUpdated(this.notRenderdLines);
     if (!screenshot) {
       this.loadingService.isLoading = false;
       this.snackbarService.error('Error: Couldn`t generate preview Image');

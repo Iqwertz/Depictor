@@ -3,6 +3,7 @@ import { BackendConnectService } from '../../../../services/backend-connect.serv
 import { GcodeViewerService } from '../../services/gcode-viewer.service';
 import { Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/modules/shared/components/confirm-dialog/confirm-dialog.component';
+import { LoadingService } from '../../../shared/services/loading.service';
 
 @Component({
   selector: 'app-delete-button',
@@ -13,7 +14,8 @@ export class DeleteButtonComponent implements OnInit {
   constructor(
     private backendConnectService: BackendConnectService,
     private gcodeViewerService: GcodeViewerService,
-    private router: Router
+    private router: Router,
+    private loadingService: LoadingService
   ) {}
 
   @ViewChild('dialog', { static: false })
@@ -23,6 +25,12 @@ export class DeleteButtonComponent implements OnInit {
 
   del() {
     this.backendConnectService.delete(this.gcodeViewerService.gcodeId);
-    this.router.navigate(['gcode', 'gallery']);
+    this.loadingService.loadingText = 'removing Gcode';
+    this.loadingService.isLoading = true;
+    setTimeout(() => {
+      //timeout to give the server some time to delete it
+      this.loadingService.isLoading = false;
+      this.router.navigate(['gcode', 'gallery']);
+    }, 1000);
   }
 }
