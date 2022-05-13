@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { enviroment } from '../../../../../../Backend/src/enviroment';
+import { Select } from '@ngxs/store';
+import { AppState } from '../../../store/app.state';
+import { Settings } from '../../shared/components/settings/settings.component';
+import { environment } from 'src/environments/environment';
 
 export type GcodeType = 'generated' | 'gallery' | 'upload' | 'drawing'; //Determins the type of the displayed gcode, used to adjust the ui
 
@@ -14,7 +19,14 @@ export class GcodeViewerService {
 
   $renderGcode: Subject<void> = new Subject<void>();
 
-  constructor() {}
+  @Select(AppState.settings) settings$: any;
+  settings: Settings = environment.defaultSettings;
+
+  constructor() {
+    this.settings$.subscribe((settings: Settings) => {
+      this.settings = settings;
+    });
+  }
 
   setGcodeFile(file: string, gcodeType: GcodeType) {
     this.gcodeType = gcodeType;
@@ -41,6 +53,7 @@ export class GcodeViewerService {
     let gcodeArray: string[] = gcode.split(/\r?\n/);
     let lastCommandParams: number[] = [0, 0];
     let biggestNegativ: number[] = [0, 0];
+    let biggest: number[] = [0, 0];
     let lastG1Index: number = 0;
     const scaleToDrawingArea: boolean = true;
 
@@ -91,11 +104,37 @@ export class GcodeViewerService {
         if (biggestNegativ[1] > lastCommandParams[1]) {
           biggestNegativ[1] = lastCommandParams[1];
         }
+        if (biggest[0] < lastCommandParams[0]) {
+          biggest[0] = lastCommandParams[0];
+        }
+        if (biggest[1] < lastCommandParams[1]) {
+          biggest[1] = lastCommandParams[1];
+        }
 
         lastG1Index = i;
       }
 
       gcodeArray[i] = command;
+    }
+
+    let gcodeScaling = 1;
+
+    biggest = [
+      biggest[0] + Math.abs(biggestNegativ[0]),
+      biggest[1] + Math.abs(biggestNegativ[1]),
+    ]; //recalculate biggest numnber with shifted negativ
+
+    if (scaleToDrawingArea) {
+      let scalings: number[] = [
+        this.settings.paperMax[0] / biggest[0],
+        this.settings.paperMax[1] / biggest[1],
+      ];
+
+      if (scalings[0] < scalings[1]) {
+        gcodeScaling = scalings[0];
+      } else {
+        gcodeScaling = scalings[1];
+      }
     }
 
     let firstG1Found: boolean = false;
@@ -105,8 +144,14 @@ export class GcodeViewerService {
       if (command.startsWith('G1')) {
         firstG1Found = true;
         let params = this.getG1Parameter(command, [0, 0]);
+        //apply negativ offset
         params[0] += Math.abs(biggestNegativ[0]);
         params[1] += Math.abs(biggestNegativ[1]);
+
+        //apply scaling
+        params[0] = params[0] * gcodeScaling;
+        params[1] = params[1] * gcodeScaling;
+
         gcodeArray[i] = 'G1X' + params[0] + 'Y' + params[1];
       }
       if (!firstG1Found) {
