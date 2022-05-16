@@ -76,8 +76,10 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
   upload(redirect: boolean) {
     this.loadingService.isLoading = true;
     this.loadingService.loadingText = 'uploading gcode';
+    let prevNRL = this.notRenderdLines;
     this.sliderUpdated(0);
     let screenshot = this.renderer?.captureScreenshot();
+    this.notRenderdLines = prevNRL;
     this.sliderUpdated(this.notRenderdLines);
     if (!screenshot) {
       this.loadingService.isLoading = false;
@@ -93,13 +95,13 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
 
   startDraw() {
     this.store.dispatch(new SetAutoRouting(true));
-
+    console.log(this.notRenderdLines);
     if (this.gcodeViewerService.gcodeType == 'upload') {
       this.upload(false);
     }
+    console.log(this.notRenderdLines);
     let serverGcode: string = this.gcodeViewerService.gcodeFile;
     let gcodeArray: string[] = serverGcode.split('\n');
-
     gcodeArray = this.replacePenDownCommand(gcodeArray);
     gcodeArray = this.scaleGcode(gcodeArray, this.settings.gcodeScale);
     let nr = this.notRenderdLines * -1;
@@ -114,6 +116,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     ) {
       gcodeArray.splice(0, 6);
     }
+    console.log(nr);
     let strippedGcode: string = gcodeArray.slice(0, nr).join('\n');
     strippedGcode = this.applyOffset(
       strippedGcode,
@@ -127,7 +130,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
 
   replacePenDownCommand(gcode: string[]): string[] {
     for (let i = 0; i < gcode.length; i++) {
-      if (gcode[i].includes('M03')) {
+      if (gcode[i].includes('M03') || gcode[i].includes('M3')) {
         gcode[i] = this.settings.penDownCommand;
       }
     }
