@@ -1,3 +1,4 @@
+import { AppComponent } from './../../../../app.component';
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { GcodeViewerService } from '../../services/gcode-viewer.service';
 import { SiteStateService } from '../../../../services/site-state.service';
@@ -107,7 +108,10 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     }
 
     ///////////////////remove the first 6 lines of the gcode and replace them with the start gcode after join -> not clean at all but currently to lazy to recompile java
-    if (this.gcodeViewerService.gcodeType != 'upload') {
+    if (
+      this.gcodeViewerService.gcodeType != 'upload' &&
+      this.gcodeViewerService.gcodeType != 'custom'
+    ) {
       gcodeArray.splice(0, 6);
     }
     let strippedGcode: string = gcodeArray.slice(0, nr).join('\n');

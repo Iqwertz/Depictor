@@ -6,7 +6,12 @@ import { AppState } from '../../../store/app.state';
 import { Settings } from '../../shared/components/settings/settings.component';
 import { environment } from 'src/environments/environment';
 
-export type GcodeType = 'generated' | 'gallery' | 'upload' | 'drawing'; //Determins the type of the displayed gcode, used to adjust the ui
+export type GcodeType =
+  | 'generated'
+  | 'gallery'
+  | 'upload'
+  | 'drawing'
+  | 'custom'; //Determins the type of the displayed gcode, used to adjust the ui
 
 @Injectable({
   providedIn: 'root',
@@ -56,10 +61,18 @@ export class GcodeViewerService {
     let biggest: number[] = [0, 0];
     let lastG1Index: number = 0;
     const scaleToDrawingArea: boolean = true;
+    const maxFloatingPoints: number = 3;
+    const allowedCommands: string[] = ['G1', 'M3', 'M5'];
 
     for (let i = 0; i < gcodeArray.length; i++) {
       //loop over every command and apply corrections
       let command = gcodeArray[i];
+
+      if (command.startsWith('G00') || command.startsWith('G01')) {
+        //replace all G0 commands with G1
+        command = 'G1' + command.slice(3);
+      }
+
       if (command.startsWith('G0')) {
         //replace all G0 commands with G1
         command = 'G1' + command.slice(2);
@@ -114,6 +127,10 @@ export class GcodeViewerService {
         lastG1Index = i;
       }
 
+      if (!this.checkIfStringStartsWith(command, allowedCommands)) {
+        command = '';
+      }
+
       gcodeArray[i] = command;
     }
 
@@ -152,10 +169,11 @@ export class GcodeViewerService {
         params[0] = params[0] * gcodeScaling;
         params[1] = params[1] * gcodeScaling;
 
+        //round floating points
+        params[0] = this.round(params[0], maxFloatingPoints);
+        params[1] = this.round(params[1], maxFloatingPoints);
+
         gcodeArray[i] = 'G1X' + params[0] + 'Y' + params[1];
-      }
-      if (!firstG1Found) {
-        gcodeArray[i] = '';
       }
 
       if (i > lastG1Index) {
@@ -167,6 +185,7 @@ export class GcodeViewerService {
       return el != '';
     });
 
+    console.log(gcodeArray);
     return gcodeArray.join('\n');
   }
 
@@ -193,5 +212,16 @@ export class GcodeViewerService {
       y = lastCommandParams[1];
     }
     return [x, y];
+  }
+
+  // from: https://stackoverflow.com/questions/11832914/how-to-round-to-at-most-2-decimal-places-if-necessary
+  private round = (n: number, dp: number) => {
+    const h = +'1'.padEnd(dp + 1, '0'); // 10 or 100 or 1000 or etc
+    return Math.round(n * h) / h;
+  };
+
+  // from: https://stackoverflow.com/questions/67866641/check-if-a-string-starts-with-any-of-the-strings-in-an-array
+  private checkIfStringStartsWith(str: string, substrs: string[]) {
+    return substrs.some((substr) => str.startsWith(substr));
   }
 }
