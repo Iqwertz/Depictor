@@ -50,6 +50,9 @@ export class GcodeViewerService {
    *    - Remove G1 Commands without parameter
    *    - transform gcode to remove all negativ positions
    *    - remove start and end gcode
+   *    - scale gcode to drawing area
+   *    - remove comments
+   *    - remove all commands that are not supported
    *
    * @param {string} gcode
    * @memberof CanvasGcodeRendererComponent
@@ -62,11 +65,13 @@ export class GcodeViewerService {
     let lastG1Index: number = 0;
     const scaleToDrawingArea: boolean = true;
     const maxFloatingPoints: number = 3;
-    const allowedCommands: string[] = ['G1', 'M3', 'M5'];
+    const allowedCommands: string[] = ['G1', 'M3', 'M5', 'F', '$'];
 
     for (let i = 0; i < gcodeArray.length; i++) {
       //loop over every command and apply corrections
       let command = gcodeArray[i];
+
+      command = command.split(';')[0]; //remove comments
 
       if (command.startsWith('G00') || command.startsWith('G01')) {
         //replace all G0 commands with G1
