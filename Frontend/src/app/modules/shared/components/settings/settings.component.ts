@@ -23,6 +23,7 @@ import { Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/modules/shared/components/confirm-dialog/confirm-dialog.component';
 import { HttpClient } from '@angular/common/http';
 import { LoadingService } from '../../services/loading.service';
+import { ViewEncapsulation } from '@angular/compiler';
 
 export interface Settings {
   endGcode: string;
@@ -34,6 +35,7 @@ export interface Settings {
   paperMax: number[]; //Maximum coordinates of the drawing area
   drawingOffset: number[];
   gcodeDisplayTransform: boolean[]; //boolean array consisting of three values: [0] when true switche x any y, [1] when true invert x, [2] when true invert y
+  standardizeGcode: boolean;
 }
 
 @Component({

@@ -7,6 +7,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,13 @@ import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dial
     SettingsComponent,
     ConfirmDialogComponent,
   ],
-  imports: [CommonModule, FontAwesomeModule, FormsModule],
+  imports: [
+    CommonModule,
+    FontAwesomeModule,
+    FormsModule,
+    MatCheckboxModule,
+    FormsModule,
+  ],
   exports: [
     NavbarComponent,
     LoadingComponent,

@@ -89,7 +89,8 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     this.backendConnectService.uploadGcodeToGallery(
       screenshot,
       this.gcodeViewerService.gcodeFile,
-      redirect
+      redirect,
+      true
     );
   }
 
@@ -111,12 +112,11 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
 
     ///////////////////remove the first 6 lines of the gcode and replace them with the start gcode after join -> not clean at all but currently to lazy to recompile java
     if (
-      this.gcodeViewerService.gcodeType != 'upload' &&
+      this.gcodeViewerService.gcodeType != 'stanCustom' &&
       this.gcodeViewerService.gcodeType != 'custom'
     ) {
       gcodeArray.splice(0, 6);
     }
-    console.log(nr);
     let strippedGcode: string = gcodeArray.slice(0, nr).join('\n');
     strippedGcode = this.applyOffset(
       strippedGcode,

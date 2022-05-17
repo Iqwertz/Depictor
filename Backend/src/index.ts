@@ -462,12 +462,15 @@ expected request:
 app.post("/uploadGalleryEntry", (req: Request, res: Response) => {
   logger.http("post: uploadGalleryEntry");
 
-  let fName: number = Date.now();
+  const fName: number = Date.now();
+  let flag: string = "c";
   let b64Preview: string = req.body.preview.replace(/^data:image\/png;base64,/, "");
-
+  if (req.body.standardized) {
+    flag = "sc";
+  }
   fse.outputFile(
     //save the gcode file //this file will be used by the gcodesender
-    "data/savedGcodes/g" + fName + ".nc",
+    "data/savedGcodes/" + flag + fName + ".nc",
     req.body.gcode,
     "utf8",
     function (err: any, data: any) {
@@ -481,7 +484,7 @@ app.post("/uploadGalleryEntry", (req: Request, res: Response) => {
 
   fse.outputFile(
     //save the gcode file //this file will be used by the gcodesender
-    "data/savedGcodes/g" + fName + ".png",
+    "data/savedGcodes/" + flag + fName + ".png",
     b64Preview,
     "base64",
     function (err: any, data: any) {

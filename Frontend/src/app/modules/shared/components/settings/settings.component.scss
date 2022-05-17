@@ -90,19 +90,6 @@
                     width: 300px;
                 }
             }
-            .action-textinput {
-                font-family: "Josefin Sans", sans-serif !important;
-                padding: 6px 5px 4px;
-                font-size: 22px;
-                border: 2px dotted #000;
-                &.area {
-                    max-height: 30px;
-                    resize: none;
-                }
-                &.short {
-                    width: 50px;
-                }
-            }
         }
         .version {
             bottom: 2px;
@@ -160,6 +147,30 @@
     &.save-control {
         padding: 10px 28px 6px 26px;
     }
+}
+
+.action-textinput {
+    font-family: "Josefin Sans", sans-serif !important;
+    padding: 6px 5px 4px;
+    font-size: 22px;
+    border: 2px dotted #000;
+    &.area {
+        max-height: 30px;
+        resize: none;
+    }
+    &.short {
+        width: 50px;
+    }
+}
+
+ ::ng-deep .mat-checkbox-frame {
+    border-color: rgb(0, 0, 0);
+    border-style: dashed !important;
+}
+
+::ng-deep .mat-checkbox-inner-container {
+    width: 20px !important;
+    height: 20px !important;
 }
 
 a {

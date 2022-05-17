@@ -92,8 +92,10 @@ export class GalleryComponent implements OnInit {
         //error
         console.log(data.err);
       } else {
-        if (id.startsWith('g')) {
+        if (id.startsWith('c')) {
           this.gcodeViewerService.gcodeType = 'custom';
+        } else if (id.startsWith('sc')) {
+          this.gcodeViewerService.gcodeType = 'stanCustom';
         }
         this.gcodeViewerService.gcodeId = id;
         this.gcodeViewerService.setGcodeFile(data.data, 'gallery');

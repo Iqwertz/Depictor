@@ -54,7 +54,7 @@ import { DragndropComponent } from './components/dragndrop/dragndrop.component';
     FormsModule,
     NgxsModule.forRoot([AppState]),
     SharedModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

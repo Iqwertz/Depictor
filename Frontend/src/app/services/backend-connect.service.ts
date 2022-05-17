@@ -343,11 +343,17 @@ export class BackendConnectService {
     );
   }
 
-  uploadGcodeToGallery(screenshot: string, gcode: string, redirect: boolean) {
+  uploadGcodeToGallery(
+    screenshot: string,
+    gcode: string,
+    redirect: boolean,
+    standardized: boolean
+  ) {
     this.http
       .post('http://' + this.ip + '/uploadGalleryEntry', {
         preview: screenshot,
         gcode: gcode,
+        standardized: standardized,
       })
       .subscribe((res: any) => {
         if (redirect) {

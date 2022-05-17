@@ -11,6 +11,7 @@ export type GcodeType =
   | 'gallery'
   | 'upload'
   | 'drawing'
+  | 'stanCustom'
   | 'custom'; //Determins the type of the displayed gcode, used to adjust the ui
 
 @Injectable({
@@ -21,6 +22,7 @@ export class GcodeViewerService {
   gcodeFile: string = '';
   gcodeType: GcodeType = 'gallery';
   gcodeId: string = '';
+  standardized: boolean = true;
 
   $renderGcode: Subject<void> = new Subject<void>();
 
