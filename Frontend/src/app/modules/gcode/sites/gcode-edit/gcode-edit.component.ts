@@ -121,7 +121,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
       strippedGcode,
       this.settings.drawingOffset
     );
-    if (this.gcodeViewerService.gcodeType != 'stanCustom') {
+    if (this.gcodeViewerService.gcodeType != 'custom') {
       strippedGcode = this.settings.startGcode + '\n' + strippedGcode;
       strippedGcode += this.settings.endGcode;
     }

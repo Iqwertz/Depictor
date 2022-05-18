@@ -467,8 +467,6 @@ app.post("/uploadGalleryEntry", (req: Request, res: Response) => {
   if (!req.body.standardized) {
     flag = "sc";
   }
-
-  console.log(req.body.name);
   fse.outputFile(
     //save the gcode file //this file will be used by the gcodesender
     "data/savedGcodes/" + flag + fName + "^" + req.body.name + ".nc",
@@ -811,6 +809,8 @@ function drawGcode(gcode: string) {
               appState = "idle";
               drawingProgress = 0;
             } else {
+              //add feedback to server here to report error while drawing
+
               logger.error(err);
               //appState = "error";
             }

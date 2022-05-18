@@ -94,9 +94,9 @@ export class GalleryComponent implements OnInit {
       } else {
         this.gcodeViewerService.standardized = true;
         if (id.startsWith('c')) {
+          this.gcodeViewerService.standardized = false;
           this.gcodeViewerService.gcodeType = 'custom';
         } else if (id.startsWith('sc')) {
-          this.gcodeViewerService.standardized = false;
           this.gcodeViewerService.gcodeType = 'stanCustom';
         }
         this.gcodeViewerService.gcodeId = id;
