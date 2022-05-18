@@ -23,7 +23,7 @@ import { Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/modules/shared/components/confirm-dialog/confirm-dialog.component';
 import { HttpClient } from '@angular/common/http';
 import { LoadingService } from '../../services/loading.service';
-import { ViewEncapsulation } from '@angular/compiler';
+import { SiteStateService } from '../../../../services/site-state.service';
 
 export interface Settings {
   endGcode: string;
@@ -82,7 +82,8 @@ export class SettingsComponent implements OnInit {
     private store: Store,
     private router: Router,
     private http: HttpClient,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    public siteStateService: SiteStateService
   ) {}
 
   ngOnInit(): void {
@@ -113,6 +114,7 @@ export class SettingsComponent implements OnInit {
   }
 
   setNewIp() {
+    this.siteStateService.serverOnline = false;
     this.store.dispatch(new SetIp(this.ip));
     localStorage.setItem('ip', this.ip);
     this.router.navigate(['']);
