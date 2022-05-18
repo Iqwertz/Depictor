@@ -90,17 +90,16 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
       screenshot,
       this.gcodeViewerService.gcodeFile,
       redirect,
-      true
+      true,
+      this.gcodeViewerService.gcodeFileName
     );
   }
 
   startDraw() {
     this.store.dispatch(new SetAutoRouting(true));
-    console.log(this.notRenderdLines);
     if (this.gcodeViewerService.gcodeType == 'upload') {
       this.upload(false);
     }
-    console.log(this.notRenderdLines);
     let serverGcode: string = this.gcodeViewerService.gcodeFile;
     let gcodeArray: string[] = serverGcode.split('\n');
     gcodeArray = this.replacePenDownCommand(gcodeArray);
@@ -122,8 +121,10 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
       strippedGcode,
       this.settings.drawingOffset
     );
-    strippedGcode = this.settings.startGcode + '\n' + strippedGcode;
-    strippedGcode += this.settings.endGcode;
+    if (this.gcodeViewerService.gcodeType != 'stanCustom') {
+      strippedGcode = this.settings.startGcode + '\n' + strippedGcode;
+      strippedGcode += this.settings.endGcode;
+    }
     this.backendConnectService.postGcode(strippedGcode);
     this.router.navigate(['gcode', 'drawing']);
   }

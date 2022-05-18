@@ -51,7 +51,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     this.backendConnectService.getDrawenGcode().subscribe(
       (res: StateResponse) => {
         if (res.data && res.isDrawing) {
-          this.gcodeViewerService.setGcodeFile(res.data, 'drawing');
+          this.gcodeViewerService.setGcodeFile(res.data, 'drawing', '');
           this.renderer?.renderGcode(this.gcodeViewerService.gcodeFile, {
             notRenderdLines: 0,
             drawing: true,

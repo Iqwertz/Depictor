@@ -48,12 +48,17 @@ export class FileUploadService {
         this.gcodeViewerService.gcodeId = '';
         this.gcodeViewerService.standardized = this.settings.standardizeGcode;
         let gcode = '';
+        console.log(this.settings.standardizeGcode);
         if (this.settings.standardizeGcode) {
           gcode = this.gcodeViewerService.standartizeGcode(result);
         } else {
           gcode = result;
         }
-        this.gcodeViewerService.setGcodeFile(result, 'upload');
+        this.gcodeViewerService.setGcodeFile(
+          gcode,
+          'upload',
+          file.name.split('.')[0]
+        );
         this.store.dispatch(new SetAutoRouting(false));
         this.router.navigate(['gcode', 'editGcode']);
       }

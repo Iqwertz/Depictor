@@ -217,7 +217,7 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
       this.rendererConfig.notRenderdLines,
       this.offset,
       true,
-      false,
+      !this.gcodeViewerService.standardized,
       null
     );
   }

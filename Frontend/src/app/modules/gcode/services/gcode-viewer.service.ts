@@ -20,6 +20,7 @@ export type GcodeType =
 export class GcodeViewerService {
   maxLines: number = 0;
   gcodeFile: string = '';
+  gcodeFileName: string = '';
   gcodeType: GcodeType = 'gallery';
   gcodeId: string = '';
   standardized: boolean = true;
@@ -35,7 +36,16 @@ export class GcodeViewerService {
     });
   }
 
-  setGcodeFile(file: string, gcodeType: GcodeType) {
+  setGcodeFile(
+    file: string,
+    gcodeType: GcodeType,
+    fileName: string | undefined
+  ) {
+    if (fileName) {
+      this.gcodeFileName = fileName;
+    } else {
+      this.gcodeFileName = '';
+    }
     this.gcodeType = gcodeType;
     this.gcodeFile = file;
     this.maxLines = this.gcodeFile.split(/\r?\n/).length;

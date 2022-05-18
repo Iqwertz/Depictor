@@ -347,13 +347,15 @@ export class BackendConnectService {
     screenshot: string,
     gcode: string,
     redirect: boolean,
-    standardized: boolean
+    standardized: boolean,
+    name: string
   ) {
     this.http
       .post('http://' + this.ip + '/uploadGalleryEntry', {
         preview: screenshot,
         gcode: gcode,
         standardized: standardized,
+        name: name,
       })
       .subscribe((res: any) => {
         if (redirect) {

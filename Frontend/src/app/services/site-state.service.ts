@@ -150,7 +150,7 @@ export class SiteStateService {
       (res: StateResponse) => {
         if (res.data) {
           //        console.log(res.data);
-          this.gcodeViewerService.setGcodeFile(res.data, 'generated');
+          this.gcodeViewerService.setGcodeFile(res.data, 'generated', '');
           this.gcodeViewerService.gcodeId = '';
           this.loadingService.isLoading = false;
           this.router.navigate(['gcode', 'editGcode']);
@@ -171,7 +171,7 @@ export class SiteStateService {
       (res: StateResponse) => {
         if (res.data) {
           //        console.log(res.data);
-          this.gcodeViewerService.setGcodeFile(res.data, 'drawing');
+          this.gcodeViewerService.setGcodeFile(res.data, 'drawing', '');
           this.loadingService.isLoading = false;
         }
       },

@@ -213,7 +213,6 @@ app.post("/getDrawenGcode", (req: Request, res: Response) => {
   if (isDrawing) {
     //check if maschine is drawing
     let rawGcode = fs.readFileSync("assets/gcodes/gcode.nc", "utf8"); //read gcode
-
     res.json({ state: appState, isDrawing: isDrawing, data: rawGcode }); //return gcode and appstate information
   } else {
     res.json({ state: appState, err: "not_drawing" }); //return not drawing error
@@ -465,12 +464,14 @@ app.post("/uploadGalleryEntry", (req: Request, res: Response) => {
   const fName: number = Date.now();
   let flag: string = "c";
   let b64Preview: string = req.body.preview.replace(/^data:image\/png;base64,/, "");
-  if (req.body.standardized) {
+  if (!req.body.standardized) {
     flag = "sc";
   }
+
+  console.log(req.body.name);
   fse.outputFile(
     //save the gcode file //this file will be used by the gcodesender
-    "data/savedGcodes/" + flag + fName + ".nc",
+    "data/savedGcodes/" + flag + fName + "^" + req.body.name + ".nc",
     req.body.gcode,
     "utf8",
     function (err: any, data: any) {
@@ -484,7 +485,7 @@ app.post("/uploadGalleryEntry", (req: Request, res: Response) => {
 
   fse.outputFile(
     //save the gcode file //this file will be used by the gcodesender
-    "data/savedGcodes/" + flag + fName + ".png",
+    "data/savedGcodes/" + flag + fName + "^" + req.body.name + ".png",
     b64Preview,
     "base64",
     function (err: any, data: any) {
