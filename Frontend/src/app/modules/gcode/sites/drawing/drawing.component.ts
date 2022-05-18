@@ -79,7 +79,9 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   updateDrawingProgress() {
     this.backendConnectService.checkDrawingProgress().subscribe((res: any) => {
       if (res.data) {
-        this.renderer?.updateDrawingGcode(res.data);
+        if (res.data != -1) {
+          this.renderer?.updateDrawingGcode(res.data);
+        }
         this.drawingProgress = res.data;
       }
     });

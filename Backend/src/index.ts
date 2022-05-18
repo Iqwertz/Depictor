@@ -55,7 +55,7 @@ interface GcodeEntry {
 
 let appState: AppStates = "idle"; //var to track the current appstate
 let isDrawing: boolean = false; //var to track if the bot is currently drawing
-let drawingProgress: number = 0; //var to track the progress of the current drawing
+let drawingProgress: number = 0; //var to track the progress of the current drawing //when -1 drawing failed
 
 let currentDrawingProcessPID: number = 0; //used to stop the drawing process
 
@@ -809,8 +809,7 @@ function drawGcode(gcode: string) {
               appState = "idle";
               drawingProgress = 0;
             } else {
-              //add feedback to server here to report error while drawing
-
+              drawingProgress = -1;
               logger.error(err);
               //appState = "error";
             }

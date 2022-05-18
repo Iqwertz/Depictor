@@ -8,7 +8,7 @@
     height: calc(100% - 45px);
     overflow: hidden;
     margin-top: 45px;
-    .not-drawing {
+    .txt-overlay {
         font-size: 2em;
         position: absolute;
         top: 50%;
@@ -16,6 +16,11 @@
         transform: translate(-50%, -50%);
         width: 100%;
         text-align: center;
+        &.error-drawing {
+            h1 {
+                color: red;
+            }
+        }
     }
 }
 
