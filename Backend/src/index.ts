@@ -243,7 +243,7 @@ app.post("/getDrawingProgress", (req: Request, res: Response) => {
     //check if drawing
     res.json({ data: drawingProgress }); //return progress
   } else {
-    res.json({ err: "not_drawing" }); //return notdrawing error
+    res.json({ err: "not_drawing", data: drawingProgress }); //return notdrawing error
   }
 });
 
