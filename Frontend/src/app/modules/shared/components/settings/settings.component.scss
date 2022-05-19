@@ -52,6 +52,10 @@
             align-items: center;
             justify-content: space-between;
             font-size: 30px;
+            &.indent {
+                width: 85%;
+                margin-left: 5%;
+            }
             .label {
                 width: 250px;
                 display: flex;

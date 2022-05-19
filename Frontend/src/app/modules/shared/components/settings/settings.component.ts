@@ -24,6 +24,7 @@ import { ConfirmDialogComponent } from 'src/app/modules/shared/components/confir
 import { HttpClient } from '@angular/common/http';
 import { LoadingService } from '../../services/loading.service';
 import { SiteStateService } from '../../../../services/site-state.service';
+import { StandartizerSettings } from '../../../gcode/services/gcode-viewer.service';
 
 export interface Settings {
   endGcode: string;
@@ -36,6 +37,7 @@ export interface Settings {
   drawingOffset: number[];
   gcodeDisplayTransform: boolean[]; //boolean array consisting of three values: [0] when true switche x any y, [1] when true invert x, [2] when true invert y
   standardizeGcode: boolean;
+  standardizerSettings: StandartizerSettings;
 }
 
 @Component({

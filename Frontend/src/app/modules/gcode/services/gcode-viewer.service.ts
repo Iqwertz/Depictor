@@ -6,6 +6,15 @@ import { AppState } from '../../../store/app.state';
 import { Settings } from '../../shared/components/settings/settings.component';
 import { environment } from 'src/environments/environment';
 
+export interface StandartizerSettings {
+  convertG0: boolean;
+  removeUnusedParameter: boolean;
+  transfromToPositiveSpace: boolean;
+  scaleToDrawingArea: boolean;
+  removeUnsupportedCommands: boolean;
+  supportedCommands: string;
+}
+
 export type GcodeType =
   | 'generated'
   | 'gallery'
@@ -71,13 +80,14 @@ export class GcodeViewerService {
    */
   standartizeGcode(gcode: string): string {
     let gcodeArray: string[] = gcode.split(/\r?\n/);
+
     let lastCommandParams: number[] = [0, 0];
     let biggestNegativ: number[] = [0, 0];
     let biggest: number[] = [0, 0];
     let lastG1Index: number = 0;
-    const scaleToDrawingArea: boolean = true;
     const maxFloatingPoints: number = 3;
-    const allowedCommands: string[] = ['G1', 'M3', 'M5', 'F', '$'];
+
+    let settings: StandartizerSettings = this.settings.standardizerSettings;
 
     for (let i = 0; i < gcodeArray.length; i++) {
       //loop over every command and apply corrections
@@ -85,24 +95,28 @@ export class GcodeViewerService {
 
       command = command.split(';')[0]; //remove comments
 
-      if (command.startsWith('G00') || command.startsWith('G01')) {
-        //replace all G0 commands with G1
-        command = 'G1' + command.slice(3);
+      if (settings.convertG0) {
+        if (command.startsWith('G00') || command.startsWith('G01')) {
+          //replace all G0 commands with G1
+          command = 'G1' + command.slice(3);
+        }
+
+        if (command.startsWith('G0')) {
+          //replace all G0 commands with G1
+          command = 'G1' + command.slice(2);
+        }
       }
 
-      if (command.startsWith('G0')) {
-        //replace all G0 commands with G1
-        command = 'G1' + command.slice(2);
-      }
+      if (settings.removeUnusedParameter) {
+        if (command.startsWith('G1') && command.includes('F')) {
+          //remive f values of G1 command
+          command = command.split('F')[0];
+        }
 
-      if (command.startsWith('G1') && command.includes('F')) {
-        //remive f values of G1 command
-        command = command.split('F')[0];
-      }
-
-      if (command.startsWith('G1') && command.includes('Z')) {
-        //remove z values of G1 command
-        command = command.split('Z')[0];
+        if (command.startsWith('G1') && command.includes('Z')) {
+          //remove z values of G1 command
+          command = command.split('Z')[0];
+        }
       }
 
       if (
@@ -144,8 +158,11 @@ export class GcodeViewerService {
         lastG1Index = i;
       }
 
-      if (!this.checkIfStringStartsWith(command, allowedCommands)) {
-        command = '';
+      if (settings.removeUnsupportedCommands) {
+        let supported: string[] = settings.supportedCommands.split(';');
+        if (!this.checkIfStringStartsWith(command, supported)) {
+          command = '';
+        }
       }
 
       gcodeArray[i] = command;
@@ -158,7 +175,7 @@ export class GcodeViewerService {
       biggest[1] + Math.abs(biggestNegativ[1]),
     ]; //recalculate biggest numnber with shifted negativ
 
-    if (scaleToDrawingArea) {
+    if (settings.scaleToDrawingArea) {
       let scalings: number[] = [
         this.settings.paperMax[0] / biggest[0],
         this.settings.paperMax[1] / biggest[1],
@@ -179,8 +196,10 @@ export class GcodeViewerService {
         firstG1Found = true;
         let params = this.getG1Parameter(command, [0, 0]);
         //apply negativ offset
-        params[0] += Math.abs(biggestNegativ[0]);
-        params[1] += Math.abs(biggestNegativ[1]);
+        if (settings.transfromToPositiveSpace) {
+          params[0] += Math.abs(biggestNegativ[0]);
+          params[1] += Math.abs(biggestNegativ[1]);
+        }
 
         //apply scaling
         params[0] = params[0] * gcodeScaling;
@@ -193,8 +212,10 @@ export class GcodeViewerService {
         gcodeArray[i] = 'G1X' + params[0] + 'Y' + params[1];
       }
 
-      if (i > lastG1Index) {
-        gcodeArray[i] = '';
+      if (settings.removeUnsupportedCommands) {
+        if (i > lastG1Index) {
+          gcodeArray[i] = '';
+        }
       }
     }
 
@@ -202,7 +223,6 @@ export class GcodeViewerService {
       return el != '';
     });
 
-    console.log(gcodeArray);
     return gcodeArray.join('\n');
   }
 

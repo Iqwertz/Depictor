@@ -72,6 +72,84 @@
             <mat-checkbox [(ngModel)]="settings.standardizeGcode"></mat-checkbox>
         </div>
 
+        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
+            <div class="label small">
+                Convert G0 to G1
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        Converts all G0, G01 or G00 commands to G1 commands.
+                    </div>
+                </div>
+            </div>
+            <mat-checkbox [(ngModel)]="settings.standardizerSettings.convertG0"></mat-checkbox>
+        </div>
+
+        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
+            <div class="label small">
+                Remove unnecessary parameter
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        Removes unnecessary (F and Z) parameter in G1 commands.
+                    </div>
+                </div>
+            </div>
+            <mat-checkbox [(ngModel)]="settings.standardizerSettings.removeUnusedParameter"></mat-checkbox>
+        </div>
+
+        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
+            <div class="label small">
+                Transform to positiv
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        Transforms all coordinates in the drawing to ensure that there are no negativ coordinates.
+                    </div>
+                </div>
+            </div>
+            <mat-checkbox [(ngModel)]="settings.standardizerSettings.transfromToPositiveSpace"></mat-checkbox>
+        </div>
+
+        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
+            <div class="label small">
+                Scale Gcode
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        Scales the Gcode so it fits exactly into the drawing area
+                    </div>
+                </div>
+            </div>
+            <mat-checkbox [(ngModel)]="settings.standardizerSettings.scaleToDrawingArea"></mat-checkbox>
+        </div>
+
+        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
+            <div class="label small">
+                Remove unsupported Commands
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        This will remove all lines in the gcode that arent starting with the commands defined below.
+                    </div>
+                </div>
+            </div>
+            <mat-checkbox [(ngModel)]="settings.standardizerSettings.removeUnsupportedCommands"></mat-checkbox>
+        </div>
+
+        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
+            <div class="label small">
+                Supported Commands
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        Commands supported by your drawing machine. Commands are sepperated by a ';'
+                    </div>
+                </div>
+            </div>
+            <input type="text" class="action-textinput" [(ngModel)]="settings.standardizerSettings.supportedCommands" />
+        </div>
+
         <div class="divider" *ngIf="siteStateService.serverOnline">
             <div class="label">Plotter controlls</div>
         </div>
