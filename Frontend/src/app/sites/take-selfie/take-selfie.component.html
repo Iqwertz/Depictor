@@ -9,10 +9,10 @@
     <app-open-camera-button></app-open-camera-button>
 </div>
 <div class="snapshot-controls" *ngIf="cameraService.base64Image">
-    <app-retake-selfie-button></app-retake-selfie-button>
     <app-checkbox-chip [label]="'Remove background'" [default]="removeBg" (buttonChange)="setRBG($event)" *ngIf="siteStateService.appState.removeBG"></app-checkbox-chip>
     <app-checkbox-chip [label]="'Add boarder'" [default]="useBoarder" (buttonChange)="setBoarder($event)"></app-checkbox-chip>
     <app-submit-selfie (clicked)="postSelfie()"></app-submit-selfie>
+    <app-retake-selfie-button></app-retake-selfie-button>
 </div>
 <app-loading></app-loading>
 <div class="navbar">

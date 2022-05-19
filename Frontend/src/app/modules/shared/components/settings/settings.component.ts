@@ -23,6 +23,8 @@ import { Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/modules/shared/components/confirm-dialog/confirm-dialog.component';
 import { HttpClient } from '@angular/common/http';
 import { LoadingService } from '../../services/loading.service';
+import { SiteStateService } from '../../../../services/site-state.service';
+import { StandartizerSettings } from '../../../gcode/services/gcode-viewer.service';
 
 export interface Settings {
   endGcode: string;
@@ -30,9 +32,11 @@ export interface Settings {
   penDownCommand: string;
   avgTimePerLine: number;
   maxImageFileSize: number;
-  gcodeScale: number;
+  paperMax: number[]; //Maximum coordinates of the drawing area
   drawingOffset: number[];
   gcodeDisplayTransform: boolean[]; //boolean array consisting of three values: [0] when true switche x any y, [1] when true invert x, [2] when true invert y
+  standardizeGcode: boolean;
+  standardizerSettings: StandartizerSettings;
 }
 
 @Component({
@@ -79,7 +83,8 @@ export class SettingsComponent implements OnInit {
     private store: Store,
     private router: Router,
     private http: HttpClient,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    public siteStateService: SiteStateService
   ) {}
 
   ngOnInit(): void {
@@ -110,6 +115,7 @@ export class SettingsComponent implements OnInit {
   }
 
   setNewIp() {
+    this.siteStateService.serverOnline = false;
     this.store.dispatch(new SetIp(this.ip));
     localStorage.setItem('ip', this.ip);
     this.router.navigate(['']);

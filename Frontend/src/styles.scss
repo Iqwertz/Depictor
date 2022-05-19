@@ -26,6 +26,16 @@ video {
     }
 }
 
+.snackbar-success {
+    font-family: "Josefin Sans", sans-serif !important;
+    color: #000 !important; // green
+    background-color: #fff !important;
+    border: 2px solid #00ff0d !important;
+    .mat-simple-snackbar-action {
+        color: #ff9090 !important;
+    }
+}
+
 .snackbar-error {
     font-family: "Josefin Sans", sans-serif !important;
     color: #000 !important; // green

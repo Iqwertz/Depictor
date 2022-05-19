@@ -55,7 +55,7 @@ interface GcodeEntry {
 
 let appState: AppStates = "idle"; //var to track the current appstate
 let isDrawing: boolean = false; //var to track if the bot is currently drawing
-let drawingProgress: number = 0; //var to track the progress of the current drawing
+let drawingProgress: number = 0; //var to track the progress of the current drawing //when -1 drawing failed
 
 let currentDrawingProcessPID: number = 0; //used to stop the drawing process
 
@@ -213,7 +213,6 @@ app.post("/getDrawenGcode", (req: Request, res: Response) => {
   if (isDrawing) {
     //check if maschine is drawing
     let rawGcode = fs.readFileSync("assets/gcodes/gcode.nc", "utf8"); //read gcode
-
     res.json({ state: appState, isDrawing: isDrawing, data: rawGcode }); //return gcode and appstate information
   } else {
     res.json({ state: appState, err: "not_drawing" }); //return not drawing error
@@ -244,7 +243,7 @@ app.post("/getDrawingProgress", (req: Request, res: Response) => {
     //check if drawing
     res.json({ data: drawingProgress }); //return progress
   } else {
-    res.json({ err: "not_drawing" }); //return notdrawing error
+    res.json({ err: "not_drawing", data: drawingProgress }); //return notdrawing error
   }
 });
 
@@ -317,8 +316,8 @@ app.post("/stop", (req: Request, res: Response) => {
   setTimeout(() => {
     //Home after some timeout because kill() needs some time
     exec("./scripts/home.sh", function (err: any, data: any) {
-      if(err){
-      logger.error(err);
+      if (err) {
+        logger.error(err);
       }
     });
   }, 2000);
@@ -448,6 +447,58 @@ app.post("/getGcodeById", (req: Request, res: Response) => {
 });
 
 /*
+post: /uploadGalleryEntry
+
+description: upload a custom gcode to the gallery
+
+expected request: 
+  {
+    preview: string,
+    gcode: string
+  }
+
+*/
+app.post("/uploadGalleryEntry", (req: Request, res: Response) => {
+  logger.http("post: uploadGalleryEntry");
+
+  const fName: number = Date.now();
+  let flag: string = "c";
+  let b64Preview: string = req.body.preview.replace(/^data:image\/png;base64,/, "");
+  if (!req.body.standardized) {
+    flag = "sc";
+  }
+  fse.outputFile(
+    //save the gcode file //this file will be used by the gcodesender
+    "data/savedGcodes/" + flag + fName + "^" + req.body.name + ".nc",
+    req.body.gcode,
+    "utf8",
+    function (err: any, data: any) {
+      if (err) {
+        //guard clause for errors
+        logger.error("Error " + err);
+        return;
+      }
+    }
+  );
+
+  fse.outputFile(
+    //save the gcode file //this file will be used by the gcodesender
+    "data/savedGcodes/" + flag + fName + "^" + req.body.name + ".png",
+    b64Preview,
+    "base64",
+    function (err: any, data: any) {
+      if (err) {
+        //guard clause for errors
+        logger.error("Error " + err);
+        return;
+      }
+    }
+  );
+
+  res.json({});
+});
+
+/*
 post: /setBGRemoveAPIKey
 
 description: sets the removeBG Api key by writing it to removeBGAPIKey.txt
@@ -496,7 +547,7 @@ app.post("/shutdown", (req: Request, res: Response) => {
   }
   res.json({});
   exec("sudo shutdown now", function (error: any, stdout: any, stderr: any) {
-    if(error){
+    if (error) {
       logger.error(error);
     }
     logger.debug(stdout);
@@ -522,7 +573,7 @@ app.post("/update", (req: Request, res: Response) => {
   logger.http("post: update");
 
   if (appState == "updating") {
-    logger.warn("cant update - update is already in progress")
+    logger.warn("cant update - update is already in progress");
     res.json({ err: "update_ongoing" });
     return;
   }
@@ -581,7 +632,7 @@ app.post("/changeSettings", (req: Request, res: Response) => {
   logger.http("post: changeSettings");
 
   if (req.body.settings) {
-    logger.debug(JSON.stringify(req.body.settings))
+    logger.debug(JSON.stringify(req.body.settings));
     fse.outputFileSync("data/settings.json", JSON.stringify(req.body.settings), "utf8", function (err: any, data: any) {
       if (err) {
         logger.error(err);
@@ -627,8 +678,8 @@ app.post("/home", (req: Request, res: Response) => {
     return;
   }
   exec("./scripts/home.sh", function (err: any, data: any) {
-    if(err){
-    logger.error(err);
+    if (err) {
+      logger.error(err);
     }
   });
 });
@@ -758,6 +809,7 @@ function drawGcode(gcode: string) {
               appState = "idle";
               drawingProgress = 0;
             } else {
+              drawingProgress = -1;
               logger.error(err);
               //appState = "error";
             }

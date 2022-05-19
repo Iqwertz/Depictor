@@ -92,8 +92,19 @@ export class GalleryComponent implements OnInit {
         //error
         console.log(data.err);
       } else {
+        this.gcodeViewerService.standardized = true;
+        if (id.startsWith('c')) {
+          this.gcodeViewerService.standardized = false;
+          this.gcodeViewerService.gcodeType = 'custom';
+        } else if (id.startsWith('sc')) {
+          this.gcodeViewerService.gcodeType = 'stanCustom';
+        }
         this.gcodeViewerService.gcodeId = id;
-        this.gcodeViewerService.setGcodeFile(data.data, false);
+        this.gcodeViewerService.setGcodeFile(
+          data.data,
+          'gallery',
+          id.substring(id.indexOf('|'), id.lastIndexOf('.'))
+        );
         this.router.navigate(['gcode', 'editGcode']);
       }
     });

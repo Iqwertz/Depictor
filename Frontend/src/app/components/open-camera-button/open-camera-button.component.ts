@@ -5,6 +5,7 @@ import { LoadingService } from '../../modules/shared/services/loading.service';
 import { FileUploadService } from '../../services/file-upload.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-open-camera-button',
@@ -15,14 +16,18 @@ export class OpenCameraButtonComponent implements OnInit {
   constructor(
     public cameraService: CameraServiceService,
     private loadingService: LoadingService,
-    private fileUploadService: FileUploadService
+    private fileUploadService: FileUploadService,
+    private deviceService: DeviceDetectorService
   ) {}
 
   @ViewChild('uploader') fileinput: any;
 
   faCamera = faCamera;
+  buttonText:string = ""
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.buttonText = this.deviceService.isMobile() ? 'Take a Selfie!' : 'Upload image or gcode';
+  }
 
   open() {
     if (environment.useCameraAPI) {
@@ -36,6 +41,6 @@ export class OpenCameraButtonComponent implements OnInit {
 
   uploadFile($event: any) {
     this.loadingService.isLoading = false;
-    this.fileUploadService.parseImageUpload($event.target.files[0]);
+    this.fileUploadService.parseFile($event.target.files[0]);
   }
 }

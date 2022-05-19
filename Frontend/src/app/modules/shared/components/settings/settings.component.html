@@ -5,17 +5,17 @@
         </div>
         <h1>Settings</h1>
 
-        <div class="divider">
+        <div class="divider" *ngIf="siteStateService.serverOnline">
             <div class="label">General</div>
         </div>
-        <div class="setting-line">
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label">Shutdown</div>
             <div class="action-button" (click)="confirmDialog!.show()">
                 <fa-icon [icon]="faPowerOff"></fa-icon>
             </div>
         </div>
 
-        <div class="setting-line">
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">
                 BgRemove API key
                 <div class="tooltip">
@@ -37,7 +37,7 @@
             <div class="action-button" (click)="setNewIp()"><b>Set</b></div>
         </div>
 
-        <div class="setting-line">
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">
                 Time per line
                 <div class="tooltip">
@@ -50,7 +50,7 @@
             <input type="number" class="action-textinput" [(ngModel)]="settings.avgTimePerLine" />
         </div>
 
-        <div class="setting-line">
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">
                 Image size (MB)
                 <div class="tooltip">
@@ -63,36 +63,126 @@
             <input type="number" class="action-textinput" [(ngModel)]="settings.maxImageFileSize" />
         </div>
 
-        <div class="divider">
+        <div class="divider" *ngIf="siteStateService.serverOnline">
+            <div class="label">Gcode upload</div>
+        </div>
+
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
+            <div class="label">Standardize gcode</div>
+            <mat-checkbox [(ngModel)]="settings.standardizeGcode"></mat-checkbox>
+        </div>
+
+        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
+            <div class="label small">
+                Convert G0 to G1
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        Converts all G0, G01 or G00 commands to G1 commands.
+                    </div>
+                </div>
+            </div>
+            <mat-checkbox [(ngModel)]="settings.standardizerSettings.convertG0"></mat-checkbox>
+        </div>
+
+        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
+            <div class="label small">
+                Remove unnecessary parameter
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        Removes unnecessary (F and Z) parameter in G1 commands.
+                    </div>
+                </div>
+            </div>
+            <mat-checkbox [(ngModel)]="settings.standardizerSettings.removeUnusedParameter"></mat-checkbox>
+        </div>
+
+        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
+            <div class="label small">
+                Transform to positiv
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        Transforms all coordinates in the drawing to ensure that there are no negativ coordinates.
+                    </div>
+                </div>
+            </div>
+            <mat-checkbox [(ngModel)]="settings.standardizerSettings.transfromToPositiveSpace"></mat-checkbox>
+        </div>
+
+        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
+            <div class="label small">
+                Scale Gcode
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        Scales the Gcode so it fits exactly into the drawing area
+                    </div>
+                </div>
+            </div>
+            <mat-checkbox [(ngModel)]="settings.standardizerSettings.scaleToDrawingArea"></mat-checkbox>
+        </div>
+
+        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
+            <div class="label small">
+                Remove unsupported Commands
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        This will remove all lines in the gcode that arent starting with the commands defined below.
+                    </div>
+                </div>
+            </div>
+            <mat-checkbox [(ngModel)]="settings.standardizerSettings.removeUnsupportedCommands"></mat-checkbox>
+        </div>
+
+        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
+            <div class="label small">
+                Supported Commands
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        Commands supported by your drawing machine. Commands are sepperated by a ';'
+                    </div>
+                </div>
+            </div>
+            <input type="text" class="action-textinput" [(ngModel)]="settings.standardizerSettings.supportedCommands" />
+        </div>
+
+        <div class="divider" *ngIf="siteStateService.serverOnline">
             <div class="label">Plotter controlls</div>
         </div>
 
-        <div class="setting-line">
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">
                 Gcode scaling
                 <div class="tooltip">
                     <fa-icon [icon]="faInfo"></fa-icon>
                     <div class="content">
-                        The highest generated gcode values are x200, y162. If this is too big or small on your plotter adjust this value to scale the gcode.
+                        Set the max. values for your drawing area. All gcode will be scaled to exactly fit it.
                     </div>
                 </div>
             </div>
-            <input type="number" class="action-textinput" [(ngModel)]="settings.gcodeScale" />
+            X:
+            <input type="number" class="action-textinput +short" [(ngModel)]="settings.paperMax[0]" /> Y:
+            <input type="number" class="action-textinput short" [(ngModel)]="settings.paperMax[1]" />
+            <!--  <input type="number" class="action-textinput" [(ngModel)]="settings.gcodeScale" /> -->
         </div>
 
-        <div class="setting-line">
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">Gcode offset</div>
             X:
             <input type="number" class="action-textinput short" [(ngModel)]="settings.drawingOffset[0]" /> Y:
             <input type="number" class="action-textinput short" [(ngModel)]="settings.drawingOffset[1]" />
         </div>
 
-        <div class="setting-line">
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label">Home pen</div>
             <div class="action-button" (click)="home()"><b>Home</b></div>
         </div>
 
-        <div class="setting-line">
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label">Move pen</div>
             <div class="button-group">
                 <div class="action-button" (click)="penUp()"><b>Up</b></div>
@@ -100,12 +190,12 @@
             </div>
         </div>
 
-        <div class="setting-line">
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">Pen down command</div>
             <input type="text" class="action-textinput" [(ngModel)]="settings.penDownCommand" />
         </div>
 
-        <div class="setting-line">
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">
                 Start gcode
                 <div class="tooltip">
@@ -118,7 +208,7 @@
             <textarea class="action-textinput area" [(ngModel)]="settings.startGcode"></textarea>
         </div>
 
-        <div class="setting-line">
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">
                 End gcode
                 <div class="tooltip">
@@ -131,11 +221,11 @@
             <textarea class="action-textinput area" [(ngModel)]="settings.endGcode"></textarea>
         </div>
 
-        <div class="divider">
+        <div class="divider" *ngIf="siteStateService.serverOnline">
             <div class="label">Updates & Data</div>
         </div>
 
-        <div class="setting-line">
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">Available updates</div>
             <div class="label small wide" *ngIf="!updatesAvailable">
                 <b>System is on newest version</b>
@@ -145,7 +235,7 @@
             </div>
         </div>
 
-        <div class="setting-line">
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">
                 Download data
                 <div class="tooltip">

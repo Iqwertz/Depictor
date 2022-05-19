@@ -6,6 +6,10 @@
     <app-canvas-gcode-renderer></app-canvas-gcode-renderer>
     <app-drawing-progress-bar [progress]="drawingProgress"></app-drawing-progress-bar>
     <app-stop-drawing-button *ngIf="isDrawing"></app-stop-drawing-button>
-    <div class="not-drawing" *ngIf="!isDrawing">ready to draw!</div>
+    <div class="not-drawing txt-overlay" *ngIf="!isDrawing">ready to draw!</div>
+    <div class="error-drawing txt-overlay" *ngIf="drawingProgress == -1">
+        <h1>Error!</h1>
+        There was an error during the drawing process! <br /> Check the logs for more information.
+    </div>
 </div>
 <app-settings-button></app-settings-button>

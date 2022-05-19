@@ -132,7 +132,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
       file,
       this.settings.gcodeDisplayTransform
     );
-    console.log('transformed');
 
     this.rendererConfig = {
       gcodeScale:
@@ -181,7 +180,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
 
     //   scales the gcode to fit window and centers it
     this.bounds = this.getBiggestValue(this.gcodeFile);
-
     console.log(this.bounds);
 
     this.offset = [0, 0];
@@ -211,8 +209,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
       color = this.rendererConfig.strokeColorPassive;
     }
 
-    console.log(this.rendererConfig);
-
     //renders gcode
     this.drawGcode(
       this.gcodeFile,
@@ -221,7 +217,7 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
       this.rendererConfig.notRenderdLines,
       this.offset,
       true,
-      false,
+      !this.gcodeViewerService.standardized,
       null
     );
   }
@@ -239,7 +235,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
         biggest[1] = cords[1];
       }
     }
-    console.log(biggest);
     return biggest;
   }
 
@@ -280,9 +275,11 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     this.ctx.beginPath();
     for (let i = 0; i < renderedLines; i++) {
       let command: string = commands[i];
-
-      if (command.startsWith('G1')) {
-        let parameter: number[] = this.getG1Parameter(command);
+      if (command.startsWith('G1') || command.startsWith('G0')) {
+        let parameter: number[] = this.getG1Parameter(
+          command,
+          lastCommandParameter
+        );
         if (isPenDown || ignorePen) {
           this.ctx.moveTo(
             lastCommandParameter[0] * scale + offset[0],
@@ -300,7 +297,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
         isPenDown = true;
       }
     }
-
     this.ctx.stroke();
 
     /*     console.log(this.canvas?.nativeElement.toDataURL('image/png'));
@@ -364,15 +360,19 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     return gcodeArray.join('\n');
   }
 
-  getG1Parameter(command: string): number[] {
-    let x: number = parseFloat(
-      command
-        .substring(command.indexOf('X') + 1, command.lastIndexOf('Y'))
-        .trim()
+  getG1Parameter(command: string, lastCommandParams?: number[]): number[] {
+    let Xindex: number = command.indexOf('X');
+    let Yindex: number = command.indexOf('Y');
+    let x: number = 0;
+    let y: number = 0;
+    x = parseFloat(
+      command.substring(Xindex + 1, command.lastIndexOf('Y')).trim()
     );
-    let y: number = parseFloat(
-      command.substring(command.indexOf('Y') + 1, command.length).trim()
-    );
+    y = parseFloat(command.substring(Yindex + 1, command.length).trim());
     return [x, y];
+  }
+
+  captureScreenshot(): string | undefined {
+    return this.canvas?.nativeElement.toDataURL('image/png');
   }
 }
