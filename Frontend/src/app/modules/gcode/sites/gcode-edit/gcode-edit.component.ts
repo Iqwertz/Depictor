@@ -103,7 +103,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     let serverGcode: string = this.gcodeViewerService.gcodeFile;
     let gcodeArray: string[] = serverGcode.split('\n');
     gcodeArray = this.replacePenDownCommand(gcodeArray);
-    gcodeArray = this.scaleGcode(gcodeArray, this.settings.gcodeScale);
+    gcodeArray = this.scaleGcode(gcodeArray);
     let nr = this.notRenderdLines * -1;
     if (nr == 0) {
       nr = -1;
@@ -138,13 +138,37 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     return gcode;
   }
 
-  scaleGcode(gcode: string[], scale: number): string[] {
+  scaleGcode(gcode: string[]): string[] {
+    let gcodeScaling = 1;
+    let biggest: number[] = [0, 0];
+
+    for (let i = 0; i < gcode.length; i++) {
+      let cmd = this.getG1Parameter(gcode[i]);
+      if (biggest[0] < cmd[0]) {
+        biggest[0] = cmd[0];
+      }
+      if (biggest[1] < cmd[1]) {
+        biggest[1] = cmd[1];
+      }
+    }
+
+    let scalings: number[] = [
+      this.settings.paperMax[0] / biggest[0],
+      this.settings.paperMax[1] / biggest[1],
+    ];
+
+    if (scalings[0] < scalings[1]) {
+      gcodeScaling = scalings[0];
+    } else {
+      gcodeScaling = scalings[1];
+    }
+
     for (let i = 0; i < gcode.length; i++) {
       let command = gcode[i];
       if (command.startsWith('G1')) {
         let parameter = this.getG1Parameter(command);
-        parameter[0] = parameter[0] * scale;
-        parameter[1] = parameter[1] * scale;
+        parameter[0] = parameter[0] * gcodeScaling;
+        parameter[1] = parameter[1] * gcodeScaling;
         gcode[i] = 'G1 X' + parameter[0] + 'Y' + parameter[1];
       }
     }

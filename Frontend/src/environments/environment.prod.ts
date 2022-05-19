@@ -5,7 +5,6 @@ const settings: Settings = {
   penDownCommand: 'M03S500;',
   avgTimePerLine: 0.096755719, //in s
   maxImageFileSize: 0.05, //in MB
-  gcodeScale: 1,
   paperMax: [200, 162],
   drawingOffset: [0, 0],
   gcodeDisplayTransform: [true, false, true],

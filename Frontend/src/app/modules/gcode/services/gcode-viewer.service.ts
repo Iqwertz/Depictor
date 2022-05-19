@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { enviroment } from '../../../../../../Backend/src/enviroment';
 import { Select } from '@ngxs/store';
 import { AppState } from '../../../store/app.state';
 import { Settings } from '../../shared/components/settings/settings.component';
@@ -170,10 +169,12 @@ export class GcodeViewerService {
 
     let gcodeScaling = 1;
 
-    biggest = [
-      biggest[0] + Math.abs(biggestNegativ[0]),
-      biggest[1] + Math.abs(biggestNegativ[1]),
-    ]; //recalculate biggest numnber with shifted negativ
+    if (settings.transfromToPositiveSpace) {
+      biggest = [
+        biggest[0] + Math.abs(biggestNegativ[0]),
+        biggest[1] + Math.abs(biggestNegativ[1]),
+      ]; //recalculate biggest numnber with shifted negativ
+    }
 
     if (settings.scaleToDrawingArea) {
       let scalings: number[] = [

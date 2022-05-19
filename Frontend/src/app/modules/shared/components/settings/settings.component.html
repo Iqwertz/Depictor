@@ -160,11 +160,14 @@
                 <div class="tooltip">
                     <fa-icon [icon]="faInfo"></fa-icon>
                     <div class="content">
-                        The highest generated gcode values are x200, y162. If this is too big or small on your plotter adjust this value to scale the gcode.
+                        Set the max. values for your drawing area. All gcode will be scaled to exactly fit it.
                     </div>
                 </div>
             </div>
-            <input type="number" class="action-textinput" [(ngModel)]="settings.gcodeScale" />
+            X:
+            <input type="number" class="action-textinput +short" [(ngModel)]="settings.paperMax[0]" /> Y:
+            <input type="number" class="action-textinput short" [(ngModel)]="settings.paperMax[1]" />
+            <!--  <input type="number" class="action-textinput" [(ngModel)]="settings.gcodeScale" /> -->
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
