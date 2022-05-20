@@ -88,8 +88,6 @@ export class GcodeViewerService {
 
     let settings: StandartizerSettings = this.settings.standardizerSettings;
 
-    console.time('standartize');
-
     for (let i = 0; i < gcodeArray.length; i++) {
       //loop over every command and apply corrections
       let command = gcodeArray[i];
@@ -225,8 +223,6 @@ export class GcodeViewerService {
     gcodeArray = gcodeArray.filter(function (el) {
       return el != '';
     });
-
-    console.timeEnd('standartize');
 
     return gcodeArray.join('\n');
   }
