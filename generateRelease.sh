@@ -37,7 +37,7 @@ ENDOFFILE
 
 cd buildTemp/
 find . -name '*.sh' |xargs dos2unix
-dos2unix ./assets/image2gcode/linux/Drawbot_stripped
+dos2unix ./assets/image2gcode/linux/Drawbot_image_to_gcode_stripped
 cd ../
 
 powershell Compress-Archive ".\buildTemp\*" "Depictor-Backend.zip"

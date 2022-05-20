@@ -201,3 +201,4 @@ application.linux-arm64hf/
 application.windows/
 application.windows32/
 application.windows64/
+java/

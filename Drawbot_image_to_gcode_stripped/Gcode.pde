@@ -4,18 +4,18 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void gcode_header() {
-    OUTPUT.println("$H");
-    OUTPUT.println("G92X0Y0Z0");
-    OUTPUT.println("F2000");
-    OUTPUT.println("G21");
-    OUTPUT.println("G90");
-    OUTPUT.println("M05");
+   // OUTPUT.println("$H");
+   // OUTPUT.println("G92X0Y0Z0");
+   // OUTPUT.println("F2000");
+   // OUTPUT.println("G21");
+   // OUTPUT.println("G90");
+   // OUTPUT.println("M05");
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void gcode_trailer() {
-    OUTPUT.println("M05");
-    OUTPUT.println("G1 X0 y0");
+  //  OUTPUT.println("M05");
+  //  OUTPUT.println("G1 X0 y0");
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void pen_up() {

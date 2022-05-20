@@ -112,19 +112,19 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     }
 
     ///////////////////remove the first 6 lines of the gcode and replace them with the start gcode after join -> not clean at all but currently to lazy to recompile java
-    if (
+    /*     if (
       this.gcodeViewerService.gcodeType != 'stanCustom' &&
       this.gcodeViewerService.gcodeType != 'custom'
     ) {
       gcodeArray.splice(0, 6);
-    }
+    } */
     let strippedGcode: string = gcodeArray.slice(0, nr).join('\n');
     strippedGcode = this.applyOffset(
       strippedGcode,
       this.settings.drawingOffset
     );
     if (this.gcodeViewerService.gcodeType != 'custom') {
-      strippedGcode = this.settings.startGcode + '\n' + strippedGcode;
+      strippedGcode = this.settings.startGcode + '\n' + strippedGcode + '\n';
       strippedGcode += this.settings.endGcode;
     }
     this.backendConnectService.postGcode(strippedGcode);
