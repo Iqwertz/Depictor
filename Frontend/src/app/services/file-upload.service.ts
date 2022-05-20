@@ -48,7 +48,6 @@ export class FileUploadService {
         this.gcodeViewerService.gcodeId = '';
         this.gcodeViewerService.standardized = this.settings.standardizeGcode;
         let gcode = '';
-        console.log(this.settings.standardizeGcode);
         if (this.settings.standardizeGcode) {
           gcode = this.gcodeViewerService.standartizeGcode(result);
         } else {

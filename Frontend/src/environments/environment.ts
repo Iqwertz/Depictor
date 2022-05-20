@@ -18,7 +18,7 @@ const settings: Settings = {
     removeUnusedParameter: true,
     scaleToDrawingArea: true,
     transfromToPositiveSpace: true,
-    supportedCommands: 'G1;M3;M5;F;$',
+    supportedCommands: 'G1;M3;M03;M5;M05;F;$',
   },
 };
 

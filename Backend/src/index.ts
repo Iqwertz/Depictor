@@ -464,7 +464,7 @@ app.post("/uploadGalleryEntry", (req: Request, res: Response) => {
   const fName: number = Date.now();
   let flag: string = "c";
   let b64Preview: string = req.body.preview.replace(/^data:image\/png;base64,/, "");
-  if (!req.body.standardized) {
+  if (req.body.standardized) {
     flag = "sc";
   }
   fse.outputFile(

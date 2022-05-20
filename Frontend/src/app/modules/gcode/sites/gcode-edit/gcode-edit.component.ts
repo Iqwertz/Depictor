@@ -90,20 +90,27 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
       screenshot,
       this.gcodeViewerService.gcodeFile,
       redirect,
-      true,
+      this.gcodeViewerService.standardized,
       this.gcodeViewerService.gcodeFileName
     );
   }
 
   startDraw() {
+    console.time('post Draw');
+    this.loadingService.isLoading = true;
+    this.loadingService.loadingText = 'sending Gcode';
     this.store.dispatch(new SetAutoRouting(true));
     if (this.gcodeViewerService.gcodeType == 'upload') {
       this.upload(false);
     }
     let serverGcode: string = this.gcodeViewerService.gcodeFile;
     let gcodeArray: string[] = serverGcode.split('\n');
+    console.time('replacePenDown');
     gcodeArray = this.replacePenDownCommand(gcodeArray);
+    console.timeEnd('replacePenDown');
+    console.time('scaleGcode');
     gcodeArray = this.scaleGcode(gcodeArray);
+    console.timeEnd('scaleGcode');
     let nr = this.notRenderdLines * -1;
     if (nr == 0) {
       nr = -1;
@@ -117,15 +124,20 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
       gcodeArray.splice(0, 6);
     }
     let strippedGcode: string = gcodeArray.slice(0, nr).join('\n');
+    console.time('applyOffset');
     strippedGcode = this.applyOffset(
       strippedGcode,
       this.settings.drawingOffset
     );
+    console.timeEnd('applyOffset');
     if (this.gcodeViewerService.gcodeType != 'custom') {
       strippedGcode = this.settings.startGcode + '\n' + strippedGcode;
       strippedGcode += this.settings.endGcode;
     }
+
+    console.timeEnd('post Draw');
     this.backendConnectService.postGcode(strippedGcode);
+    this.loadingService.isLoading = false;
     this.router.navigate(['gcode', 'drawing']);
   }
 
