@@ -32,6 +32,8 @@ export class FileUploadService {
   }
 
   parseFile(file: File) {
+    this.loadingService.isLoading = true;
+    this.loadingService.loadingText = 'processing File';
     let fileType = file.name.split('.').pop();
     if (fileType == 'nc' || fileType == 'gcode') {
       this.parseGcodeUpload(file);
@@ -59,6 +61,7 @@ export class FileUploadService {
           file.name.split('.')[0]
         );
         this.store.dispatch(new SetAutoRouting(false));
+        this.loadingService.isLoading = false;
         this.router.navigate(['gcode', 'editGcode']);
       }
     });
