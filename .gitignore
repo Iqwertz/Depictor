@@ -194,3 +194,10 @@ Backend/assets/image2gcode/windows/log.txt
 Backend/assets/image2gcode/windows/gcode/render.png
 Backend/assets/image2gcode/windows/data/input/image.jpg
 Backend/assets/image2gcode/windows/gcode/render.png
+application.linux32/
+application.linux64/
+application.linux-arm64/
+application.linux-arm64hf/
+application.windows/
+application.windows32/
+application.windows64/
