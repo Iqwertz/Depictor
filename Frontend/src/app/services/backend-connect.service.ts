@@ -139,6 +139,7 @@ export class BackendConnectService {
     this.http
       .post('http://' + this.ip + '/setBGRemoveAPIKey', { key: key })
       .subscribe((res: any) => {
+        this.snackbarService.success('Updated BG remove key!');
         console.log(res);
       });
   }
@@ -216,6 +217,7 @@ export class BackendConnectService {
    */
   stop() {
     this.http.post('http://' + this.ip + '/stop', {}).subscribe((res: any) => {
+      this.snackbarService.notification('stopped drawing process');
       //optional Error handling
     });
   }
@@ -226,6 +228,7 @@ export class BackendConnectService {
    * @memberof BackendConnectService
    */
   update() {
+    this.snackbarService.notification('starting system update');
     this.http
       .post('http://' + this.ip + '/update', {})
       .subscribe((res: any) => {
@@ -256,6 +259,7 @@ export class BackendConnectService {
     this.http
       .post('http://' + this.ip + '/delete', { id: id })
       .subscribe((res: any) => {
+        this.snackbarService.success('Deleted gcode successfully!');
         //optional Error handling
       });
   }
@@ -298,6 +302,7 @@ export class BackendConnectService {
         settings: settings,
       })
       .subscribe((res: any) => {
+        this.snackbarService.success('settings saved successfully!');
         //optional error handling
       });
   }
