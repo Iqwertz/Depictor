@@ -47,6 +47,13 @@ rm -r Depictor-Backend
 echo -e "\x1B[96m installing Node modules \x1B[0m"
 npm i
 
+echo -e "\x1B[96m setting default Gcodes \x1B[0m"
+if [ -z "$(ls -A /data/savedGcodes)" ]; then
+   cp -a /assets/defaultGcodes/. /data/savedGcodes
+else
+   echo "System already has gcode data"
+fi
+
 echo -e "\x1B[96m setting chmod flags \x1B[0m"
 sudo chmod +x chmodScripts.sh
 sudo ./chmodScripts.sh
