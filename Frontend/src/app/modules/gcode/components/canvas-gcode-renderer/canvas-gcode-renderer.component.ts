@@ -43,8 +43,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
   lastDrawingCommand: string = '';
   lastDrawingPosition = 0;
 
-  bounds: number[] = [];
-
   height: number = window.innerHeight - 250;
   width: number = window.innerWidth / 2;
 
@@ -179,28 +177,30 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     }
 
     //   scales the gcode to fit window and centers it
-    this.bounds = this.getBiggestValue(this.gcodeFile);
-    console.log(this.bounds);
+    let biggestValues = this.getBiggestValues(this.gcodeFile);
+    let bounds: number[] = biggestValues[1];
+    /*     bounds[0] += Math.abs(biggestValues[0][0]);
+    bounds[1] += Math.abs(biggestValues[0][1]); */
 
     this.offset = [0, 0];
 
     if (
       this.canvas.nativeElement.width / this.canvas.nativeElement.height <
-      this.bounds[0] / this.bounds[1]
+      bounds[0] / bounds[1]
     ) {
       //can be optimized when called only once per new gcode file (not at any change)
       this.rendererConfig.gcodeScale =
-        this.canvas.nativeElement.width / this.bounds[0];
+        this.canvas.nativeElement.width / bounds[0];
       this.offset[1] =
         (this.canvas.nativeElement.height -
-          this.bounds[1] * this.rendererConfig.gcodeScale) /
+          bounds[1] * this.rendererConfig.gcodeScale) /
         2;
     } else {
       this.rendererConfig.gcodeScale =
-        this.canvas.nativeElement.height / this.bounds[1];
+        this.canvas.nativeElement.height / bounds[1];
       this.offset[0] =
         (this.canvas.nativeElement.width -
-          this.bounds[0] * this.rendererConfig.gcodeScale) /
+          bounds[0] * this.rendererConfig.gcodeScale) /
         2;
     }
 
@@ -222,10 +222,11 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     );
   }
 
-  getBiggestValue(gcode: string): number[] {
+  getBiggestValues(gcode: string): number[][] {
     //determins the farthest cordinates
     let commands: string[] = gcode.split(/\r?\n/);
     let biggest: number[] = [0, 0];
+    let smallest: number[] = [0, 0];
     for (let cmd of commands) {
       let cords: number[] = this.getG1Parameter(cmd);
       if (cords[0] > biggest[0]) {
@@ -234,8 +235,15 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
       if (cords[1] > biggest[1]) {
         biggest[1] = cords[1];
       }
+
+      if (cords[0] < smallest[0]) {
+        smallest[0] = cords[0];
+      }
+      if (cords[1] < smallest[1]) {
+        smallest[1] = cords[1];
+      }
     }
-    return biggest;
+    return [smallest, biggest];
   }
 
   drawGcode(
@@ -275,11 +283,13 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     this.ctx.beginPath();
     for (let i = 0; i < renderedLines; i++) {
       let command: string = commands[i];
-      if (command.startsWith('G1') || command.startsWith('G0')) {
-        let parameter: number[] = this.getG1Parameter(
-          command,
-          lastCommandParameter
-        );
+      if (
+        command.startsWith('G1') ||
+        command.startsWith('G0') ||
+        command.startsWith('X') ||
+        command.startsWith('Y')
+      ) {
+        let parameter: number[] = this.getG1Parameter(command);
         if (isPenDown || ignorePen) {
           this.ctx.moveTo(
             lastCommandParameter[0] * scale + offset[0],
@@ -327,7 +337,7 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     let bounds: number[] = [];
     if (transform[1] || transform[2]) {
       //only calculate the biggest gcode value when needed
-      bounds = this.getBiggestValue(gcode);
+      bounds = this.getBiggestValues(gcode)[1];
     }
 
     let gcodeArray: string[] = gcode.split('\n');
@@ -360,7 +370,7 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     return gcodeArray.join('\n');
   }
 
-  getG1Parameter(command: string, lastCommandParams?: number[]): number[] {
+  getG1Parameter(command: string): number[] {
     let Xindex: number = command.indexOf('X');
     let Yindex: number = command.indexOf('Y');
     let x: number = 0;
