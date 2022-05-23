@@ -104,8 +104,12 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     }
     let serverGcode: string = this.gcodeViewerService.gcodeFile;
     let gcodeArray: string[] = serverGcode.split('\n');
-    gcodeArray = this.replacePenDownCommand(gcodeArray);
-    gcodeArray = this.scaleGcode(gcodeArray);
+
+    if (this.gcodeViewerService.gcodeType != 'custom') {
+      gcodeArray = this.replacePenDownCommand(gcodeArray);
+      gcodeArray = this.scaleGcode(gcodeArray);
+    }
+
     let nr = this.notRenderdLines * -1;
     if (nr == 0) {
       nr = -1;
@@ -119,14 +123,16 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
       gcodeArray.splice(0, 6);
     } */
     let strippedGcode: string = gcodeArray.slice(0, nr).join('\n');
-    strippedGcode = this.applyOffset(
-      strippedGcode,
-      this.settings.drawingOffset
-    );
     if (this.gcodeViewerService.gcodeType != 'custom') {
+      strippedGcode = this.applyOffset(
+        strippedGcode,
+        this.settings.drawingOffset
+      );
+
       strippedGcode = this.settings.startGcode + '\n' + strippedGcode + '\n';
       strippedGcode += this.settings.endGcode;
     }
+
     this.backendConnectService.postGcode(strippedGcode);
     this.loadingService.isLoading = false;
     this.router.navigate(['gcode', 'drawing']);
@@ -187,6 +193,11 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
         let parameter = this.getG1Parameter(command);
         parameter[0] += offset[0];
         parameter[1] += offset[1];
+
+        //round floating points
+        parameter[0] = this.round(parameter[0], this.settings.floatingPoints);
+        parameter[1] = this.round(parameter[1], this.settings.floatingPoints);
+
         gcodeArray[i] = 'G1 X' + parameter[0] + 'Y' + parameter[1];
       }
     }
@@ -205,4 +216,10 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     );
     return [x, y];
   }
+
+  // from: https://stackoverflow.com/questions/11832914/how-to-round-to-at-most-2-decimal-places-if-necessary
+  private round = (n: number, dp: number) => {
+    const h = +'1'.padEnd(dp + 1, '0'); // 10 or 100 or 1000 or etc
+    return Math.round(n * h) / h;
+  };
 }

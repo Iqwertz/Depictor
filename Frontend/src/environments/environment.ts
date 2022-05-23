@@ -12,6 +12,7 @@ const settings: Settings = {
   drawingOffset: [0, 0],
   gcodeDisplayTransform: [true, false, true],
   standardizeGcode: true,
+  floatingPoints: 3,
   standardizerSettings: {
     convertG0: true,
     removeUnsupportedCommands: true,

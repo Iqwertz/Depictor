@@ -84,7 +84,7 @@ export class GcodeViewerService {
     let biggestNegativ: number[] = [0, 0];
     let biggest: number[] = [0, 0];
     let lastG1Index: number = 0;
-    const maxFloatingPoints: number = 3;
+    const maxFloatingPoints: number = this.settings.floatingPoints;
 
     let settings: StandartizerSettings = this.settings.standardizerSettings;
 

@@ -9,13 +9,14 @@ const settings: Settings = {
   drawingOffset: [0, 0],
   gcodeDisplayTransform: [true, false, true],
   standardizeGcode: true,
+  floatingPoints: 3,
   standardizerSettings: {
     convertG0: true,
     removeUnsupportedCommands: true,
     removeUnusedParameter: true,
     scaleToDrawingArea: true,
     transfromToPositiveSpace: true,
-    supportedCommands: 'G1;M3;M5;F;$',
+    supportedCommands: 'G1;M3;M03;M5;M05;F;$',
   },
 };
 
