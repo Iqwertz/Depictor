@@ -18,6 +18,7 @@ import { SetSettings } from '../store/app.action';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { SnackbarService } from './snackbar.service';
+import { GalleryEntryUpload } from '../modules/gcode/sites/gcode-edit/gcode-edit.component';
 
 export interface BackendVersion {
   tag: string; //version tag is used to check if a newer version is available
@@ -348,20 +349,9 @@ export class BackendConnectService {
     );
   }
 
-  uploadGcodeToGallery(
-    screenshot: string,
-    gcode: string,
-    redirect: boolean,
-    standardized: boolean,
-    name: string
-  ) {
+  uploadGcodeToGallery(uploadData: GalleryEntryUpload, redirect: boolean) {
     this.http
-      .post('http://' + this.ip + '/uploadGalleryEntry', {
-        preview: screenshot,
-        gcode: gcode,
-        standardized: standardized,
-        name: name,
-      })
+      .post('http://' + this.ip + '/uploadGalleryEntry', uploadData)
       .subscribe((res: any) => {
         if (redirect) {
           this.loadingService.isLoading = false;

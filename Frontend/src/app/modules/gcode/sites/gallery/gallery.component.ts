@@ -84,6 +84,7 @@ export class GalleryComponent implements OnInit {
   }
 
   loadGcodeById(id: string) {
+    console.log(id);
     this.loadingService.isLoading = true;
     this.loadingService.loadingText = 'loading Data';
     this.backendConnectService.getGcodeById(id).subscribe((data: any) => {
@@ -93,12 +94,26 @@ export class GalleryComponent implements OnInit {
         console.log(data.err);
       } else {
         this.gcodeViewerService.standardized = true;
-        if (id.startsWith('c')) {
-          this.gcodeViewerService.standardized = false;
-          this.gcodeViewerService.gcodeType = 'custom';
-        } else if (id.startsWith('sc')) {
-          this.gcodeViewerService.gcodeType = 'stanCustom';
+
+        console.log(id);
+        let idData = id.split('#');
+
+        if (idData.length > 1) {
+          let config = idData[2].split(',');
+          if (config[0] == 's0') {
+            this.gcodeViewerService.scaleToDrawingArea = false;
+          } else {
+            this.gcodeViewerService.scaleToDrawingArea = true;
+          }
+
+          if (idData[1] == 'c') {
+            this.gcodeViewerService.standardized = false;
+            this.gcodeViewerService.gcodeType = 'custom';
+          } else if (idData[1] == 'sc') {
+            this.gcodeViewerService.gcodeType = 'stanCustom';
+          }
         }
+
         this.gcodeViewerService.gcodeId = id;
         this.gcodeViewerService.setGcodeFile(
           data.data,

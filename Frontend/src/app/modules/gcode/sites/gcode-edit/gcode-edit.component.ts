@@ -12,6 +12,15 @@ import { AppState } from '../../../../store/app.state';
 import { Settings } from '../../../shared/components/settings/settings.component';
 import { SnackbarService } from '../../../../services/snackbar.service';
 import { LoadingService } from '../../../shared/services/loading.service';
+
+export interface GalleryEntryUpload {
+  name?: string;
+  gcode: string;
+  preview: string;
+  standardized: boolean;
+  scale: boolean;
+}
+
 @Component({
   templateUrl: './gcode-edit.component.html',
   styleUrls: ['./gcode-edit.component.scss'],
@@ -86,13 +95,15 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
       this.snackbarService.error('Error: Couldn`t generate preview Image');
       return;
     }
-    this.backendConnectService.uploadGcodeToGallery(
-      screenshot,
-      this.gcodeViewerService.gcodeFile,
-      redirect,
-      this.gcodeViewerService.standardized,
-      this.gcodeViewerService.gcodeFileName
-    );
+
+    let uploadData: GalleryEntryUpload = {
+      gcode: this.gcodeViewerService.gcodeFile,
+      preview: screenshot,
+      standardized: this.gcodeViewerService.standardized,
+      scale: this.gcodeViewerService.scaleToDrawingArea,
+    };
+
+    this.backendConnectService.uploadGcodeToGallery(uploadData, redirect);
   }
 
   startDraw() {
@@ -107,7 +118,9 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
 
     if (this.gcodeViewerService.gcodeType != 'custom') {
       gcodeArray = this.replacePenDownCommand(gcodeArray);
-      gcodeArray = this.scaleGcode(gcodeArray);
+      if (this.gcodeViewerService.scaleToDrawingArea) {
+        gcodeArray = this.scaleGcode(gcodeArray);
+      }
     }
 
     let nr = this.notRenderdLines * -1;

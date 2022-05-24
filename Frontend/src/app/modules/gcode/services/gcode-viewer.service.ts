@@ -32,6 +32,7 @@ export class GcodeViewerService {
   gcodeType: GcodeType = 'gallery';
   gcodeId: string = '';
   standardized: boolean = true;
+  scaleToDrawingArea: boolean = true;
 
   $renderGcode: Subject<void> = new Subject<void>();
 

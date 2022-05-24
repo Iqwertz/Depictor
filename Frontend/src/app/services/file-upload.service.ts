@@ -49,6 +49,8 @@ export class FileUploadService {
       if (typeof result === 'string') {
         this.gcodeViewerService.gcodeId = '';
         this.gcodeViewerService.standardized = this.settings.standardizeGcode;
+        this.gcodeViewerService.scaleToDrawingArea =
+          this.settings.standardizerSettings.scaleToDrawingArea;
         let gcode = '';
         if (this.settings.standardizeGcode) {
           gcode = this.gcodeViewerService.standartizeGcode(result);

@@ -458,18 +458,33 @@ expected request:
   }
 
 */
-app.post("/uploadGalleryEntry", (req: Request, res: Response) => {
+interface GalleryEntryUpload {
+  name?: string;
+  gcode: string;
+  preview: string;
+  standardized: boolean;
+  scale: boolean;
+}
+
+app.post("/uploadGalleryEntry", (req: Request<{}, {}, GalleryEntryUpload>, res: Response) => {
   logger.http("post: uploadGalleryEntry");
 
   const fName: number = Date.now();
+  let config: string = "";
+  if (req.body.scale) {
+    config += "s1,";
+  } else {
+    config += "s0,";
+  }
   let flag: string = "c";
   let b64Preview: string = req.body.preview.replace(/^data:image\/png;base64,/, "");
   if (req.body.standardized) {
     flag = "sc";
   }
+
   fse.outputFile(
     //save the gcode file //this file will be used by the gcodesender
-    "data/savedGcodes/" + flag + fName + "^" + req.body.name + ".nc",
+    "data/savedGcodes/" + fName + "#" + flag + "#" + config + ".nc",
     req.body.gcode,
     "utf8",
     function (err: any, data: any) {
@@ -483,7 +498,7 @@ app.post("/uploadGalleryEntry", (req: Request, res: Response) => {
 
   fse.outputFile(
     //save the gcode file //this file will be used by the gcodesender
-    "data/savedGcodes/" + flag + fName + "^" + req.body.name + ".png",
+    "data/savedGcodes/" + fName + "#" + flag + "#" + config + ".png",
     b64Preview,
     "base64",
     function (err: any, data: any) {

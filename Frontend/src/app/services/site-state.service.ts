@@ -152,6 +152,7 @@ export class SiteStateService {
           //        console.log(res.data);
           this.gcodeViewerService.setGcodeFile(res.data, 'generated', '');
           this.gcodeViewerService.gcodeId = '';
+          this.gcodeViewerService.scaleToDrawingArea = true;
           this.loadingService.isLoading = false;
           this.router.navigate(['gcode', 'editGcode']);
         }

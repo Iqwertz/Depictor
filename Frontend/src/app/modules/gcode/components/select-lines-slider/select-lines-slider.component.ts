@@ -18,6 +18,7 @@ export class SelectLinesSliderComponent implements OnInit {
 
   sliderChanged() {
     this.sliderUpdate.emit(this.notRenderdLines);
+    console.log(this.gcodeViewerService.scaleToDrawingArea);
     //this.gcodeViewerService.gcodeFileChanged = true;
   }
 
