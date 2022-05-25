@@ -118,6 +118,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
 
     if (this.gcodeViewerService.gcodeType != 'custom') {
       gcodeArray = this.replacePenDownCommand(gcodeArray);
+      gcodeArray = this.applyOffset(gcodeArray, this.settings.drawingOffset);
       if (this.gcodeViewerService.scaleToDrawingArea) {
         gcodeArray = this.scaleGcode(gcodeArray);
       }
@@ -136,12 +137,8 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
       gcodeArray.splice(0, 6);
     } */
     let strippedGcode: string = gcodeArray.slice(0, nr).join('\n');
-    if (this.gcodeViewerService.gcodeType != 'custom') {
-      strippedGcode = this.applyOffset(
-        strippedGcode,
-        this.settings.drawingOffset
-      );
 
+    if (this.gcodeViewerService.gcodeType != 'custom') {
       strippedGcode = this.settings.startGcode + '\n' + strippedGcode + '\n';
       strippedGcode += this.settings.endGcode;
     }
@@ -197,9 +194,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     return gcode;
   }
 
-  applyOffset(gcode: string, offset: number[]): string {
-    let gcodeArray: string[] = gcode.split('\n');
-
+  applyOffset(gcodeArray: string[], offset: number[]): string[] {
     for (let i = 0; i < gcodeArray.length; i++) {
       let command = gcodeArray[i];
       if (command.startsWith('G1')) {
@@ -215,7 +210,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
       }
     }
 
-    return gcodeArray.join('\n');
+    return gcodeArray;
   }
 
   getG1Parameter(command: string): number[] {
