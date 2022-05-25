@@ -119,13 +119,12 @@ Before you try to draw your first image, you propably have to adjust these three
 In this textfield you can paste some gcode that gets appended to the gcode file before drawing it. Before starting your first print please adjust the feedrate (default: 4000) and the homing command (default: $H) for your plotter. 
 
 ### **Gcode scaling**
-The maximum values of the generated gcode are X200, Y162. If you move your plotter to this point the pen should be at the boarder of the a4 paper you want to draw on. If this is not the case you have to adjust the scaling of the generated gcode: 
+Depictor will automatically scale your gcode to the size of your drawing area. By default the  drawing area is from [X0 Y0] to  [X20 Y162]. Since these values are propably diffrent on your machine you will have to adjust them:
 
-To calculate the correct scaling for your plotter move your plotter to (0,0). Now place one corner of the A4 paper under the pen. 
-Now move the y axis to the other corner of the A4 Paper. Note down the y coordinate of the new position. Then divide this value by 162. 
-The result is the correct scaling. Enter it into the "_Gcode scaling_" field in the settings. 
-
-If the drawen picture is not in the center of the paper you can shift the image by adjusting the "_Gcode offset_" setting.
+- Gcode scaling:
+  - To calculate this value move the pen to the corner of your drawing area that is furthest aways from 0,0. Enter these values in the settings under "Gcode scaling"
+- Gcode offset:
+  - To calculate this value move the pen to the corner of your drawing area that is closest to 0,0. Enter these values in the settings under "Gcode offset".
 
 ### **Pen down command**
 As the name says this is the command that is used to lower the pen during drawing. If this command is diffrent on your plotter please change it here.
