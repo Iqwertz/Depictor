@@ -109,6 +109,10 @@ Now paste these three commands:
   sudo chmod +x install.sh
   sudo ./install.sh
 ```
+(Or use this one liner:)
+```bash
+  wget https://raw.githubusercontent.com/Iqwertz/Depictor/main/install.sh && sudo chmod +x install.sh && sudo ./install.sh
+```
 
 The install will take a few minutes. After it finished you successfully have installed Depictor! You can access it by opening this url in the browser: [depictor.local](http://depictor.local/).
 
