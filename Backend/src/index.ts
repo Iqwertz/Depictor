@@ -310,11 +310,11 @@ returns:
 */
 app.post("/stop", (req: Request, res: Response) => {
   logger.http("post: stop");
-  appState = "idle"; //reset appState
   drawingProgress = 0; //reset drawing progress
   kill(currentDrawingProcessPID); //kill the drawing process
   setTimeout(() => {
     //Home after some timeout because kill() needs some time
+    appState = "idle"; //reset appState
     exec("./scripts/home.sh", function (err: any, data: any) {
       if (err) {
         logger.error(err);
