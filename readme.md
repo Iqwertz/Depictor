@@ -11,7 +11,7 @@
 
 
 Depictor is a web app that runs on a Raspberry Pi. It provides a simple and clean web interface to easily generate and draw images on an 2d plotter.
-It features automatic background removal, custom gcode settings, print time estimates, gallery with previous prints and many more features.
+It features automatic background removal, custom gcode settings, print time estimates, gallery with previous prints and many more features. It is currently optimized for GRBL plotter, but the basic feautres should work with most plotter.
 
 The image conversion is based on the [Drawbot_image_to_gcode_v2](https://github.com/Scott-Cooper/Drawbot_image_to_gcode_v2) project.
 
@@ -130,9 +130,8 @@ Depictor will automatically scale your gcode to the size of your drawing area. B
 - Gcode offset:
   - To calculate this value move the pen to the corner of your drawing area that is closest to 0,0. Enter these values in the settings under "Gcode offset".
 
-### **Pen down command**
-As the name says this is the command that is used to lower the pen during drawing. If this command is diffrent on your plotter please change it here.
-(Note: Currently the pen up command is always "_M05_"! I will add an option to change this in the future. If it is important to you please create an issue)
+### **Pen down command** / **Pen up command**
+Here you can configure the commands to lift and lower the drawing pen. If these commands are diffrent on your plotter please change them here.
 
 ### **Enable automatic background removal**
 The background remove function uses the [remove.bg](https://www.remove.bg/) api. To enable it you have to get an API key:
