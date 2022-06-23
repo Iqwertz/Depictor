@@ -30,6 +30,7 @@ export interface Settings {
   endGcode: string;
   startGcode: string;
   penDownCommand: string;
+  penUpCommand: string;
   avgTimePerLine: number;
   maxImageFileSize: number;
   paperMax: number[]; //Maximum coordinates of the drawing area
@@ -127,11 +128,15 @@ export class SettingsComponent implements OnInit {
   }
 
   penUp() {
-    this.backendConnectService.executeGcode('$X;\nM05;');
+    this.backendConnectService.executeGcode(
+      `$X;\n${this.settings.penUpCommand};`
+    );
   }
 
   penDown() {
-    this.backendConnectService.executeGcode('$X;\nM03S500;');
+    this.backendConnectService.executeGcode(
+      `$X;\n${this.settings.penDownCommand};`
+    );
   }
 
   checkForUpdates() {

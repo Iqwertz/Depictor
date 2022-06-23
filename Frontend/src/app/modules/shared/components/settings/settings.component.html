@@ -191,6 +191,11 @@
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
+            <div class="label small">Pen up command</div>
+            <input type="text" class="action-textinput" [(ngModel)]="settings.penUpCommand" />
+        </div>
+
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">Pen down command</div>
             <input type="text" class="action-textinput" [(ngModel)]="settings.penDownCommand" />
         </div>

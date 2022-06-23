@@ -301,9 +301,17 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
           );
         }
         lastCommandParameter = parameter;
-      } else if (command.startsWith('M05') || command.startsWith('M5')) {
+      } else if (
+        command.startsWith('M05') ||
+        command.startsWith('M5') ||
+        command == this.settings.penUpCommand
+      ) {
         isPenDown = false;
-      } else if (command.startsWith('M03') || command.startsWith('M3')) {
+      } else if (
+        command.startsWith('M03') ||
+        command.startsWith('M3') ||
+        command == this.settings.penDownCommand
+      ) {
         isPenDown = true;
       }
     }

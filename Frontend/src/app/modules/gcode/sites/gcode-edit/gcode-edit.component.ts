@@ -117,7 +117,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     let gcodeArray: string[] = serverGcode.split('\n');
 
     if (this.gcodeViewerService.gcodeType != 'custom') {
-      gcodeArray = this.replacePenDownCommand(gcodeArray);
+      gcodeArray = this.replacePenCommands(gcodeArray);
       gcodeArray = this.applyOffset(gcodeArray, this.settings.drawingOffset);
       if (this.gcodeViewerService.scaleToDrawingArea) {
         gcodeArray = this.scaleGcode(gcodeArray);
@@ -148,10 +148,12 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     this.router.navigate(['gcode', 'drawing']);
   }
 
-  replacePenDownCommand(gcode: string[]): string[] {
+  replacePenCommands(gcode: string[]): string[] {
     for (let i = 0; i < gcode.length; i++) {
       if (gcode[i].includes('M03') || gcode[i].includes('M3')) {
         gcode[i] = this.settings.penDownCommand;
+      } else if (gcode[i].includes('M05') || gcode[i].includes('M5')) {
+        gcode[i] = this.settings.penUpCommand;
       }
     }
     return gcode;

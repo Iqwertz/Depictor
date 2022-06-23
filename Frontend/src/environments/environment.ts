@@ -6,6 +6,7 @@ const settings: Settings = {
   endGcode: 'M05;\nG01X0Y0;',
   startGcode: '$H\nG92X0Y0Z0\nF4000\nG21\nG90\nM05',
   penDownCommand: 'M03S500;',
+  penUpCommand: 'M05;',
   avgTimePerLine: 0.096755719, //in s
   maxImageFileSize: 0.05, //in MB
   paperMax: [200, 162],
