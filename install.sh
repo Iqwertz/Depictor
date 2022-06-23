@@ -1,5 +1,8 @@
 #!/bin/bash
 
+mkdir Depictor
+cd Depictor
+
 echo -e "\x1B[96m starting Depictor install \x1B[0m"
 
 echo -e "\x1B[96m updating system \x1B[0m"
