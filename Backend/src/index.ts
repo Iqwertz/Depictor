@@ -991,6 +991,17 @@ function convertBase64ToGcode(base64: string) {
                 }
               );
 
+              fse.copy(
+                //save the generated svg file to the gcode folder
+                img2gcodePath + "gcode/gcode_image.svg",
+                "data/savedGcodes/" + fName + ".svg",
+                (err: any) => {
+                  if (err) {
+                    logger.error(err);
+                  }
+                }
+              );
+
               appState = "rawGcodeReady"; //update appState
             }
           }

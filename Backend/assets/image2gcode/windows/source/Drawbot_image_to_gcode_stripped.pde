@@ -157,6 +157,7 @@ void drawfunctions() {
             noLoop();
            save("gcode/render.png");
             create_gcode_files(display_line_count);
+            create_svg_file(display_line_count);
             exit();
             break;
         default:

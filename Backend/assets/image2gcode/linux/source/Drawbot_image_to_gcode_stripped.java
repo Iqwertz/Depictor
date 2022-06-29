@@ -173,6 +173,7 @@ public void drawfunctions() {
             noLoop();
            save("gcode/render.png");
             create_gcode_files(display_line_count);
+            create_svg_file(display_line_count);
             exit();
             break;
         default:
@@ -398,6 +399,28 @@ class botDrawing {
         lines[i].render_with_copic();
       }
     }
+  }
+  
+  public void set_pen_continuation_flags () {
+    float prev_x = 123456.0f;
+    float prev_y = 654321.0f;
+    boolean prev_pen_down = false;
+    int prev_pen_number = 123456;
+    
+    for (int i=1; i<line_count; i++) { 
+ 
+      if (prev_x != lines[i].x1 || prev_y != lines[i].y1 || prev_pen_down != lines[i].pen_down  || prev_pen_number != lines[i].pen_number) {
+        lines[i].pen_continuation = false;
+      } else {
+        lines[i].pen_continuation = true;
+      }
+
+      prev_x = lines[i].x2;
+      prev_y = lines[i].y2;
+      prev_pen_down = lines[i].pen_down;
+      prev_pen_number = lines[i].pen_number;
+    }
+    println("set_pen_continuation_flags");
   }
 
   public void addline(int pen_number_, boolean pen_down_, float x1_, float y1_, float x2_, float y2_) {
@@ -660,6 +683,83 @@ public void create_gcode_files(int line_count) {
         println("gcode created:  " + gname);
     }
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+// Thanks to Vladimir Bochkov for helping me debug the SVG international decimal separators problem.
+public String svg_format (Float n) {
+  final char regional_decimal_separator = ',';
+  final char svg_decimal_seperator = '.';
+  
+  String s = nf(n, 0, svg_decimals);
+  s = s.replace(regional_decimal_separator, svg_decimal_seperator);
+  return s;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+// Thanks to John Cliff for getting the SVG output moving forward.
+public void create_svg_file (int line_count) {
+  boolean drawing_polyline = false;
+  
+  // Inkscape versions before 0.91 used 90dpi, Today most software assumes 96dpi.
+  float svgdpi = 96.0f / 25.4f;
+  
+  String gname = "gcode\\gcode_" + basefile_selected + ".svg";
+  OUTPUT = createWriter(sketchPath("") + gname);
+  OUTPUT.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
+  OUTPUT.println("<svg width=\"" + svg_format(img.width * gcode_scale) + "mm\" height=\"" + svg_format(img.height * gcode_scale) + "mm\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">");
+  d1.set_pen_continuation_flags();
+  
+  // Loop over pens backwards to display dark lines last.
+  // Then loop over all displayed lines.
+  for (int p=pen_count-1; p>=0; p--) {    
+    OUTPUT.println("<g id=\"0\">");
+    for (int i=1; i<line_count; i++) { 
+      if (d1.lines[i].pen_number == p) {
+
+        // Do we add gcode_offsets needed by my bot, or zero based?
+        //float gcode_scaled_x1 = d1.lines[i].x1 * gcode_scale * svgdpi + gcode_offset_x;
+        //float gcode_scaled_y1 = d1.lines[i].y1 * gcode_scale * svgdpi + gcode_offset_y;
+        //float gcode_scaled_x2 = d1.lines[i].x2 * gcode_scale * svgdpi + gcode_offset_x;
+        //float gcode_scaled_y2 = d1.lines[i].y2 * gcode_scale * svgdpi + gcode_offset_y;
+        
+        float gcode_scaled_x1 = d1.lines[i].x1 * gcode_scale * svgdpi;
+        float gcode_scaled_y1 = d1.lines[i].y1 * gcode_scale * svgdpi;
+        float gcode_scaled_x2 = d1.lines[i].x2 * gcode_scale * svgdpi;
+        float gcode_scaled_y2 = d1.lines[i].y2 * gcode_scale * svgdpi;
+
+        if (d1.lines[i].pen_continuation == false && drawing_polyline) {
+          OUTPUT.println("\" />");
+          drawing_polyline = false;
+        }
+
+        if (d1.lines[i].pen_down) {
+          if (d1.lines[i].pen_continuation) {
+            String buf = svg_format(gcode_scaled_x2) + "," + svg_format(gcode_scaled_y2);
+            OUTPUT.println(buf);
+            drawing_polyline = true;
+          } else {
+            OUTPUT.println("<polyline fill=\"none\" stroke=\"#000000\" stroke-width=\"1.0\" stroke-opacity=\"1\" points=\"");
+            String buf = svg_format(gcode_scaled_x1) + "," + svg_format(gcode_scaled_y1);
+            OUTPUT.println(buf);
+            drawing_polyline = true;
+          }
+        }
+      }
+    }
+    if (drawing_polyline) {
+      OUTPUT.println("\" />");
+      drawing_polyline = false;
+    }
+    OUTPUT.println("</g>");
+  }
+  OUTPUT.println("</svg>");
+  OUTPUT.flush();
+  OUTPUT.close();
+  println("SVG created:  " + gname);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 public void image_threshold() {
   img.filter(THRESHOLD);
