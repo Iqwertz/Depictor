@@ -65,6 +65,8 @@ app.use(cors()); //enable cors
 
 httpServer = require("http").createServer(app); //create new http server
 
+var SerialPort = require('serialport').SerialPort; // omega2 port (at v3)
+
 /*
 post: /newPicture
 
@@ -745,12 +747,23 @@ app.get("/zipData", async function (req: any, res: any) {
   });
 });
 
+const { LinuxBinding } = require('@serialport/bindings-cpp')
+
 httpServer!.listen(enviroment.port, () => {
   //start http server
   logger.info("started Server");
   logger.info("listening on *:" + enviroment.port);
   logger.info("Detected Linux: " + isLinux);
+
+  if (isLinux) {
+    listPorts();
+  }
 });
+
+async function listPorts(){
+  const ports = await LinuxBinding.list();
+  console.log(ports)
+}
 
 /**
  *drawGcode()
