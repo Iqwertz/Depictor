@@ -54,6 +54,11 @@ interface GcodeEntry {
   name: string;
 } //reponse interface when sending a gallery item
 
+interface SerialPort{
+  path: string;
+  manufacturer: string;
+}
+
 let appState: AppStates = "idle"; //var to track the current appstate
 let isDrawing: boolean = false; //var to track if the bot is currently drawing
 let drawingProgress: number = 0; //var to track the progress of the current drawing //when -1 drawing failed
@@ -689,6 +694,12 @@ app.post("/getAvailableSerialPorts", (req: Request, res: Response) => {
   logger.http("post: getAvailableSerialPorts");
 
   listPorts().then((ports: any) => {
+    let formattedPorts: SerialPort[] = [];
+    for (let port of ports) {
+      let formattedPort: SerialPort = {path: port.path, manufacturer: port.manufacturer}
+      formattedPorts.push(formattedPort);
+    }
+
     res.json({ ports: ports });
   });
 });
@@ -704,7 +715,7 @@ async function listPorts() {
 }
 
 /*
-post: /setSerialPorts
+post: /setSerialPort
 
 description: returns available serial ports
 
@@ -718,16 +729,16 @@ returns:
     successful
     {}
 */
-app.post("/setSerialPorts", (req: Request, res: Response) => {
+app.post("/setSerialPort", (req: Request, res: Response) => {
   //test this on linux
-  logger.http("post: setSerialPorts");
-
+  logger.http("post: setSerialPort");
+  console.log("setting port to " + req.body.path);
   if (req.body.path) {
     execFile("sudo", ["bash" ,"./scripts/changeSerialPort.sh", req.body.path], function (err: any, data: any) {
       if (err) {
         logger.error(err);
       }
-      console.log(data)
+      
     });
     res.json({});
   } else {
