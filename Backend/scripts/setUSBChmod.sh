@@ -1,3 +1,3 @@
 #!/bin/bash
-
-sudo chmod a+rw /dev/ttyACM0
+source ./portConfig.sh
+sudo chmod a+rw $serialPort

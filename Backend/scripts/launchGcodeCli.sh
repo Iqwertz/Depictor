@@ -1,2 +1,3 @@
 #!/bin/bash
-gcode-cli -b 1 -s 3000 ./assets/gcodes/gcode.nc /dev/ttyACM0,b115200 > ./data/logs/gcodeCliOutput.txt
+source ./portConfig.sh
+gcode-cli -b 1 -s 3000 ./assets/gcodes/gcode.nc $serialPort,b115200 > ./data/logs/gcodeCliOutput.txt
