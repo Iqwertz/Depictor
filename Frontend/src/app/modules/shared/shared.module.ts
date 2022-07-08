@@ -5,9 +5,10 @@ import { LoadingComponent } from './components/loading/loading.component';
 import { SettingsButtonComponent } from './components/settings-button/settings-button.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -20,9 +21,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
   imports: [
     CommonModule,
     FontAwesomeModule,
-    FormsModule,
     MatCheckboxModule,
     FormsModule,
+    ReactiveFormsModule,
+    MatSelectModule,
   ],
   exports: [
     NavbarComponent,

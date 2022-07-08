@@ -25,6 +25,7 @@ import { HttpClient } from '@angular/common/http';
 import { LoadingService } from '../../services/loading.service';
 import { SiteStateService } from '../../../../services/site-state.service';
 import { StandartizerSettings } from '../../../gcode/services/gcode-viewer.service';
+import { FormControl, Validators } from '@angular/forms';
 
 export interface Settings {
   endGcode: string;
@@ -39,6 +40,11 @@ export interface Settings {
   standardizeGcode: boolean;
   standardizerSettings: StandartizerSettings;
   floatingPoints: number;
+}
+
+export interface SerialPort {
+  path: string;
+  manufacturer: string;
 }
 
 @Component({
@@ -77,6 +83,9 @@ export class SettingsComponent implements OnInit {
     production: false,
   };
 
+  serialPortFormControl = new FormControl(null, Validators.required);
+  availableSerialPorts: SerialPort[] = [];
+
   updatesAvailable: boolean = false;
   availableUpdateVersion: string = '';
 
@@ -99,6 +108,13 @@ export class SettingsComponent implements OnInit {
       this.checkForUpdates();
     });
 
+    this.backendConnectService
+      .getAvailableSerialPorts()
+      .subscribe((res: any) => {
+        console.log(res);
+        this.availableSerialPorts = res.ports;
+      });
+
     this.settings$.subscribe((settings: Settings) => {
       this.settings = settings;
     });
@@ -109,6 +125,14 @@ export class SettingsComponent implements OnInit {
   shutdown() {
     this.backendConnectService.shutdown();
     this.router.navigate(['']);
+  }
+
+  setSerialPort() {
+    this.backendConnectService
+      .setSerialPort(this.serialPortFormControl.value)
+      .subscribe((res: any) => {
+        console.log(res);
+      });
   }
 
   setBgRemoveApiKey() {
