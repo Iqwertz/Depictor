@@ -25,6 +25,7 @@ const { spawn } = require("child_process");
 let Tail = require("tail").Tail;
 const axios = require("axios");
 let zip = require("express-easy-zip");
+const { LinuxBinding, WindowsBinding } = require("@serialport/bindings-cpp");
 
 var cors = require("cors");
 const app = express();
@@ -64,8 +65,6 @@ let httpServer: any;
 app.use(cors()); //enable cors
 
 httpServer = require("http").createServer(app); //create new http server
-
-var SerialPort = require('serialport').SerialPort; // omega2 port (at v3)
 
 /*
 post: /newPicture
@@ -672,6 +671,71 @@ app.post("/changeSettings", (req: Request, res: Response) => {
 });
 
 /*
+post: /getAvailableSerialPorts
+
+description: returns available serial ports
+
+expected request: 
+  {}
+  
+returns: 
+    unsuccessful 
+      {}
+
+    successful
+    {ports: string[]}
+*/
+app.post("/getAvailableSerialPorts", (req: Request, res: Response) => {
+  logger.http("post: getAvailableSerialPorts");
+
+  listPorts().then((ports: any) => {
+    res.json({ ports: ports });
+  });
+});
+
+async function listPorts() {
+  if (isLinux) {
+    const ports = await LinuxBinding.list();
+    return ports;
+  } else {
+    const ports = await WindowsBinding.list();
+    return ports;
+  }
+}
+
+/*
+post: /setSerialPorts
+
+description: returns available serial ports
+
+expected request: 
+  {path: string}
+  
+returns: 
+    unsuccessful 
+      {err: string}
+
+    successful
+    {}
+*/
+app.post("/setSerialPorts", (req: Request, res: Response) => {
+  //test this on linux
+  logger.http("post: setSerialPorts");
+
+  if (req.body.path) {
+    exec("bash", ["./scripts/changeSerialPort.sh", "req.body.path"], function (err: any, data: any) {
+      if (err) {
+        logger.error(err);
+      }
+    });
+    res.json({});
+  } else {
+    logger.warn("setSerialPort: no path provided");
+    res.json({ err: "no path provided" });
+  }
+});
+
+/*
 post: /home
 
 description: homes the maschine (when not currently drawing)
@@ -747,23 +811,12 @@ app.get("/zipData", async function (req: any, res: any) {
   });
 });
 
-const { LinuxBinding } = require('@serialport/bindings-cpp')
-
 httpServer!.listen(enviroment.port, () => {
   //start http server
   logger.info("started Server");
   logger.info("listening on *:" + enviroment.port);
   logger.info("Detected Linux: " + isLinux);
-
-  if (isLinux) {
-    listPorts();
-  }
 });
-
-async function listPorts(){
-  const ports = await LinuxBinding.list();
-  console.log(ports)
-}
 
 /**
  *drawGcode()
