@@ -723,10 +723,11 @@ app.post("/setSerialPorts", (req: Request, res: Response) => {
   logger.http("post: setSerialPorts");
 
   if (req.body.path) {
-    exec("bash", ["./scripts/changeSerialPort.sh", "req.body.path"], function (err: any, data: any) {
+    execFile("sudo", ["bash" ,"./scripts/changeSerialPort.sh", req.body.path], function (err: any, data: any) {
       if (err) {
         logger.error(err);
       }
+      console.log(data)
     });
     res.json({});
   } else {
