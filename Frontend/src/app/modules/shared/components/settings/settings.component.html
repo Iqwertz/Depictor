@@ -17,15 +17,12 @@
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">Serial Port</div>
-            <mat-form-field appearance="fill">
-                <mat-label>Select serial port</mat-label>
-                <mat-select [formControl]="serialPortFormControl" required>
-                    <mat-option>--</mat-option>
-                    <mat-option *ngFor="let port of availableSerialPorts" [value]="port.path">
-                        {{ port.path }} ({{ port.manufacturer }})
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
+            <!--html select for serial port options-->
+            <select class="action-select" [formControl]="serialPortFormControl" required>
+        <option *ngFor="let port of availableSerialPorts" [value]="port.path">
+          {{ port.path }} ({{ port.manufacturer }})
+        </option>
+      </select>
             <div class="action-button" (click)="setSerialPort()"><b>Set</b></div>
         </div>
 

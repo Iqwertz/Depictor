@@ -181,6 +181,19 @@ a {
     all: unset;
 }
 
+.action-select {
+    font-size: 20px;
+    font-family: "Josefin Sans", sans-serif !important;
+    border: 2px dotted #000;
+    height: 35px;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 5px 3px;
+    margin-left: 10px;
+    width: 210px;
+    cursor: pointer;
+}
+
 @media screen and (max-width: 700px) {
     .pop-up-container {
         width: 95vw;
