@@ -13,7 +13,7 @@ echo updated Frontend
 echo start Backend Update
 
 shopt -s extglob
-rm -r ./!("data")
+rm -r ./!("data"|"removeBGAPIKey.txt")
 sudo wget "https://github.com/Iqwertz/Depictor/releases/latest/download/Depictor-Backend.zip"
 sudo unzip Depictor-Backend.zip -d ./Depictor-Backend/
 sudo rm Depictor-Backend.zip
