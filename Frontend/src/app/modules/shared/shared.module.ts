@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
+import { TerminalButtonComponent } from './components/terminal-button/terminal-button.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { MatSelectModule } from '@angular/material/select';
     SettingsButtonComponent,
     SettingsComponent,
     ConfirmDialogComponent,
+    TerminalButtonComponent,
   ],
   imports: [
     CommonModule,
@@ -31,6 +33,7 @@ import { MatSelectModule } from '@angular/material/select';
     LoadingComponent,
     SettingsButtonComponent,
     ConfirmDialogComponent,
+    TerminalButtonComponent,
   ],
 })
 export class SharedModule {}
