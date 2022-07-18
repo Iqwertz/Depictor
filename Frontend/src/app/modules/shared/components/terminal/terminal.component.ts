@@ -4,18 +4,20 @@ import {
   EventEmitter,
   Output,
   ViewChild,
+  OnDestroy,
 } from '@angular/core';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { NgTerminal } from 'ng-terminal';
 import { FitAddon } from 'xterm-addon-fit';
 import { WebLinksAddon } from 'xterm-addon-web-links';
+import { TerminalService } from '../../services/terminal.service';
 
 @Component({
   selector: 'app-terminal',
   templateUrl: './terminal.component.html',
   styleUrls: ['./terminal.component.scss'],
 })
-export class TerminalComponent implements OnInit {
+export class TerminalComponent implements OnInit, OnDestroy {
   @Output() close = new EventEmitter<null>();
 
   faTimes = faTimes;
@@ -28,12 +30,17 @@ export class TerminalComponent implements OnInit {
   lineStartLength = 2;
   fitAddon = new FitAddon();
 
-  constructor() {}
+  constructor(private terminalService: TerminalService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.terminalService.connectTerminal();
+  }
+
+  ngOnDestroy() {
+    this.terminalService.disconnect();
+  }
 
   ngAfterViewInit() {
-    //...
     this.child.underlying.loadAddon(new WebLinksAddon());
     this.child.underlying.loadAddon(this.fitAddon);
     this.fitAddon.fit();
@@ -43,11 +50,11 @@ export class TerminalComponent implements OnInit {
     this.child.underlying.blur();
     this.child.underlying.setOption('scrollback', true);
     this.child.keyEventInput.subscribe((e) => {
-      console.log('keyboard event:' + e.domEvent.keyCode + ', ' + e.key);
       const ev = e.domEvent;
       const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
       if (ev.keyCode === 13) {
         console.log(this.currentLine);
+        this.terminalService.sendCommand(this.currentLine);
         this.child.write('\r\n ');
         this.currentLine = '';
       } else if (ev.keyCode === 8) {
