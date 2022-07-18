@@ -25,7 +25,6 @@ import { HttpClient } from '@angular/common/http';
 import { LoadingService } from '../../services/loading.service';
 import { SiteStateService } from '../../../../services/site-state.service';
 import { StandartizerSettings } from '../../../gcode/services/gcode-viewer.service';
-import { FormControl, Validators } from '@angular/forms';
 
 export interface Settings {
   endGcode: string;
@@ -40,6 +39,7 @@ export interface Settings {
   standardizeGcode: boolean;
   standardizerSettings: StandartizerSettings;
   floatingPoints: number;
+  port: string;
 }
 
 export interface SerialPort {
@@ -83,7 +83,6 @@ export class SettingsComponent implements OnInit {
     production: false,
   };
 
-  serialPortFormControl = new FormControl(null, Validators.required);
   availableSerialPorts: SerialPort[] = [];
 
   updatesAvailable: boolean = false;
@@ -128,8 +127,9 @@ export class SettingsComponent implements OnInit {
   }
 
   setSerialPort() {
+    console.log(this.settings.port);
     this.backendConnectService
-      .setSerialPort(this.serialPortFormControl.value)
+      .setSerialPort(this.settings.port)
       .subscribe((res: any) => {
         console.log(res);
       });

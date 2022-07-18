@@ -18,12 +18,11 @@
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">Serial Port</div>
             <!--html select for serial port options-->
-            <select class="action-select" [formControl]="serialPortFormControl" required>
+            <select class="action-select" [(ngModel)]="settings.port" (change)="setSerialPort()">
         <option *ngFor="let port of availableSerialPorts" [value]="port.path">
           {{ port.path }} ({{ port.manufacturer }})
         </option>
       </select>
-            <div class="action-button" (click)="setSerialPort()"><b>Set</b></div>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
