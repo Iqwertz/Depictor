@@ -17,6 +17,7 @@ import { RemoveBgResult, RemoveBgError, removeBackgroundFromImageBase64 } from "
 import { Request, Response } from "express";
 import { enviroment } from "./enviroment";
 import { version } from "./version";
+import { Socket } from "socket.io";
 
 const kill = require("tree-kill");
 let execFile = require("child_process").execFile;
@@ -26,6 +27,7 @@ let Tail = require("tail").Tail;
 const axios = require("axios");
 let zip = require("express-easy-zip");
 const { LinuxBinding, WindowsBinding } = require("@serialport/bindings-cpp");
+import { SerialPort } from 'serialport'
 
 var cors = require("cors");
 const app = express();
@@ -54,7 +56,7 @@ interface GcodeEntry {
   name: string;
 } //reponse interface when sending a gallery item
 
-interface SerialPort{
+interface SerialPortEntry {
   path: string;
   manufacturer: string;
 }
@@ -70,6 +72,13 @@ let httpServer: any;
 app.use(cors()); //enable cors
 
 httpServer = require("http").createServer(app); //create new http server
+
+const io = require('socket.io')(httpServer, {
+  cors: {
+    origins: ['http://localhost:4200']
+  }
+});
+
 
 /*
 post: /newPicture
@@ -694,9 +703,9 @@ app.post("/getAvailableSerialPorts", (req: Request, res: Response) => {
   logger.http("post: getAvailableSerialPorts");
 
   listPorts().then((ports: any) => {
-    let formattedPorts: SerialPort[] = [];
+    let formattedPorts: SerialPortEntry[] = [];
     for (let port of ports) {
-      let formattedPort: SerialPort = {path: port.path, manufacturer: port.manufacturer}
+      let formattedPort: SerialPortEntry = {path: port.path, manufacturer: port.manufacturer}
       formattedPorts.push(formattedPort);
     }
 
@@ -1162,6 +1171,50 @@ function executeGcode(gcode: string) {
     }
   });
 }
+
+
+////////////////////////////serialport//////////////////////////////////////////////
+let serialport:SerialPort|null = null;
+
+function openSerialPort(){
+  let port:string = "";
+    if (fs.existsSync("data/settings.json")) {
+    let settings = fs.readFileSync("data/settings.json", "utf8");
+   port = JSON.parse(settings).port
+  } else {
+    logger.warn("cant open serial Port, no settings file found");
+  
+  }
+
+  if(!port){
+    logger.error("cant open serial Port, no port found");
+    return "err: noPortFound"
+  }
+
+  serialport = new SerialPort({ path: port, baudRate: 115200 })
+}
+
+
+///////////////////////////socket.io//////////////////////////////////////////////
+io.on('connection', (socket:any) => {
+  console.log('a user connected');
+  openSerialPort();
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+    serialport?.close();
+  });
+
+    socket.on('command', (msg:string) => {
+    console.log('message: ' + msg);
+    if(serialport){
+      serialport.write(msg + "\n");
+    }else{
+      logger.error("serialport not open")
+    }
+  });
+});
+
+
 
 ////////////////////logger/////////////////////////
 const logger = winston.createLogger({
