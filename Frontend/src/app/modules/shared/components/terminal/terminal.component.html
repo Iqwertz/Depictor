@@ -1,0 +1,12 @@
+<div class="pop-up-container">
+    <div class="header">
+        <div class="titel">Terminal - dev/tty/ttyS0</div>
+        <div class="close-button" (click)="closeTerminal()">
+            <fa-icon [icon]="faTimes"></fa-icon>
+        </div>
+    </div>
+
+    <div class="terminal-container">
+        <ng-terminal #term [draggable]="false"></ng-terminal>
+    </div>
+</div>

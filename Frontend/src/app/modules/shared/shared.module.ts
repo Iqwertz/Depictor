@@ -10,6 +10,8 @@ import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dial
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { TerminalButtonComponent } from './components/terminal-button/terminal-button.component';
+import { TerminalComponent } from './components/terminal/terminal.component';
+import { NgTerminalModule } from 'ng-terminal';
 
 @NgModule({
   declarations: [
@@ -19,6 +21,7 @@ import { TerminalButtonComponent } from './components/terminal-button/terminal-b
     SettingsComponent,
     ConfirmDialogComponent,
     TerminalButtonComponent,
+    TerminalComponent,
   ],
   imports: [
     CommonModule,
@@ -27,6 +30,7 @@ import { TerminalButtonComponent } from './components/terminal-button/terminal-b
     FormsModule,
     ReactiveFormsModule,
     MatSelectModule,
+    NgTerminalModule,
   ],
   exports: [
     NavbarComponent,
