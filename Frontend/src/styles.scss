@@ -53,6 +53,13 @@ video {
 }
 
 
+/* Dirty fix for terminal resize-handle*/
+
+.resize-handle {
+    display: none !important;
+}
+
+
 /* ===== Scrollbar CSS ===== */
 
 
@@ -60,22 +67,22 @@ video {
 
 * {
     scrollbar-width: auto;
-    scrollbar-color: #696969 #ffffff;
+    scrollbar-color: #696969 #ffffff00;
 }
 
 
 /* Chrome, Edge, and Safari */
 
 *::-webkit-scrollbar {
-    width: 13px;
+    width: 8px;
 }
 
 *::-webkit-scrollbar-track {
-    background: #ffffff;
+    background: #ffffff00;
 }
 
 *::-webkit-scrollbar-thumb {
     background-color: #696969;
     border-radius: 10px;
-    border: 3px solid #ffffff;
+    border: 0px solid #ffffff00;
 }
