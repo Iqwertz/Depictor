@@ -23,11 +23,13 @@ export class TerminalComponent implements OnInit, OnDestroy {
   faTimes = faTimes;
 
   terminalHistory: string[] = [];
+  commandHistory: string[] = [];
+  commandHistoryIndex = 0;
 
   @ViewChild('term', { static: true }) child!: NgTerminal;
   currentLine: string = '';
   pcTyping: boolean = false;
-  lineStartLength = 2;
+  lineStartLength = 0;
   fitAddon = new FitAddon();
 
   constructor(private terminalService: TerminalService) {}
@@ -48,13 +50,26 @@ export class TerminalComponent implements OnInit, OnDestroy {
       background: '#232729',
     });
     this.child.underlying.blur();
-    this.child.underlying.setOption('scrollback', true);
+    this.child.underlying.setOption('cursorBlink', true);
     this.child.keyEventInput.subscribe((e) => {
       const ev = e.domEvent;
-      const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
+      //check if direction key
+
+      const printable =
+        !ev.altKey &&
+        !ev.ctrlKey &&
+        !ev.metaKey &&
+        ev.key !== 'ArrowDown' &&
+        ev.key !== 'ArrowUp' &&
+        ev.key !== 'ArrowLeft' &&
+        ev.key !== 'ArrowRight';
+
       if (ev.keyCode === 13) {
         console.log(this.currentLine);
         this.terminalService.sendCommand(this.currentLine);
+        this.commandHistory.push(this.currentLine);
+        this.compressCommandHistory();
+        this.commandHistoryIndex = this.commandHistory.length;
         this.child.write('\r\n ');
         this.currentLine = '';
       } else if (ev.keyCode === 8) {
@@ -63,6 +78,23 @@ export class TerminalComponent implements OnInit, OnDestroy {
         ) {
           this.child.write('\b \b');
           this.currentLine = this.currentLine.slice(0, -1);
+        }
+      } else if (ev.key === 'ArrowUp') {
+        if (this.commandHistoryIndex > 0 && this.commandHistory.length > 0) {
+          this.commandHistoryIndex--;
+          this.currentLine = this.commandHistory[this.commandHistoryIndex];
+          this.child.write('\x1b[2K\r');
+          this.child.write(this.currentLine);
+        }
+      } else if (ev.key === 'ArrowDown') {
+        if (
+          this.commandHistoryIndex < this.commandHistory.length - 1 &&
+          this.commandHistory.length > 0
+        ) {
+          this.commandHistoryIndex++;
+          this.currentLine = this.commandHistory[this.commandHistoryIndex];
+          this.child.write('\x1b[2K\r');
+          this.child.write(this.currentLine);
         }
       } else if (printable) {
         this.child.write(e.key);
@@ -77,5 +109,11 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
   closeTerminal() {
     this.close.emit();
+  }
+
+  compressCommandHistory() {
+    //check for duplicates
+    const unique = [...new Set(this.commandHistory)];
+    this.commandHistory = unique;
   }
 }
