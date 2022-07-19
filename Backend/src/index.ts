@@ -27,7 +27,7 @@ let Tail = require("tail").Tail;
 const axios = require("axios");
 let zip = require("express-easy-zip");
 const { LinuxBinding, WindowsBinding } = require("@serialport/bindings-cpp");
-import { SerialPort } from 'serialport'
+import { SerialPort } from "serialport";
 
 var cors = require("cors");
 const app = express();
@@ -73,12 +73,11 @@ app.use(cors()); //enable cors
 
 httpServer = require("http").createServer(app); //create new http server
 
-const io = require('socket.io')(httpServer, {
+const io = require("socket.io")(httpServer, {
   cors: {
-    origins: ['http://localhost:4200']
-  }
+    origins: ["http://localhost:4200"],
+  },
 });
-
 
 /*
 post: /newPicture
@@ -705,7 +704,7 @@ app.post("/getAvailableSerialPorts", (req: Request, res: Response) => {
   listPorts().then((ports: any) => {
     let formattedPorts: SerialPortEntry[] = [];
     for (let port of ports) {
-      let formattedPort: SerialPortEntry = {path: port.path, manufacturer: port.manufacturer}
+      let formattedPort: SerialPortEntry = { path: port.path, manufacturer: port.manufacturer };
       formattedPorts.push(formattedPort);
     }
 
@@ -743,11 +742,10 @@ app.post("/setSerialPort", (req: Request, res: Response) => {
   logger.http("post: setSerialPort");
   console.log("setting port to " + req.body.path);
   if (req.body.path) {
-    execFile("sudo", ["bash" ,"./scripts/changeSerialPort.sh", req.body.path], function (err: any, data: any) {
+    execFile("sudo", ["bash", "./scripts/changeSerialPort.sh", req.body.path], function (err: any, data: any) {
       if (err) {
         logger.error(err);
       }
-      
     });
     res.json({});
   } else {
@@ -1172,49 +1170,59 @@ function executeGcode(gcode: string) {
   });
 }
 
-
 ////////////////////////////serialport//////////////////////////////////////////////
-let serialport:SerialPort|null = null;
+let serialport: SerialPort | null = null;
 
-function openSerialPort(){
-  let port:string = "";
-    if (fs.existsSync("data/settings.json")) {
+function openSerialPort() {
+  let port: string = "";
+  if (fs.existsSync("data/settings.json")) {
     let settings = fs.readFileSync("data/settings.json", "utf8");
-   port = JSON.parse(settings).port
+    port = JSON.parse(settings).port;
   } else {
     logger.warn("cant open serial Port, no settings file found");
-  
   }
 
-  if(!port){
+  if (!port) {
     logger.error("cant open serial Port, no port found");
-    return "err: noPortFound"
+    return "err: noPortFound";
   }
 
-  serialport = new SerialPort({ path: port, baudRate: 115200 })
+  serialport = new SerialPort({ path: port, baudRate: 115200 }).setEncoding("utf8");
+
+  // Open errors will be emitted as an error event
+  serialport.on("error", function (err) {
+    logger.error("Serialport error: " + err);
+  });
 }
 
-
 ///////////////////////////socket.io//////////////////////////////////////////////
-io.on('connection', (socket:any) => {
-  console.log('a user connected');
+io.on("connection", (socket: any) => {
+  console.log("a user connected");
   openSerialPort();
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
     serialport?.close();
   });
 
-    socket.on('command', (msg:string) => {
-    console.log('message: ' + msg);
-    if(serialport){
+  if (serialport) {
+    serialport.on("readable", function () {
+      let data = serialport?.read();
+      if (data) {
+        socket.emit("serialData", data);
+      }
+      console.log("Data:", serialport?.read());
+    });
+  }
+
+  socket.on("command", (msg: string) => {
+    console.log("message: " + msg);
+    if (serialport) {
       serialport.write(msg + "\n");
-    }else{
-      logger.error("serialport not open")
+    } else {
+      logger.error("serialport not open");
     }
   });
 });
-
-
 
 ////////////////////logger/////////////////////////
 const logger = winston.createLogger({
