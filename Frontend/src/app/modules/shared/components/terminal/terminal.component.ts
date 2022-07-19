@@ -69,6 +69,10 @@ export class TerminalComponent implements OnInit, OnDestroy {
         this.currentLine += e.key;
       }
     });
+
+    this.terminalService.serialDataObervable.subscribe((data) => {
+      this.child.write(data);
+    });
   }
 
   closeTerminal() {
