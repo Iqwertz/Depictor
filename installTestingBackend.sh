@@ -10,6 +10,5 @@ sudo chmod +x chmodScripts.sh
 sudo ./chmodScripts.sh
 sudo find ./ -type d -exec chmod 755 {} \;
 sudo chmod -R a+rw ./*
-sudo chmod a+rw /dev/ttyACM0
 sudo bash testingBackend/scripts/setUSBChmod.sh
 sudo nodemon
