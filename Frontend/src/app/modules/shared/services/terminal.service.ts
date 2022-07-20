@@ -40,6 +40,11 @@ export class TerminalService {
       console.log('serialData:', command);
       this.serialDataObervable.emit(command);
     });
+
+    this.socket.on('serialError', (error: string) => {
+      console.log('serialError:', error);
+      this.serialDataObervable.emit('\x1b[1;31m' + error + '\x1b[37m \n');
+    });
   }
 
   disconnect() {

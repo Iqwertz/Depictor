@@ -7,10 +7,14 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { Select } from '@ngxs/store';
 import { NgTerminal } from 'ng-terminal';
+import { AppState } from 'src/app/store/app.state';
+import { environment } from 'src/environments/environment';
 import { FitAddon } from 'xterm-addon-fit';
 import { WebLinksAddon } from 'xterm-addon-web-links';
 import { TerminalService } from '../../services/terminal.service';
+import { Settings } from '../settings/settings.component';
 
 @Component({
   selector: 'app-terminal',
@@ -32,10 +36,16 @@ export class TerminalComponent implements OnInit, OnDestroy {
   lineStartLength = 0;
   fitAddon = new FitAddon();
 
+  @Select(AppState.settings) settings$: any;
+  settings: Settings = environment.defaultSettings;
+
   constructor(private terminalService: TerminalService) {}
 
   ngOnInit(): void {
     this.terminalService.connectTerminal();
+    this.settings$.subscribe((settings: Settings) => {
+      this.settings = settings;
+    });
   }
 
   ngOnDestroy() {
@@ -70,7 +80,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
         this.commandHistory.push(this.currentLine);
         this.compressCommandHistory();
         this.commandHistoryIndex = this.commandHistory.length;
-        this.child.write('\r\n ');
+        this.child.write('\r\n');
         this.currentLine = '';
       } else if (ev.keyCode === 8) {
         if (
@@ -99,11 +109,13 @@ export class TerminalComponent implements OnInit, OnDestroy {
       } else if (printable) {
         this.child.write(e.key);
         this.currentLine += e.key;
+        this.commandHistoryIndex = this.commandHistory.length;
       }
     });
 
     this.terminalService.serialDataObervable.subscribe((data) => {
       this.child.write(data);
+      this.child.write('\x1b[2K\r');
     });
   }
 
