@@ -1182,17 +1182,19 @@ function executeGcode(gcode: string) {
 let serialport: SerialPort | null = null;
 
 function openSerialPort() {
+  let error = "";
   let port: string = "";
   if (fs.existsSync("data/settings.json")) {
     let settings = fs.readFileSync("data/settings.json", "utf8");
     port = JSON.parse(settings).port;
   } else {
-    logger.warn("cant open serial Port, no settings file found");
+    error = "cant open serial Port, no settings file found";
+    logger.warn(error);
   }
 
   if (!port) {
     logger.error("cant open serial Port, no port found");
-    return "err: noPortFound";
+    return "Error when opening serial port: noPortFound";
   }
 
   serialport = new SerialPort({ path: port, baudRate: 115200 }).setEncoding("utf8");
@@ -1200,6 +1202,9 @@ function openSerialPort() {
   // Open errors will be emitted as an error event
   serialport.on("error", function (err) {
     logger.error("Serialport error: " + err);
+    if (globalTerminalSocket) {
+      globalTerminalSocket.emit("serialError", err.message);
+    }
   });
 
   serialport.on("data", function (data) {
@@ -1217,7 +1222,9 @@ interface TerminalHistoryEntry {
 
 let terminalHistory: TerminalHistoryEntry[] = [];
 ///////////////////////////socket.io//////////////////////////////////////////////
-io.on("connection", (socket: any) => {
+let globalTerminalSocket: Socket | null = null;
+
+io.on("connection", (socket: Socket) => {
   console.log("a user connected");
   if (!serialport?.isOpen) {
     openSerialPort();
@@ -1248,6 +1255,8 @@ io.on("connection", (socket: any) => {
       logger.error("serialport not open");
     }
   });
+
+  globalTerminalSocket = socket;
 });
 
 function disconnectTerminal() {

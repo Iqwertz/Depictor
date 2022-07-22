@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { io } from 'socket.io-client';
 import { Socket } from 'socket.io-client';
@@ -10,6 +10,10 @@ import { AppState } from '../../../store/app.state';
 })
 export class TerminalService {
   socket: Socket | null = null;
+
+  serialDataObervable = new EventEmitter<string>();
+
+  //create event emitter
 
   @Select(AppState.ip)
   ip$: any;
@@ -23,6 +27,24 @@ export class TerminalService {
 
   connectTerminal() {
     this.socket = io(this.ip);
+
+    this.socket.on('connect', () => {
+      console.log('Connected to terminal');
+    });
+
+    this.socket.on('disconnect', () => {
+      console.log('Disconnected from terminal');
+    });
+
+    this.socket.on('serialData', (command: string) => {
+      console.log('serialData:', command);
+      this.serialDataObervable.emit(command);
+    });
+
+    this.socket.on('serialError', (error: string) => {
+      console.log('serialError:', error);
+      this.serialDataObervable.emit('\x1b[1;31m' + error + '\x1b[37m \n');
+    });
   }
 
   disconnect() {
