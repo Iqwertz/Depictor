@@ -329,6 +329,7 @@ app.post("/stop", (req: Request, res: Response) => {
   setTimeout(() => {
     //Home after some timeout because kill() needs some time
     appState = "idle"; //reset appState
+    disconnectTerminal();
     exec("./scripts/home.sh", function (err: any, data: any) {
       if (err) {
         logger.error(err);
@@ -742,6 +743,7 @@ app.post("/setSerialPort", (req: Request, res: Response) => {
   logger.http("post: setSerialPort");
   console.log("setting port to " + req.body.path);
   if (req.body.path) {
+    disconnectTerminal();
     execFile("sudo", ["bash", "./scripts/changeSerialPort.sh", req.body.path], function (err: any, data: any) {
       if (err) {
         logger.error(err);
@@ -777,6 +779,7 @@ app.post("/home", (req: Request, res: Response) => {
     res.json({ err: "drawing" });
     return;
   }
+  disconnectTerminal();
   exec("./scripts/home.sh", function (err: any, data: any) {
     if (err) {
       logger.error(err);
@@ -807,6 +810,7 @@ app.post("/executeGcode", (req: Request, res: Response) => {
     res.json({ err: "drawing" });
     return;
   }
+  disconnectTerminal();
   executeGcode(req.body.gcode);
   res.json({});
 });
@@ -883,6 +887,7 @@ function drawGcode(gcode: string) {
           isDrawing = false;
         });
 
+        disconnectTerminal();
         const launchProcess = exec(
           //execute launchcommand
           launchcommand,
@@ -1154,6 +1159,9 @@ function executeGcode(gcode: string) {
 
   logger.info("Executing custom gcode: " + gcode);
   fse.outputFileSync("./assets/gcodes/temp.gcode", gcode, "utf8");
+
+  disconnectTerminal();
+
   exec("./scripts/execTemp.sh", function (err: any, data: any) {
     fs.unlink("./assets/gcodes/temp.gcode", (err: any) => {
       //delete preview image
@@ -1193,36 +1201,64 @@ function openSerialPort() {
   serialport.on("error", function (err) {
     logger.error("Serialport error: " + err);
   });
+
+  serialport.on("data", function (data) {
+    if (data) {
+      terminalHistory.push({ command: data, type: "response" });
+      io.emit("serialData", data);
+    }
+  });
 }
 
+interface TerminalHistoryEntry {
+  command: string;
+  type: "command" | "response";
+}
+
+let terminalHistory: TerminalHistoryEntry[] = [];
 ///////////////////////////socket.io//////////////////////////////////////////////
 io.on("connection", (socket: any) => {
   console.log("a user connected");
-  openSerialPort();
+  if (!serialport?.isOpen) {
+    openSerialPort();
+  }
+  for (let command of terminalHistory) {
+    if (command.type === "command") {
+      socket.emit("commandData", command.command);
+    } else {
+      socket.emit("serialData", command.command);
+    }
+  }
+
   socket.on("disconnect", () => {
     console.log("user disconnected");
-    serialport?.close();
+    if (io.engine.clientsCount == 0) {
+      terminalHistory = [];
+      serialport?.close();
+    }
   });
-
-  if (serialport) {
-    serialport.on("readable", function () {
-      let data = serialport?.read();
-      if (data) {
-        socket.emit("serialData", data);
-      }
-      console.log("Data:", serialport?.read());
-    });
-  }
 
   socket.on("command", (msg: string) => {
     console.log("message: " + msg);
     if (serialport) {
+      terminalHistory.push({ command: msg, type: "command" });
+      io.emit("commandData", msg);
       serialport.write(msg + "\n");
     } else {
       logger.error("serialport not open");
     }
   });
 });
+
+function disconnectTerminal() {
+  console.log("disconnecting terminal");
+  if (io.engine.clientsCount > 0) {
+    io.emit("disconnectSelf");
+  }
+  if (serialport) {
+    serialport.close();
+  }
+}
 
 ////////////////////logger/////////////////////////
 const logger = winston.createLogger({
