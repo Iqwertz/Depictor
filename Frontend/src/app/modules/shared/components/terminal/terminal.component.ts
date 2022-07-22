@@ -73,14 +73,13 @@ export class TerminalComponent implements OnInit, OnDestroy {
         ev.key !== 'ArrowUp' &&
         ev.key !== 'ArrowLeft' &&
         ev.key !== 'ArrowRight';
-
       if (ev.keyCode === 13) {
         console.log(this.currentLine);
         this.terminalService.sendCommand(this.currentLine);
         this.commandHistory.push(this.currentLine);
         this.compressCommandHistory();
         this.commandHistoryIndex = this.commandHistory.length;
-        this.child.write('\r\n');
+        this.child.write('\x1b[2K\r');
         this.currentLine = '';
       } else if (ev.keyCode === 8) {
         if (
@@ -105,7 +104,12 @@ export class TerminalComponent implements OnInit, OnDestroy {
           this.currentLine = this.commandHistory[this.commandHistoryIndex];
           this.child.write('\x1b[2K\r');
           this.child.write(this.currentLine);
+        } else if (this.commandHistoryIndex == this.commandHistory.length - 1) {
+          this.commandHistoryIndex++;
+          this.child.write('\x1b[2K\r');
+          this.child.write('');
         }
+        console.log(this.commandHistoryIndex);
       } else if (printable) {
         this.child.write(e.key);
         this.currentLine += e.key;
@@ -114,8 +118,15 @@ export class TerminalComponent implements OnInit, OnDestroy {
     });
 
     this.terminalService.serialDataObervable.subscribe((data) => {
-      this.child.write(data);
-      this.child.write('\x1b[2K\r');
+      if (data.length > 0) {
+        this.child.write(data);
+      }
+    });
+
+    this.terminalService.disconnected.subscribe((discon) => {
+      if (discon) {
+        this.close.emit();
+      }
     });
   }
 

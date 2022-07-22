@@ -12,6 +12,7 @@ export class TerminalService {
   socket: Socket | null = null;
 
   serialDataObervable = new EventEmitter<string>();
+  disconnected = new EventEmitter<boolean>();
 
   //create event emitter
 
@@ -34,11 +35,22 @@ export class TerminalService {
 
     this.socket.on('disconnect', () => {
       console.log('Disconnected from terminal');
+      this.disconnected.emit(true);
+    });
+
+    this.socket.on('disconnectSelf', () => {
+      console.log('Disconnected from terminal');
+      this.disconnected.emit(true);
     });
 
     this.socket.on('serialData', (command: string) => {
       console.log('serialData:', command);
       this.serialDataObervable.emit(command);
+    });
+
+    this.socket.on('commandData', (command: string) => {
+      console.log('CommandData:', command);
+      this.serialDataObervable.emit('> ' + command + '\r\n');
     });
 
     this.socket.on('serialError', (error: string) => {
