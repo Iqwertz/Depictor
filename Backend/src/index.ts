@@ -1267,6 +1267,7 @@ function disconnectTerminal() {
   }
   if (serialport) {
     serialport.close();
+    serialport = null;
   }
 }
 
