@@ -1198,6 +1198,7 @@ function openSerialPort() {
   }
 
   serialport = new SerialPort({ path: port, baudRate: 115200 }).setEncoding("utf8");
+  logger.info("serial port opened at " + port);
 
   // Open errors will be emitted as an error event
   serialport.on("error", function (err) {
@@ -1225,7 +1226,7 @@ let terminalHistory: TerminalHistoryEntry[] = [];
 let globalTerminalSocket: Socket | null = null;
 
 io.on("connection", (socket: Socket) => {
-  console.log("a user connected");
+  logger.info("a user connected");
   if (!serialport?.isOpen) {
     openSerialPort();
   }
@@ -1238,7 +1239,7 @@ io.on("connection", (socket: Socket) => {
   }
 
   socket.on("disconnect", () => {
-    console.log("user disconnected");
+    logger.info("user disconnected");
     if (io.engine.clientsCount == 0) {
       terminalHistory = [];
       serialport?.close();
@@ -1246,7 +1247,7 @@ io.on("connection", (socket: Socket) => {
   });
 
   socket.on("command", (msg: string) => {
-    console.log("message: " + msg);
+    logger.info("Terminal Command: " + msg);
     if (serialport) {
       terminalHistory.push({ command: msg, type: "command" });
       io.emit("commandData", msg);
@@ -1260,7 +1261,7 @@ io.on("connection", (socket: Socket) => {
 });
 
 function disconnectTerminal() {
-  console.log("disconnecting terminal");
+  logger.info("disconnecting all terminals");
   if (io.engine.clientsCount > 0) {
     io.emit("disconnectSelf");
   }
