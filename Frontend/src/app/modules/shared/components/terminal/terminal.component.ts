@@ -15,6 +15,7 @@ import { FitAddon } from 'xterm-addon-fit';
 import { WebLinksAddon } from 'xterm-addon-web-links';
 import { TerminalService } from '../../services/terminal.service';
 import { Settings } from '../settings/settings.component';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 @Component({
   selector: 'app-terminal',
@@ -39,7 +40,10 @@ export class TerminalComponent implements OnInit, OnDestroy {
   @Select(AppState.settings) settings$: any;
   settings: Settings = environment.defaultSettings;
 
-  constructor(private terminalService: TerminalService) {}
+  constructor(
+    private terminalService: TerminalService,
+    private clipboard: Clipboard
+  ) {}
 
   ngOnInit(): void {
     this.terminalService.connectTerminal();
