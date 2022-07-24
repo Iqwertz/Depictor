@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { TerminalButtonComponent } from './components/terminal-button/terminal-button.component';
 import { TerminalComponent } from './components/terminal/terminal.component';
 import { NgTerminalModule } from 'ng-terminal';
+import { DragndropComponent } from './components/dragndrop/dragndrop.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { NgTerminalModule } from 'ng-terminal';
     ConfirmDialogComponent,
     TerminalButtonComponent,
     TerminalComponent,
+    DragndropComponent,
   ],
   imports: [
     CommonModule,
@@ -38,6 +40,7 @@ import { NgTerminalModule } from 'ng-terminal';
     SettingsButtonComponent,
     ConfirmDialogComponent,
     TerminalButtonComponent,
+    DragndropComponent,
   ],
 })
 export class SharedModule {}
