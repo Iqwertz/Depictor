@@ -1227,9 +1227,16 @@ let globalTerminalSocket: Socket | null = null;
 
 io.on("connection", (socket: Socket) => {
   logger.info("a user connected");
+
+  if (isDrawing) {
+    socket.emit("serialError", "cannot connect to serial port while drawing");
+    return;
+  }
+
   if (!serialport?.isOpen) {
     openSerialPort();
   }
+
   for (let command of terminalHistory) {
     if (command.type === "command") {
       socket.emit("commandData", command.command);
@@ -1243,6 +1250,7 @@ io.on("connection", (socket: Socket) => {
     if (io.engine.clientsCount == 0) {
       terminalHistory = [];
       serialport?.close();
+      serialport = null;
     }
   });
 
@@ -1263,9 +1271,12 @@ io.on("connection", (socket: Socket) => {
 function disconnectTerminal() {
   logger.info("disconnecting all terminals");
   if (io.engine.clientsCount > 0) {
+    console.log("disconnecting all terminals");
     io.emit("disconnectSelf");
   }
   if (serialport) {
+    console.log("closing serialport");
+    terminalHistory = [];
     serialport.close();
     serialport = null;
   }

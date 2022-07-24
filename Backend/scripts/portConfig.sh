@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-serialPort="/dev/ttyS0"
+serialPort="/dev/ttyACM0"
