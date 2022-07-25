@@ -110,7 +110,10 @@ export class SettingsComponent implements OnInit {
     this.backendConnectService
       .getAvailableSerialPorts()
       .subscribe((res: any) => {
-        console.log(res);
+        if (!this.settings.port) {
+          this.settings.port = res.ports[0].path;
+          this.setSerialPort();
+        }
         this.availableSerialPorts = res.ports;
       });
 
@@ -127,7 +130,6 @@ export class SettingsComponent implements OnInit {
   }
 
   setSerialPort() {
-    console.log(this.settings.port);
     this.backendConnectService
       .setSerialPort(this.settings.port)
       .subscribe((res: any) => {
