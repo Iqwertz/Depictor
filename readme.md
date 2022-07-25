@@ -119,6 +119,9 @@ The installation will take a few minutes. After it finished you successfully hav
 ## Setup
 Before you try to draw your first image, you probably have to adjust these three settings (all of them can be found in the settings tab in the top right):
 
+### **Port**
+To be able to connect the plotter with the rpi you have to select the correct port in the settings. To test if you have selected the correct port you can open the terminal and check if the grbl greeting is displayed.
+
 ### **Start gcode**
 In this text field you can paste some gcode that gets appended to the gcode file before drawing it. Before starting your first print please adjust the feedrate (default: 4000) and the homing command (default: $H) for your plotter. 
 
