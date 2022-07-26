@@ -208,8 +208,6 @@ export class SettingsComponent implements OnInit {
 
   compareSettings(s1: Settings, s2: Settings) {
     if (JSON.stringify(s1) !== JSON.stringify(s2)) {
-      console.log(JSON.stringify(s1));
-      console.log(JSON.stringify(s2));
       return false;
     }
 

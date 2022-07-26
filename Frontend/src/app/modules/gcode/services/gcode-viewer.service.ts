@@ -124,8 +124,10 @@ export class GcodeViewerService {
         command.startsWith('G1') &&
         !(command.includes('X') || command.includes('Y'))
       ) {
+        console.log(command);
         command = '';
       }
+      console.log(command);
 
       if (command.startsWith('G1')) {
         //rebuild G1 command to ensure X and Y values
@@ -164,7 +166,6 @@ export class GcodeViewerService {
           command = '';
         }
       }
-
       gcodeArray[i] = command;
     }
 
@@ -178,7 +179,10 @@ export class GcodeViewerService {
     }
 
     if (settings.scaleToDrawingArea) {
-      let scalings: number[] = [
+      //disabled scaling for custom uploads because it will get scaled again in the start draw process!
+      //This led to wrong scaling calculations
+      //so for now the scaleToDrawingArea parameter is only passed to the backendConnectService.uploadGcodeToGallery() function.
+      /* let scalings: number[] = [
         this.settings.paperMax[0] / biggest[0],
         this.settings.paperMax[1] / biggest[1],
       ];
@@ -187,7 +191,7 @@ export class GcodeViewerService {
         gcodeScaling = scalings[0];
       } else {
         gcodeScaling = scalings[1];
-      }
+      }*/
     }
 
     let firstG1Found: boolean = false;
@@ -224,7 +228,7 @@ export class GcodeViewerService {
     gcodeArray = gcodeArray.filter(function (el) {
       return el != '';
     });
-
+    console.log(gcodeArray);
     return gcodeArray.join('\n');
   }
 
