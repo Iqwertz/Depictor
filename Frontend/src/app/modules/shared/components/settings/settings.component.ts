@@ -74,9 +74,11 @@ export class SettingsComponent implements OnInit {
   faInfo = faInfoCircle;
 
   @Select(AppState.settings) settings$: any;
-  settings: Settings = environment.defaultSettings;
+  settings: Settings = JSON.parse(JSON.stringify(environment.defaultSettings));
 
-  settingsBefore: Settings = environment.defaultSettings;
+  settingsBefore: Settings = JSON.parse(
+    JSON.stringify(environment.defaultSettings)
+  );
 
   backendVersion: BackendVersion = {
     tag: 'NAN',
@@ -206,6 +208,8 @@ export class SettingsComponent implements OnInit {
 
   compareSettings(s1: Settings, s2: Settings) {
     if (JSON.stringify(s1) !== JSON.stringify(s2)) {
+      console.log(JSON.stringify(s1));
+      console.log(JSON.stringify(s2));
       return false;
     }
 
@@ -215,5 +219,11 @@ export class SettingsComponent implements OnInit {
   update() {
     this.backendConnectService.update();
     this.close.emit();
+  }
+
+  resetSettings() {
+    this.settings = JSON.parse(
+      JSON.stringify(this.environment.defaultSettings)
+    );
   }
 }

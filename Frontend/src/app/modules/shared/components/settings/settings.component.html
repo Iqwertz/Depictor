@@ -264,6 +264,19 @@
                 <div class="action-button"><b>Download</b></div>
             </a>
         </div>
+
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
+            <div class="label small">
+                Reset settings
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        Resets all settings to their default values.
+                    </div>
+                </div>
+            </div>
+            <div class="action-button" (click)="resetSettings()"><b>Reset</b></div>
+        </div>
         <div class="version">
             Version: {{ backendVersion.tag }} {{ backendVersion.production ? "" : "Development" }}
         </div>
