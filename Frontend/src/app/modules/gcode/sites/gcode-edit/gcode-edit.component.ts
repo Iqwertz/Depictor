@@ -175,9 +175,8 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     }
 
     let scalings: number[] = [
-      //this line is incorrect
-      this.settings.paperMax[0] / (biggest[0] + this.settings.drawingOffset[0]),
-      this.settings.paperMax[1] / (biggest[1] + this.settings.drawingOffset[1]),
+      (this.settings.paperMax[0] - this.settings.drawingOffset[0]) / biggest[0],
+      (this.settings.paperMax[1] - this.settings.drawingOffset[1]) / biggest[1],
     ];
 
     if (scalings[0] < scalings[1]) {

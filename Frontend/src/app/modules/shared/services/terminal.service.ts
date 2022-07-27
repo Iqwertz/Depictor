@@ -44,17 +44,14 @@ export class TerminalService {
     });
 
     this.socket.on('serialData', (command: string) => {
-      console.log('serialData:', command);
       this.serialDataObervable.emit(command);
     });
 
     this.socket.on('commandData', (command: string) => {
-      console.log('CommandData:', command);
       this.serialDataObervable.emit('> ' + command + '\r\n');
     });
 
     this.socket.on('serialError', (error: string) => {
-      console.log('serialError:', error);
       this.serialDataObervable.emit('\x1b[1;31m' + error + '\x1b[37m \n');
     });
   }

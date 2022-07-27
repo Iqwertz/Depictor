@@ -879,6 +879,7 @@ function drawGcode(gcode: string) {
           //update progress when a new line is drawen
           data = data.trim();
           drawingProgress = parseInt(data.replace(/[^\d].*/, ""));
+          console.log(drawingProgress);
         });
 
         tail.on("error", function (error: any) {
