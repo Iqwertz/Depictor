@@ -126,12 +126,7 @@ To be able to connect the plotter with the rpi you have to select the correct po
 In this text field you can paste some gcode that gets appended to the gcode file before drawing it. Before starting your first print please adjust the feedrate (default: 4000) and the homing command (default: $H) for your plotter. 
 
 ### **Gcode scaling**
-Depictor will automatically scale your gcode to the size of your drawing area. By default, the drawing area is from [X0 Y0] to [X20 Y162]. Since these values are probably different on your machine you will have to adjust them:
-
-- Gcode scaling:
-  - To calculate this value move the pen to the corner of your drawing area that is the furthest away from 0,0. Enter these values in the settings under "Gcode scaling"
-- Gcode offset:
-  - To calculate this value move the pen to the corner of your drawing area that is closest to 0,0. Enter these values in the settings under "Gcode offset".
+Depictor will automatically scale your gcode to the size of your drawing area. To define the drawing area you have to measure the smallest point and the biggest point on it. Enter these values into the "Drawing area start" and "Drawing area end" fields.
 
 ### **Pen down command** / **Pen up command**
 Here you can configure the commands to lift and lower the drawing pen. If these commands are different on your plotter please change them here.
