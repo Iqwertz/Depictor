@@ -175,7 +175,7 @@ export class GcodeViewerService {
       biggest = [
         biggest[0] + Math.abs(biggestNegativ[0]),
         biggest[1] + Math.abs(biggestNegativ[1]),
-      ]; //recalculate biggest numnber with shifted negativ
+      ]; //recalculate biggest number with shifted negativ
     }
 
     if (settings.scaleToDrawingArea) {
