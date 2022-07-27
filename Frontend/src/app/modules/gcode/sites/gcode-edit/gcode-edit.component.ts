@@ -118,15 +118,16 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
 
     if (this.gcodeViewerService.gcodeType != 'custom') {
       gcodeArray = this.replacePenCommands(gcodeArray);
-      gcodeArray = this.applyOffset(gcodeArray, this.settings.drawingOffset);
       if (this.gcodeViewerService.scaleToDrawingArea) {
         gcodeArray = this.scaleGcode(gcodeArray);
       }
+      gcodeArray = this.applyOffset(gcodeArray, this.settings.drawingOffset);
     }
 
     let nr = this.notRenderdLines * -1;
     if (nr == 0) {
       nr = -1;
+      gcodeArray.push('');
     }
 
     ///////////////////remove the first 6 lines of the gcode and replace them with the start gcode after join -> not clean at all but currently to lazy to recompile java
@@ -174,8 +175,8 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     }
 
     let scalings: number[] = [
-      this.settings.paperMax[0] / biggest[0],
-      this.settings.paperMax[1] / biggest[1],
+      (this.settings.paperMax[0] - this.settings.drawingOffset[0]) / biggest[0],
+      (this.settings.paperMax[1] - this.settings.drawingOffset[1]) / biggest[1],
     ];
 
     if (scalings[0] < scalings[1]) {
@@ -190,6 +191,10 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
         let parameter = this.getG1Parameter(command);
         parameter[0] = parameter[0] * gcodeScaling;
         parameter[1] = parameter[1] * gcodeScaling;
+
+        //round floating points
+        parameter[0] = this.round(parameter[0], this.settings.floatingPoints);
+        parameter[1] = this.round(parameter[1], this.settings.floatingPoints);
         gcode[i] = 'G1 X' + parameter[0] + 'Y' + parameter[1];
       }
     }

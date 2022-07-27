@@ -198,6 +198,32 @@ export class BackendConnectService {
   }
 
   /**
+   *sends a post request to get all available serial ports
+   *
+   * @return {*}  {Observable<BackendVersion>}
+   * @memberof BackendConnectService
+   */
+  getAvailableSerialPorts(): Observable<BackendVersion> {
+    return this.http.post<BackendVersion>(
+      'http://' + this.ip + '/getAvailableSerialPorts',
+      {}
+    );
+  }
+
+  /**
+   *sends a post request to set a new serial port
+   *
+   * @return {*}  {Observable<BackendVersion>}
+   * @memberof BackendConnectService
+   */
+  setSerialPort(path: string): Observable<BackendVersion> {
+    return this.http.post<BackendVersion>(
+      'http://' + this.ip + '/setSerialPort',
+      { path: path }
+    );
+  }
+
+  /**
    *Sends a post request with custom gcode that will be excuted on the machine
    *
    * @param {string} gcode

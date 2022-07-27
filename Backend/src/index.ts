@@ -17,6 +17,7 @@ import { RemoveBgResult, RemoveBgError, removeBackgroundFromImageBase64 } from "
 import { Request, Response } from "express";
 import { enviroment } from "./enviroment";
 import { version } from "./version";
+import { Socket } from "socket.io";
 
 const kill = require("tree-kill");
 let execFile = require("child_process").execFile;
@@ -25,6 +26,8 @@ const { spawn } = require("child_process");
 let Tail = require("tail").Tail;
 const axios = require("axios");
 let zip = require("express-easy-zip");
+const { LinuxBinding, WindowsBinding } = require("@serialport/bindings-cpp");
+import { SerialPort } from "serialport";
 
 var cors = require("cors");
 const app = express();
@@ -53,6 +56,11 @@ interface GcodeEntry {
   name: string;
 } //reponse interface when sending a gallery item
 
+interface SerialPortEntry {
+  path: string;
+  manufacturer: string;
+}
+
 let appState: AppStates = "idle"; //var to track the current appstate
 let isDrawing: boolean = false; //var to track if the bot is currently drawing
 let drawingProgress: number = 0; //var to track the progress of the current drawing //when -1 drawing failed
@@ -65,7 +73,11 @@ app.use(cors()); //enable cors
 
 httpServer = require("http").createServer(app); //create new http server
 
-var SerialPort = require('serialport').SerialPort; // omega2 port (at v3)
+const io = require("socket.io")(httpServer, {
+  cors: {
+    origins: ["http://localhost:4200"],
+  },
+});
 
 /*
 post: /newPicture
@@ -317,6 +329,7 @@ app.post("/stop", (req: Request, res: Response) => {
   setTimeout(() => {
     //Home after some timeout because kill() needs some time
     appState = "idle"; //reset appState
+    disconnectTerminal();
     exec("./scripts/home.sh", function (err: any, data: any) {
       if (err) {
         logger.error(err);
@@ -672,6 +685,78 @@ app.post("/changeSettings", (req: Request, res: Response) => {
 });
 
 /*
+post: /getAvailableSerialPorts
+
+description: returns available serial ports
+
+expected request: 
+  {}
+  
+returns: 
+    unsuccessful 
+      {}
+
+    successful
+    {ports: string[]}
+*/
+app.post("/getAvailableSerialPorts", (req: Request, res: Response) => {
+  logger.http("post: getAvailableSerialPorts");
+
+  listPorts().then((ports: any) => {
+    let formattedPorts: SerialPortEntry[] = [];
+    for (let port of ports) {
+      let formattedPort: SerialPortEntry = { path: port.path, manufacturer: port.manufacturer };
+      formattedPorts.push(formattedPort);
+    }
+
+    res.json({ ports: ports });
+  });
+});
+
+async function listPorts() {
+  if (isLinux) {
+    const ports = await LinuxBinding.list();
+    return ports;
+  } else {
+    const ports = await WindowsBinding.list();
+    return ports;
+  }
+}
+
+/*
+post: /setSerialPort
+
+description: returns available serial ports
+
+expected request: 
+  {path: string}
+  
+returns: 
+    unsuccessful 
+      {err: string}
+
+    successful
+    {}
+*/
+app.post("/setSerialPort", (req: Request, res: Response) => {
+  //test this on linux
+  logger.http("post: setSerialPort");
+  console.log("setting port to " + req.body.path);
+  if (req.body.path) {
+    disconnectTerminal();
+    execFile("sudo", ["bash", "./scripts/changeSerialPort.sh", req.body.path], function (err: any, data: any) {
+      if (err) {
+        logger.error(err);
+      }
+    });
+    res.json({});
+  } else {
+    logger.warn("setSerialPort: no path provided");
+    res.json({ err: "no path provided" });
+  }
+});
+
+/*
 post: /home
 
 description: homes the maschine (when not currently drawing)
@@ -694,6 +779,7 @@ app.post("/home", (req: Request, res: Response) => {
     res.json({ err: "drawing" });
     return;
   }
+  disconnectTerminal();
   exec("./scripts/home.sh", function (err: any, data: any) {
     if (err) {
       logger.error(err);
@@ -724,6 +810,7 @@ app.post("/executeGcode", (req: Request, res: Response) => {
     res.json({ err: "drawing" });
     return;
   }
+  disconnectTerminal();
   executeGcode(req.body.gcode);
   res.json({});
 });
@@ -747,23 +834,12 @@ app.get("/zipData", async function (req: any, res: any) {
   });
 });
 
-const { LinuxBinding } = require('@serialport/bindings-cpp')
-
 httpServer!.listen(enviroment.port, () => {
   //start http server
   logger.info("started Server");
   logger.info("listening on *:" + enviroment.port);
   logger.info("Detected Linux: " + isLinux);
-
-  if (isLinux) {
-    listPorts();
-  }
 });
-
-async function listPorts(){
-  const ports = await LinuxBinding.list();
-  console.log(ports)
-}
 
 /**
  *drawGcode()
@@ -803,6 +879,7 @@ function drawGcode(gcode: string) {
           //update progress when a new line is drawen
           data = data.trim();
           drawingProgress = parseInt(data.replace(/[^\d].*/, ""));
+          console.log(drawingProgress);
         });
 
         tail.on("error", function (error: any) {
@@ -811,6 +888,7 @@ function drawGcode(gcode: string) {
           isDrawing = false;
         });
 
+        disconnectTerminal();
         const launchProcess = exec(
           //execute launchcommand
           launchcommand,
@@ -1082,6 +1160,9 @@ function executeGcode(gcode: string) {
 
   logger.info("Executing custom gcode: " + gcode);
   fse.outputFileSync("./assets/gcodes/temp.gcode", gcode, "utf8");
+
+  disconnectTerminal();
+
   exec("./scripts/execTemp.sh", function (err: any, data: any) {
     fs.unlink("./assets/gcodes/temp.gcode", (err: any) => {
       //delete preview image
@@ -1096,6 +1177,110 @@ function executeGcode(gcode: string) {
       return;
     }
   });
+}
+
+////////////////////////////serialport//////////////////////////////////////////////
+let serialport: SerialPort | null = null;
+
+function openSerialPort() {
+  let error = "";
+  let port: string = "";
+  if (fs.existsSync("data/settings.json")) {
+    let settings = fs.readFileSync("data/settings.json", "utf8");
+    port = JSON.parse(settings).port;
+  } else {
+    error = "cant open serial Port, no settings file found";
+    logger.warn(error);
+  }
+
+  if (!port) {
+    logger.error("cant open serial Port, no port found");
+    return "Error when opening serial port: noPortFound";
+  }
+
+  serialport = new SerialPort({ path: port, baudRate: 115200 }).setEncoding("utf8");
+  logger.info("serial port opened at " + port);
+
+  // Open errors will be emitted as an error event
+  serialport.on("error", function (err) {
+    logger.error("Serialport error: " + err);
+    if (globalTerminalSocket) {
+      globalTerminalSocket.emit("serialError", err.message);
+    }
+  });
+
+  serialport.on("data", function (data) {
+    if (data) {
+      terminalHistory.push({ command: data, type: "response" });
+      io.emit("serialData", data);
+    }
+  });
+}
+
+interface TerminalHistoryEntry {
+  command: string;
+  type: "command" | "response";
+}
+
+let terminalHistory: TerminalHistoryEntry[] = [];
+///////////////////////////socket.io//////////////////////////////////////////////
+let globalTerminalSocket: Socket | null = null;
+
+io.on("connection", (socket: Socket) => {
+  logger.info("a user connected");
+
+  if (isDrawing) {
+    socket.emit("serialError", "cannot connect to serial port while drawing");
+    return;
+  }
+
+  if (!serialport?.isOpen) {
+    openSerialPort();
+  }
+
+  for (let command of terminalHistory) {
+    if (command.type === "command") {
+      socket.emit("commandData", command.command);
+    } else {
+      socket.emit("serialData", command.command);
+    }
+  }
+
+  socket.on("disconnect", () => {
+    logger.info("user disconnected");
+    if (io.engine.clientsCount == 0) {
+      terminalHistory = [];
+      serialport?.close();
+      serialport = null;
+    }
+  });
+
+  socket.on("command", (msg: string) => {
+    logger.info("Terminal Command: " + msg);
+    if (serialport) {
+      terminalHistory.push({ command: msg, type: "command" });
+      io.emit("commandData", msg);
+      serialport.write(msg + "\n");
+    } else {
+      logger.error("serialport not open");
+    }
+  });
+
+  globalTerminalSocket = socket;
+});
+
+function disconnectTerminal() {
+  logger.info("disconnecting all terminals");
+  if (io.engine.clientsCount > 0) {
+    console.log("disconnecting all terminals");
+    io.emit("disconnectSelf");
+  }
+  if (serialport) {
+    console.log("closing serialport");
+    terminalHistory = [];
+    serialport.close();
+    serialport = null;
+  }
 }
 
 ////////////////////logger/////////////////////////

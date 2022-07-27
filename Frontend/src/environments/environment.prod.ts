@@ -19,6 +19,7 @@ const settings: Settings = {
     transfromToPositiveSpace: true,
     supportedCommands: 'G1;M3;M03;M5;M05;F;$',
   },
+  port: '',
 };
 
 export const environment = {

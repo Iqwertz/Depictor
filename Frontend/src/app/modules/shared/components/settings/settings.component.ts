@@ -39,6 +39,12 @@ export interface Settings {
   standardizeGcode: boolean;
   standardizerSettings: StandartizerSettings;
   floatingPoints: number;
+  port: string;
+}
+
+export interface SerialPort {
+  path: string;
+  manufacturer: string;
 }
 
 @Component({
@@ -68,14 +74,18 @@ export class SettingsComponent implements OnInit {
   faInfo = faInfoCircle;
 
   @Select(AppState.settings) settings$: any;
-  settings: Settings = environment.defaultSettings;
+  settings: Settings = JSON.parse(JSON.stringify(environment.defaultSettings));
 
-  settingsBefore: Settings = environment.defaultSettings;
+  settingsBefore: Settings = JSON.parse(
+    JSON.stringify(environment.defaultSettings)
+  );
 
   backendVersion: BackendVersion = {
     tag: 'NAN',
     production: false,
   };
+
+  availableSerialPorts: SerialPort[] = [];
 
   updatesAvailable: boolean = false;
   availableUpdateVersion: string = '';
@@ -99,6 +109,16 @@ export class SettingsComponent implements OnInit {
       this.checkForUpdates();
     });
 
+    this.backendConnectService
+      .getAvailableSerialPorts()
+      .subscribe((res: any) => {
+        if (!this.settings.port) {
+          this.settings.port = res.ports[0].path;
+          this.setSerialPort();
+        }
+        this.availableSerialPorts = res.ports;
+      });
+
     this.settings$.subscribe((settings: Settings) => {
       this.settings = settings;
     });
@@ -109,6 +129,14 @@ export class SettingsComponent implements OnInit {
   shutdown() {
     this.backendConnectService.shutdown();
     this.router.navigate(['']);
+  }
+
+  setSerialPort() {
+    this.backendConnectService
+      .setSerialPort(this.settings.port)
+      .subscribe((res: any) => {
+        console.log(res);
+      });
   }
 
   setBgRemoveApiKey() {
@@ -189,5 +217,11 @@ export class SettingsComponent implements OnInit {
   update() {
     this.backendConnectService.update();
     this.close.emit();
+  }
+
+  resetSettings() {
+    this.settings = JSON.parse(
+      JSON.stringify(this.environment.defaultSettings)
+    );
   }
 }

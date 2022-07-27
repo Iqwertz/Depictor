@@ -1,7 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
-import { CameraServiceService } from '../../services/camera-service.service';
-import { FileUploadService } from '../../services/file-upload.service';
+import { FileUploadService } from '../../../../services/file-upload.service';
 
 @Component({
   selector: 'app-dragndrop',

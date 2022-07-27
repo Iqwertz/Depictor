@@ -24,7 +24,6 @@ import { FormsModule } from '@angular/forms';
 import { SharedModule } from './modules/shared/shared.module';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CheckboxChipComponent } from './components/checkbox-chip/checkbox-chip.component';
-import { DragndropComponent } from './components/dragndrop/dragndrop.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +39,6 @@ import { DragndropComponent } from './components/dragndrop/dragndrop.component';
     ConnectingComponent,
     RemoveBgCheckboxComponent,
     CheckboxChipComponent,
-    DragndropComponent,
   ],
   imports: [
     BrowserModule,

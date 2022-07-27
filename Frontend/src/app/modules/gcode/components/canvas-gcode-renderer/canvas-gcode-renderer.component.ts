@@ -391,6 +391,26 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
   }
 
   captureScreenshot(): string | undefined {
+    if (!this.canvas) {
+      return undefined;
+    }
+
+    this.height = 500;
+    this.width = 380;
+    this.canvas.nativeElement.width = this.width;
+    this.canvas.nativeElement.height = this.height;
+
+    this.ctx = this.canvas!.nativeElement.getContext('2d');
+
+    if (!this.ctx) {
+      return;
+    }
+
+    this.ctx.fillStyle = '#fff';
+    this.ctx.fillRect(0, 0, this.width, this.height);
+
+    this.render();
+
     return this.canvas?.nativeElement.toDataURL('image/png');
   }
 }

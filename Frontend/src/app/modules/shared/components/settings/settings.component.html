@@ -16,6 +16,16 @@
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
+            <div class="label small">Serial Port</div>
+            <!--html select for serial port options-->
+            <select class="action-select" [(ngModel)]="settings.port" (change)="setSerialPort()">
+        <option *ngFor="let port of availableSerialPorts" [value]="port.path">
+          {{ port.path }} ({{ port.manufacturer }})
+        </option>
+      </select>
+        </div>
+
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">
                 BgRemove API key
                 <div class="tooltip">
@@ -151,30 +161,59 @@
         </div>
 
         <div class="divider" *ngIf="siteStateService.serverOnline">
-            <div class="label">Plotter controlls</div>
+            <div class="label">Plotter controls</div>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">
-                Gcode scaling
+                Drawing area start
                 <div class="tooltip">
                     <fa-icon [icon]="faInfo"></fa-icon>
                     <div class="content">
-                        Set the max. values for your drawing area. All gcode will be scaled to exactly fit it.
+                        The min. values for your drawing area. All gcode will be scaled to exactly fit it.
                     </div>
                 </div>
             </div>
-            X:
-            <input type="number" class="action-textinput +short" [(ngModel)]="settings.paperMax[0]" /> Y:
-            <input type="number" class="action-textinput short" [(ngModel)]="settings.paperMax[1]" />
-            <!--  <input type="number" class="action-textinput" [(ngModel)]="settings.gcodeScale" /> -->
+            <span>
+        X:
+        <input
+          type="number"
+          class="action-textinput short"
+          [(ngModel)]="settings.drawingOffset[0]"
+        />
+        Y:
+        <input
+          type="number"
+          class="action-textinput short"
+          [(ngModel)]="settings.drawingOffset[1]"
+        />
+      </span>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">Gcode offset</div>
-            X:
-            <input type="number" class="action-textinput short" [(ngModel)]="settings.drawingOffset[0]" /> Y:
-            <input type="number" class="action-textinput short" [(ngModel)]="settings.drawingOffset[1]" />
+            <div class="label small">
+                Drawing area end
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        The max. values for your drawing area. All gcode will be scaled to exactly fit it.
+                    </div>
+                </div>
+            </div>
+            <span>
+        X:
+        <input
+          type="number"
+          class="action-textinput short"
+          [(ngModel)]="settings.paperMax[0]"
+        />
+        Y:
+        <input
+          type="number"
+          class="action-textinput short"
+          [(ngModel)]="settings.paperMax[1]"
+        />
+      </span>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
@@ -253,6 +292,19 @@
             <a href="/zipData" [href]="'http://' + ip + '/zipData'" download>
                 <div class="action-button"><b>Download</b></div>
             </a>
+        </div>
+
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
+            <div class="label small">
+                Reset settings
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">
+                        Resets all settings to their default values.
+                    </div>
+                </div>
+            </div>
+            <div class="action-button" (click)="resetSettings()"><b>Reset</b></div>
         </div>
         <div class="version">
             Version: {{ backendVersion.tag }} {{ backendVersion.production ? "" : "Development" }}
