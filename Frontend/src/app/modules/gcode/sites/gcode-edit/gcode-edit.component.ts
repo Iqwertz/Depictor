@@ -119,7 +119,10 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     if (this.gcodeViewerService.gcodeType != 'custom') {
       gcodeArray = this.replacePenCommands(gcodeArray);
       if (this.gcodeViewerService.scaleToDrawingArea) {
-        gcodeArray = this.scaleGcode(gcodeArray);
+        gcodeArray = this.scaleGcode(
+          gcodeArray,
+          this.settings.centerOnDrawingArea
+        );
       }
       gcodeArray = this.applyOffset(gcodeArray, this.settings.drawingOffset);
     }
@@ -160,9 +163,10 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     return gcode;
   }
 
-  scaleGcode(gcode: string[]): string[] {
+  scaleGcode(gcode: string[], center: Boolean): string[] {
     let gcodeScaling = 1;
     let biggest: number[] = [0, 0];
+    let centeringOffset: number[] = [0, 0];
 
     for (let i = 0; i < gcode.length; i++) {
       let cmd = this.getG1Parameter(gcode[i]);
@@ -181,16 +185,18 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
 
     if (scalings[0] < scalings[1]) {
       gcodeScaling = scalings[0];
+      centeringOffset[1] = (biggest[1] * gcodeScaling) / 2;
     } else {
       gcodeScaling = scalings[1];
+      centeringOffset[0] = (biggest[0] * gcodeScaling) / 2;
     }
 
     for (let i = 0; i < gcode.length; i++) {
       let command = gcode[i];
       if (command.startsWith('G1')) {
         let parameter = this.getG1Parameter(command);
-        parameter[0] = parameter[0] * gcodeScaling;
-        parameter[1] = parameter[1] * gcodeScaling;
+        parameter[0] = parameter[0] * gcodeScaling + centeringOffset[0];
+        parameter[1] = parameter[1] * gcodeScaling + centeringOffset[1];
 
         //round floating points
         parameter[0] = this.round(parameter[0], this.settings.floatingPoints);

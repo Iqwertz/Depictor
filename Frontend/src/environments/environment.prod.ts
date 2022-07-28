@@ -8,6 +8,7 @@ const settings: Settings = {
   maxImageFileSize: 0.05, //in MB
   paperMax: [200, 162],
   drawingOffset: [0, 0],
+  centerOnDrawingArea: true,
   gcodeDisplayTransform: [true, false, true],
   standardizeGcode: true,
   floatingPoints: 3,
