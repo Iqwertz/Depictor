@@ -75,7 +75,7 @@ httpServer = require("http").createServer(app); //create new http server
 
 const io = require("socket.io")(httpServer, {
   cors: {
-    origins: ["http://localhost:4200"],
+    origins: ["*"],
   },
 });
 
@@ -879,6 +879,7 @@ function drawGcode(gcode: string) {
           //update progress when a new line is drawen
           data = data.trim();
           drawingProgress = parseInt(data.replace(/[^\d].*/, ""));
+          console.log(drawingProgress);
         });
 
         tail.on("error", function (error: any) {

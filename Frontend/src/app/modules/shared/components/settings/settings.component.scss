@@ -163,7 +163,15 @@
         resize: none;
     }
     &.short {
-        width: 50px;
+        width: 35px;
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    &.short::-webkit-outer-spin-button,
+    &.short::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+        -moz-appearance: textfield;
     }
 }
 
