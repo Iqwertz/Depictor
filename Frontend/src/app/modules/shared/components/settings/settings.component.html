@@ -110,11 +110,11 @@
 
         <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
             <div class="label small">
-                Transform to positiv
+                Transform to positive
                 <div class="tooltip">
                     <fa-icon [icon]="faInfo"></fa-icon>
                     <div class="content">
-                        Transforms all coordinates in the drawing to ensure that there are no negativ coordinates.
+                        Transforms all coordinates in the drawing to ensure that there are no negative coordinates.
                     </div>
                 </div>
             </div>
@@ -214,6 +214,17 @@
           [(ngModel)]="settings.paperMax[1]"
         />
       </span>
+        </div>
+
+        <div class="setting-line" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
+            <div class="label small">
+                Center Gcode
+                <div class="tooltip">
+                    <fa-icon [icon]="faInfo"></fa-icon>
+                    <div class="content">Center the Gcode in the drawing area.</div>
+                </div>
+            </div>
+            <mat-checkbox [(ngModel)]="settings.centerOnDrawingArea"></mat-checkbox>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
