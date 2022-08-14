@@ -3,10 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 const settings: Settings = {
-  endGcode: 'M05;\nG01X0Y0;',
-  startGcode: '$H\nG92X0Y0Z0\nF4000\nG21\nG90\nM05',
-  penDownCommand: 'M03S500;\nG4 P0.5',
-  penUpCommand: 'M05;\nG4 P0.5;',
+  endGcode: 'M05;\nG4P0.5;\nG01X0Y0;',
+  startGcode: '$H\nG92X0Y0Z0\nF4000\nG21\nG90\nM05\nG4P0.5;',
+  penDownCommand: 'M03S500;\nG4P0.5',
+  penUpCommand: 'M05;\nG4P0.5;',
   avgTimePerLine: 0.096755719, //in s
   maxImageFileSize: 0.05, //in MB
   paperMax: [200, 162],
