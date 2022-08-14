@@ -164,6 +164,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
   }
 
   scaleGcode(gcode: string[], center: Boolean): string[] {
+    //to do: make dependent on center variable
     let gcodeScaling = 1;
     let biggest: number[] = [0, 0];
     let centeringOffset: number[] = [0, 0];
@@ -186,11 +187,17 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     if (scalings[0] < scalings[1]) {
       gcodeScaling = scalings[0];
       centeringOffset[1] =
-        (this.settings.paperMax[1] - biggest[1] * gcodeScaling) / 2;
+        (this.settings.paperMax[1] -
+          this.settings.drawingOffset[1] -
+          biggest[1] * gcodeScaling) /
+        2;
     } else {
       gcodeScaling = scalings[1];
       centeringOffset[0] =
-        (this.settings.paperMax[0] - biggest[0] * gcodeScaling) / 2;
+        (this.settings.paperMax[0] -
+          this.settings.drawingOffset[0] -
+          biggest[0] * gcodeScaling) /
+        2;
     }
 
     for (let i = 0; i < gcode.length; i++) {
