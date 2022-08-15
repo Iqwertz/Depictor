@@ -283,7 +283,7 @@
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">Available updates</div>
             <div class="label small wide" *ngIf="!updatesAvailable">
-                <b>System is on newest version</b>
+                <b>System is on the newest version</b>
             </div>
             <div class="action-button" *ngIf="updatesAvailable" (click)="update()">
                 <b>{{ availableUpdateVersion }}</b>
