@@ -10,8 +10,8 @@
 ![commits](https://img.shields.io/github/commit-activity/m/iqwertz/depictor)
 
 
-Depictor is a web app that runs on a Raspberry Pi. It provides a simple and clean web interface to easily generate and draw images on an 2d plotter.
-It features automatic background removal, custom gcode settings, print time estimates, gallery with previous prints and many more features. It is currently optimized for GRBL plotter, but the basic feautres should work with most plotter.
+Depictor is a web app that runs on a Raspberry Pi. It provides a simple and clean web interface to easily generate and draw images with a 2d plotter.
+It features automatic background removal, custom gcode settings, print time estimates, gallery with previous prints and many more features. It is currently optimized for GRBL plotter, but the basic features should work with most plotter.
 
 The image conversion is based on the [Drawbot_image_to_gcode_v2](https://github.com/Scott-Cooper/Drawbot_image_to_gcode_v2) project.
 
@@ -146,7 +146,7 @@ The project was developed and tested with a Raspberry Pi 3B but should work on e
     
 # Acknowledgements
 
- - Huge thanks to [Scott-Cooper](https://github.com/Scott-Cooper), for creating the  [Drawbot_image_to_gcode_v2](https://github.com/Scott-Cooper/Drawbot_image_to_gcode_v2) which is used to convert the images to beautiful gcode.
+ - Huge thanks to [Scott-Cooper](https://github.com/Scott-Cooper), for creating the [Drawbot_image_to_gcode_v2](https://github.com/Scott-Cooper/Drawbot_image_to_gcode_v2) which is used to convert the images to beautiful gcode.
  - [gcode-cli](https://github.com/hzeller)
  - [remove.bg](https://www.remove.bg/de)
 
@@ -165,7 +165,7 @@ Clone the project
 ```
 
 ## Start the backend server
-Go to the projects backend directory:
+Go to the project's backend directory:
 
 ```bash
   cd Depictor/Backend
@@ -188,7 +188,7 @@ or
 ```
 
 ## Serve frontend
-Go to the projects frontend directory:
+Go to the project's frontend directory:
 
 ```bash
   cd Depictor/Frontend
