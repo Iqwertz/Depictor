@@ -1,0 +1,31 @@
+.action-button {
+    font-size: 16px;
+    border: 2px dashed #000;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 24px 0 22px;
+    border-radius: 3px;
+    margin-left: 10px;
+    cursor: pointer;
+    fa-icon {
+        font-size: 22px;
+    }
+    transition: all 0.5s;
+    &.save-control {
+        font-size: 26px;
+        padding: 10px 24px 6px 22px;
+        margin: 0px 10px 0 10px;
+        &.save {
+            border-style: solid;
+        }
+    }
+}
+
+.action-button:hover {
+    padding: 4px 28px 0 26px;
+    &.save-control {
+        padding: 10px 28px 6px 26px;
+    }
+}

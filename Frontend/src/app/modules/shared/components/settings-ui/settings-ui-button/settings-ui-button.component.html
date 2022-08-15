@@ -1,0 +1,4 @@
+<div class="action-button" (click)="clicked()">
+    <b *ngIf="!offButton">{{ name }}</b>
+    <fa-icon *ngIf="offButton" [icon]="faPowerOff"></fa-icon>
+</div>

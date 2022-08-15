@@ -7,7 +7,6 @@ import {
   EventEmitter,
 } from '@angular/core';
 import {
-  faCircle,
   faInfoCircle,
   faPowerOff,
   faTimes,

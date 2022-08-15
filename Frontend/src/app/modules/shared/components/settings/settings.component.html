@@ -10,9 +10,7 @@
         </div>
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label">Shutdown</div>
-            <div class="action-button" (click)="confirmDialog!.show()">
-                <fa-icon [icon]="faPowerOff"></fa-icon>
-            </div>
+            <app-settings-ui-button [offButton]="true" (clicked)="confirmDialog!.show()"></app-settings-ui-button>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
@@ -37,14 +35,14 @@
                     </div>
                 </div>
             </div>
-            <input type="text" class="action-textinput" [(ngModel)]="bgRemoveApiKey" />
-            <div class="action-button" (click)="setBgRemoveApiKey()"><b>Set</b></div>
+            <app-settings-textinput [(ngModel)]="bgRemoveApiKey"></app-settings-textinput>
+            <app-settings-ui-button [name]="'Set'" (clicked)="setBgRemoveApiKey()"></app-settings-ui-button>
         </div>
 
         <div class="setting-line">
             <div class="label">API endpoint</div>
-            <input type="text" class="action-textinput" [(ngModel)]="ip" />
-            <div class="action-button" (click)="setNewIp()"><b>Set</b></div>
+            <app-settings-textinput [(ngModel)]="ip"></app-settings-textinput>
+            <app-settings-ui-button [name]="'Set'" (clicked)="setNewIp()"></app-settings-ui-button>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
@@ -57,7 +55,7 @@
                     </div>
                 </div>
             </div>
-            <input type="number" class="action-textinput" [(ngModel)]="settings.avgTimePerLine" />
+            <app-settings-textinput [type]="'number'" [(ngModel)]="settings.avgTimePerLine"></app-settings-textinput>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
@@ -70,7 +68,7 @@
                     </div>
                 </div>
             </div>
-            <input type="number" class="action-textinput" [(ngModel)]="settings.maxImageFileSize" />
+            <app-settings-textinput [type]="'number'" [(ngModel)]="settings.maxImageFileSize"></app-settings-textinput>
         </div>
 
         <div class="divider" *ngIf="siteStateService.serverOnline">
@@ -79,7 +77,7 @@
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label">Standardize gcode</div>
-            <mat-checkbox [(ngModel)]="settings.standardizeGcode"></mat-checkbox>
+            <app-settings-checkbox [(ngModel)]="settings.standardizeGcode"></app-settings-checkbox>
         </div>
 
         <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
@@ -92,7 +90,7 @@
                     </div>
                 </div>
             </div>
-            <mat-checkbox [(ngModel)]="settings.standardizerSettings.convertG0"></mat-checkbox>
+            <app-settings-checkbox [(ngModel)]="settings.standardizerSettings.convertG0"></app-settings-checkbox>
         </div>
 
         <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
@@ -105,7 +103,7 @@
                     </div>
                 </div>
             </div>
-            <mat-checkbox [(ngModel)]="settings.standardizerSettings.removeUnusedParameter"></mat-checkbox>
+            <app-settings-checkbox [(ngModel)]="settings.standardizerSettings.removeUnusedParameter"></app-settings-checkbox>
         </div>
 
         <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
@@ -118,7 +116,7 @@
                     </div>
                 </div>
             </div>
-            <mat-checkbox [(ngModel)]="settings.standardizerSettings.transfromToPositiveSpace"></mat-checkbox>
+            <app-settings-checkbox [(ngModel)]="settings.standardizerSettings.transfromToPositiveSpace"></app-settings-checkbox>
         </div>
 
         <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
@@ -131,7 +129,7 @@
                     </div>
                 </div>
             </div>
-            <mat-checkbox [(ngModel)]="settings.standardizerSettings.scaleToDrawingArea"></mat-checkbox>
+            <app-settings-checkbox [(ngModel)]="settings.standardizerSettings.scaleToDrawingArea"></app-settings-checkbox>
         </div>
 
         <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
@@ -144,7 +142,7 @@
                     </div>
                 </div>
             </div>
-            <mat-checkbox [(ngModel)]="settings.standardizerSettings.removeUnsupportedCommands"></mat-checkbox>
+            <app-settings-checkbox [(ngModel)]="settings.standardizerSettings.removeUnsupportedCommands"></app-settings-checkbox>
         </div>
 
         <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
@@ -157,11 +155,11 @@
                     </div>
                 </div>
             </div>
-            <input type="text" class="action-textinput" [(ngModel)]="settings.standardizerSettings.supportedCommands" />
+            <app-settings-textinput [(ngModel)]="settings.standardizerSettings.supportedCommands"></app-settings-textinput>
         </div>
 
         <div class="divider" *ngIf="siteStateService.serverOnline">
-            <div class="label">Plotter controls</div>
+            <div class="label">Drawing area</div>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
@@ -176,17 +174,17 @@
             </div>
             <span>
         X:
-        <input
-          type="number"
-          class="action-textinput short"
+        <app-settings-textinput
+          [type]="'number'"
+          [short]="true"
           [(ngModel)]="settings.drawingOffset[0]"
-        />
+        ></app-settings-textinput>
         Y:
-        <input
-          type="number"
-          class="action-textinput short"
+        <app-settings-textinput
+          [type]="'number'"
+          [short]="true"
           [(ngModel)]="settings.drawingOffset[1]"
-        />
+        ></app-settings-textinput>
       </span>
         </div>
 
@@ -202,17 +200,19 @@
             </div>
             <span>
         X:
-        <input
-          type="number"
-          class="action-textinput short"
+        <app-settings-textinput
+          [type]="'number'"
+          [short]="true"
           [(ngModel)]="settings.paperMax[0]"
-        />
+        ></app-settings-textinput>
+
         Y:
-        <input
-          type="number"
-          class="action-textinput short"
+        <app-settings-textinput
+          [type]="'number'"
+          [short]="true"
           [(ngModel)]="settings.paperMax[1]"
-        />
+        >
+        </app-settings-textinput>
       </span>
         </div>
 
@@ -224,30 +224,34 @@
                     <div class="content">Center the gcode in the drawing area.</div>
                 </div>
             </div>
-            <mat-checkbox [(ngModel)]="settings.centerOnDrawingArea"></mat-checkbox>
+            <app-settings-checkbox [(ngModel)]="settings.centerOnDrawingArea"></app-settings-checkbox>
+        </div>
+
+        <div class="divider" *ngIf="siteStateService.serverOnline">
+            <div class="label">Plotter controls</div>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label">Home pen</div>
-            <div class="action-button" (click)="home()"><b>Home</b></div>
+            <app-settings-ui-button [name]="'Home'" (clicked)="home()"></app-settings-ui-button>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label">Move pen</div>
             <div class="button-group">
-                <div class="action-button" (click)="penUp()"><b>Up</b></div>
-                <div class="action-button" (click)="penDown()"><b>Down</b></div>
+                <app-settings-ui-button [name]="'Up'" (clicked)="penUp()"></app-settings-ui-button>
+                <app-settings-ui-button [name]="'Down'" (clicked)="penDown()"></app-settings-ui-button>
             </div>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">Pen up command</div>
-            <textarea class="action-textinput area" [(ngModel)]="settings.penUpCommand"></textarea>
+            <app-settings-textarea [(ngModel)]="settings.penUpCommand"></app-settings-textarea>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">Pen down command</div>
-            <textarea class="action-textinput area" [(ngModel)]="settings.penDownCommand"></textarea>
+            <app-settings-textarea [(ngModel)]="settings.penDownCommand"></app-settings-textarea>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
@@ -260,9 +264,8 @@
                     </div>
                 </div>
             </div>
-            <textarea class="action-textinput area" [(ngModel)]="settings.startGcode"></textarea>
+            <app-settings-textarea [(ngModel)]="settings.startGcode"></app-settings-textarea>
         </div>
-
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
             <div class="label small">
                 End gcode
@@ -273,7 +276,7 @@
                     </div>
                 </div>
             </div>
-            <textarea class="action-textinput area" [(ngModel)]="settings.endGcode"></textarea>
+            <app-settings-textarea [(ngModel)]="settings.endGcode"></app-settings-textarea>
         </div>
 
         <div class="divider" *ngIf="siteStateService.serverOnline">
@@ -285,9 +288,7 @@
             <div class="label small wide" *ngIf="!updatesAvailable">
                 <b>System is on the newest version</b>
             </div>
-            <div class="action-button" *ngIf="updatesAvailable" (click)="update()">
-                <b>{{ availableUpdateVersion }}</b>
-            </div>
+            <app-settings-ui-button *ngIf="updatesAvailable" [name]="availableUpdateVersion" (clicked)="update()"></app-settings-ui-button>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
@@ -301,7 +302,7 @@
                 </div>
             </div>
             <a href="/zipData" [href]="'http://' + ip + '/zipData'" download>
-                <div class="action-button"><b>Download</b></div>
+                <app-settings-ui-button [name]="'Download'"></app-settings-ui-button>
             </a>
         </div>
 
@@ -315,7 +316,7 @@
                     </div>
                 </div>
             </div>
-            <div class="action-button" (click)="resetSettings()"><b>Reset</b></div>
+            <app-settings-ui-button [name]="'Reset'" (clicked)="resetSettings()"></app-settings-ui-button>
         </div>
         <div class="version">
             Version: {{ backendVersion.tag }} {{ backendVersion.production ? "" : "Development" }}
@@ -334,6 +335,7 @@
     </div>
 </div>
 
+<!-- <app-paper-profile-popup></app-paper-profile-popup> -->
 <app-confirm-dialog #dialog (yes)="shutdown()"></app-confirm-dialog>
 
 <app-confirm-dialog #deleteSaved [text]="'You have unsaved changes! Do you want to save them?'" [buttons]="['Discard', 'Save']" (no)="discardSettings()" (yes)="setSettings(); close.emit()"></app-confirm-dialog>
