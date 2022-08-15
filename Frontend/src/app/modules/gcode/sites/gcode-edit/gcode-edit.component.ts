@@ -167,10 +167,11 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
   }
 
   scaleGcode(gcode: string[], center: Boolean): string[] {
-    //to do: make dependent on center variable
     let gcodeScaling = 1;
     let biggest: number[] = [0, 0];
     let centeringOffset: number[] = [0, 0];
+
+    gcode = this.moveToOrigin(gcode);
 
     for (let i = 0; i < gcode.length; i++) {
       let cmd = this.getG1Parameter(gcode[i]);
@@ -224,6 +225,41 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
         gcode[i] = 'G1 X' + parameter[0] + 'Y' + parameter[1];
       }
     }
+    return gcode;
+  }
+
+  //moves the gcode to the origing by substracting the smallest x,y value from all x,y values
+  moveToOrigin(gcode: string[]): string[] {
+    let smallest: number[] = [-1, -1];
+
+    for (let i = 0; i < gcode.length; i++) {
+      if (gcode[i].startsWith('G1')) {
+        let cmd = this.getG1Parameter(gcode[i]);
+        if (smallest[0] == -1) {
+          smallest[0] = cmd[0];
+          smallest[1] = cmd[1];
+        } else {
+          if (smallest[0] > cmd[0]) {
+            smallest[0] = cmd[0];
+          }
+          if (smallest[1] > cmd[1]) {
+            smallest[1] = cmd[1];
+          }
+        }
+      }
+    }
+
+    for (let i = 0; i < gcode.length; i++) {
+      let command = gcode[i];
+      if (command.startsWith('G1')) {
+        let parameter = this.getG1Parameter(command);
+        parameter[0] = parameter[0] - smallest[0];
+        parameter[1] = parameter[1] - smallest[1];
+
+        gcode[i] = 'G1 X' + parameter[0] + 'Y' + parameter[1];
+      }
+    }
+
     return gcode;
   }
 
