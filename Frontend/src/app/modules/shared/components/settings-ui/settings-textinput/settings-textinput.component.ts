@@ -16,7 +16,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 export class SettingsTextinputComponent implements OnInit {
   constructor() {}
 
-  text: string = '';
+  text: string | number = '';
 
   ngOnInit(): void {}
 
@@ -25,25 +25,25 @@ export class SettingsTextinputComponent implements OnInit {
   // Allow the input to be disabled.
   @Input() disabled = false;
 
-  onChange = (text: string) => {};
+  onChange = (text: string | number) => {};
 
   // Function to call when the input is touched.
   onTouched = () => {};
 
-  get value(): string {
+  get value(): string | number {
     return this.text;
   }
 
   // Allows Angular to update the model.
   // Update the model and changes needed for the view here.
-  writeValue(text: string): void {
+  writeValue(text: string | number): void {
     this.text = text;
     this.onChange(this.text);
   }
 
   // Allows Angular to register a function to call when the model changes.
   // Save the function as a property to call later here.
-  registerOnChange(fn: (text: string) => void): void {
+  registerOnChange(fn: (text: string | number) => void): void {
     this.onChange = fn;
   }
 
@@ -59,6 +59,9 @@ export class SettingsTextinputComponent implements OnInit {
   }
 
   onModelChange(): void {
+    if (this.type == 'number') {
+      this.text = Number(this.text);
+    }
     this.onChange(this.text);
   }
 }

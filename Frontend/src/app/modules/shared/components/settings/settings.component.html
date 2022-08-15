@@ -163,57 +163,21 @@
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">
-                Drawing area start
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">
-                        The min. values for your drawing area. All gcode will be scaled to exactly fit it.
-                    </div>
-                </div>
-            </div>
-            <span>
-        X:
-        <app-settings-textinput
-          [type]="'number'"
-          [short]="true"
-          [(ngModel)]="settings.drawingOffset[0]"
-        ></app-settings-textinput>
-        Y:
-        <app-settings-textinput
-          [type]="'number'"
-          [short]="true"
-          [(ngModel)]="settings.drawingOffset[1]"
-        ></app-settings-textinput>
-      </span>
+            <div class="label small">Paper profile</div>
+            <select class="action-select" [ngModel]="settings.selectedPaperProfile.name" (ngModelChange)="updatePaperProfile($event)">
+        <option
+          *ngFor="let profile of settings.paperProfiles"
+          [value]="profile.name"
+        >
+          {{ profile.name }}
+        </option>
+      </select>
+            <app-settings-ui-button [name]="'Edit'" (clicked)="editPaperProfile()"></app-settings-ui-button>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">
-                Drawing area end
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">
-                        The max. values for your drawing area. All gcode will be scaled to exactly fit it.
-                    </div>
-                </div>
-            </div>
-            <span>
-        X:
-        <app-settings-textinput
-          [type]="'number'"
-          [short]="true"
-          [(ngModel)]="settings.paperMax[0]"
-        ></app-settings-textinput>
-
-        Y:
-        <app-settings-textinput
-          [type]="'number'"
-          [short]="true"
-          [(ngModel)]="settings.paperMax[1]"
-        >
-        </app-settings-textinput>
-      </span>
+            <div class="label small">Create new profile</div>
+            <app-settings-ui-button [name]="'Create'" (clicked)="createPaperProfile()"></app-settings-ui-button>
         </div>
 
         <div class="setting-line" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
@@ -325,17 +289,15 @@
 
     <div class="save-container" *ngIf="!compareSettings(settingsBefore, settings)">
         <div class="button-group">
-            <div class="action-button save-control cancle" (click)="discardSettings()">
-                <b>Cancel</b>
-            </div>
-            <div class="action-button save-control save" (click)="setSettings(); close.emit()">
-                <b>Save</b>
-            </div>
+            <app-settings-ui-button [name]="'Cancel'" (clicked)="discardSettings()">
+            </app-settings-ui-button>
+            <app-settings-ui-button [name]="'Save'" (clicked)="setSettings(); close.emit()">
+            </app-settings-ui-button>
         </div>
     </div>
 </div>
 
-<!-- <app-paper-profile-popup></app-paper-profile-popup> -->
+<app-paper-profile-popup #paperprofilepopup></app-paper-profile-popup>
 <app-confirm-dialog #dialog (yes)="shutdown()"></app-confirm-dialog>
 
 <app-confirm-dialog #deleteSaved [text]="'You have unsaved changes! Do you want to save them?'" [buttons]="['Discard', 'Save']" (no)="discardSettings()" (yes)="setSettings(); close.emit()"></app-confirm-dialog>

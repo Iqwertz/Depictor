@@ -124,7 +124,10 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
           this.settings.centerOnDrawingArea
         );
       }
-      gcodeArray = this.applyOffset(gcodeArray, this.settings.drawingOffset);
+      gcodeArray = this.applyOffset(
+        gcodeArray,
+        this.settings.selectedPaperProfile.drawingOffset
+      );
     }
 
     let nr = this.notRenderdLines * -1;
@@ -180,16 +183,20 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     }
 
     let scalings: number[] = [
-      (this.settings.paperMax[0] - this.settings.drawingOffset[0]) / biggest[0],
-      (this.settings.paperMax[1] - this.settings.drawingOffset[1]) / biggest[1],
+      (this.settings.selectedPaperProfile.paperMax[0] -
+        this.settings.selectedPaperProfile.drawingOffset[0]) /
+        biggest[0],
+      (this.settings.selectedPaperProfile.paperMax[1] -
+        this.settings.selectedPaperProfile.drawingOffset[1]) /
+        biggest[1],
     ];
 
     if (scalings[0] < scalings[1]) {
       gcodeScaling = scalings[0];
       if (center) {
         centeringOffset[1] =
-          (this.settings.paperMax[1] -
-            this.settings.drawingOffset[1] -
+          (this.settings.selectedPaperProfile.paperMax[1] -
+            this.settings.selectedPaperProfile.drawingOffset[1] -
             biggest[1] * gcodeScaling) /
           2;
       }
@@ -197,8 +204,8 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
       gcodeScaling = scalings[1];
       if (center) {
         centeringOffset[0] =
-          (this.settings.paperMax[0] -
-            this.settings.drawingOffset[0] -
+          (this.settings.selectedPaperProfile.paperMax[0] -
+            this.settings.selectedPaperProfile.drawingOffset[0] -
             biggest[0] * gcodeScaling) /
           2;
       }

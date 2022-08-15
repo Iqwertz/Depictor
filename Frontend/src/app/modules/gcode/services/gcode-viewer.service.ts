@@ -183,8 +183,8 @@ export class GcodeViewerService {
       //This led to wrong scaling calculations
       //so for now the scaleToDrawingArea parameter is only passed to the backendConnectService.uploadGcodeToGallery() function.
       /* let scalings: number[] = [
-        this.settings.paperMax[0] / biggest[0],
-        this.settings.paperMax[1] / biggest[1],
+        this.settings.selectedPaperProfile.paperMax[0] / biggest[0],
+        this.settings.selectedPaperProfile.paperMax[1] / biggest[1],
       ];
 
       if (scalings[0] < scalings[1]) {

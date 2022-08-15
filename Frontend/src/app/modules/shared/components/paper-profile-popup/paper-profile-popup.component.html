@@ -1,6 +1,53 @@
-<div class="container">
-    <h5>Add profile</h5>
+<div class="container" *ngIf="show">
+    <div class="close" (click)="cancel()">
+        <fa-icon [icon]="faTimes"></fa-icon>
+    </div>
+    <h3>Add profile</h3>
     <div class="line">
-        Name: <input type="text" name="name" [(ngModel)]="name" />
+        Name:
+        <app-settings-textinput [(ngModel)]="profile.name"></app-settings-textinput>
+    </div>
+    <div class="line">
+        <div class="label">Drawing area start</div>
+        <span>
+      X:
+      <app-settings-textinput
+        [type]="'number'"
+        [short]="true"
+        [(ngModel)]="profile.drawingOffset[0]"
+      ></app-settings-textinput>
+      Y:
+      <app-settings-textinput
+        [type]="'number'"
+        [short]="true"
+        [(ngModel)]="profile.drawingOffset[1]"
+      ></app-settings-textinput>
+    </span>
+    </div>
+
+    <div class="line">
+        <div class="label">Drawing area end</div>
+        <span>
+      X:
+      <app-settings-textinput
+        [type]="'number'"
+        [short]="true"
+        [(ngModel)]="profile.paperMax[0]"
+      ></app-settings-textinput>
+
+      Y:
+      <app-settings-textinput
+        [type]="'number'"
+        [short]="true"
+        [(ngModel)]="profile.paperMax[1]"
+      >
+      </app-settings-textinput>
+    </span>
+    </div>
+
+    <div class="button-container">
+        <app-settings-ui-button *ngIf="editedProfileName == null" [name]="'Create'" (clicked)="addProfile()"></app-settings-ui-button>
+        <app-settings-ui-button *ngIf="editedProfileName != null" [name]="'Update'" (clicked)="updateProfile()"></app-settings-ui-button>
+        <app-settings-ui-button *ngIf="editedProfileName != null" [name]="'Delete'" (clicked)="deleteProfile()"></app-settings-ui-button>
     </div>
 </div>

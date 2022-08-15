@@ -24,6 +24,13 @@ import { HttpClient } from '@angular/common/http';
 import { LoadingService } from '../../services/loading.service';
 import { SiteStateService } from '../../../../services/site-state.service';
 import { StandartizerSettings } from '../../../gcode/services/gcode-viewer.service';
+import { PaperProfilePopupComponent } from '../paper-profile-popup/paper-profile-popup.component';
+
+export interface PaperProfile {
+  name: string;
+  paperMax: number[]; //Maximum coordinates of the drawing area ("Drawing area end" in the settings UI)
+  drawingOffset: number[]; //Offset of the drawing area from the origin ("Drawing area start" in the settings UI)
+}
 
 export interface Settings {
   endGcode: string;
@@ -32,9 +39,9 @@ export interface Settings {
   penUpCommand: string;
   avgTimePerLine: number;
   maxImageFileSize: number;
-  paperMax: number[]; //Maximum coordinates of the drawing area
-  drawingOffset: number[];
   centerOnDrawingArea: boolean;
+  paperProfiles: PaperProfile[];
+  selectedPaperProfile: PaperProfile;
   gcodeDisplayTransform: boolean[]; //boolean array consisting of three values: [0] when true switche x any y, [1] when true invert x, [2] when true invert y
   standardizeGcode: boolean;
   standardizerSettings: StandartizerSettings;
@@ -63,6 +70,9 @@ export class SettingsComponent implements OnInit {
 
   @ViewChild('deleteSaved', { static: false })
   confirmCancleSave: ConfirmDialogComponent | undefined;
+
+  @ViewChild('paperprofilepopup', { static: false })
+  paperProfilePopup: PaperProfilePopupComponent | undefined;
 
   faPowerOff = faPowerOff;
   faTimes = faTimes;
@@ -137,6 +147,33 @@ export class SettingsComponent implements OnInit {
       .subscribe((res: any) => {
         console.log(res);
       });
+  }
+
+  updatePaperProfile(profileName: string) {
+    //get profile by name
+    const profile: PaperProfile | undefined = this.settings.paperProfiles.find(
+      (p) => p.name === profileName
+    );
+    if (profile) {
+      this.settings.selectedPaperProfile = JSON.parse(JSON.stringify(profile));
+    } else {
+      console.error('Cant select profile: profile not found');
+    }
+  }
+
+  editPaperProfile() {
+    this.paperProfilePopup!.show = true;
+    this.paperProfilePopup!.profile = JSON.parse(
+      JSON.stringify(this.settings.selectedPaperProfile)
+    );
+    this.paperProfilePopup!.editedProfileName =
+      this.settings.selectedPaperProfile.name;
+    console.log(this.settings);
+  }
+
+  createPaperProfile() {
+    this.paperProfilePopup!.show = true;
+    this.paperProfilePopup!.editedProfileName = null;
   }
 
   setBgRemoveApiKey() {
