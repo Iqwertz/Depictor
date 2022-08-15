@@ -291,12 +291,12 @@ app.post("/postGcode", (req: Request, res: Response) => {
 
     res.json({ appState: appState });
   } else {
-    res.json({ appState: appState, err: "not_allowed" }); //return notallowed error
+    res.json({ appState: appState, err: "not_allowed" }); //return not allowed error
   }
 });
 
 /*
-post: /cancle
+post: /cancle //I now know its written cancel but too lazy to change all code vars....
 
 description: cancles the generated gcode by updateing appState
 
