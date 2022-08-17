@@ -1,0 +1,9 @@
+ ::ng-deep .mat-checkbox-frame {
+    border-color: rgb(0, 0, 0);
+    border-style: dashed !important;
+}
+
+::ng-deep .mat-checkbox-inner-container {
+    width: 20px !important;
+    height: 20px !important;
+}

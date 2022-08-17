@@ -13,6 +13,11 @@ import { TerminalButtonComponent } from './components/terminal-button/terminal-b
 import { TerminalComponent } from './components/terminal/terminal.component';
 import { NgTerminalModule } from 'ng-terminal';
 import { DragndropComponent } from './components/dragndrop/dragndrop.component';
+import { PaperProfilePopupComponent } from './components/paper-profile-popup/paper-profile-popup.component';
+import { SettingsTextinputComponent } from './components/settings-ui/settings-textinput/settings-textinput.component';
+import { SettingsTextareaComponent } from './components/settings-ui/settings-textarea/settings-textarea.component';
+import { SettingsUiButtonComponent } from './components/settings-ui/settings-ui-button/settings-ui-button.component';
+import { SettingsCheckboxComponent } from './components/settings-ui/settings-checkbox/settings-checkbox.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +29,12 @@ import { DragndropComponent } from './components/dragndrop/dragndrop.component';
     TerminalButtonComponent,
     TerminalComponent,
     DragndropComponent,
+    PaperProfilePopupComponent,
+    SettingsTextinputComponent,
+    SettingsTextareaComponent,
+    SettingsButtonComponent,
+    SettingsUiButtonComponent,
+    SettingsCheckboxComponent,
   ],
   imports: [
     CommonModule,

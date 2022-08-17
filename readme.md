@@ -10,8 +10,8 @@
 ![commits](https://img.shields.io/github/commit-activity/m/iqwertz/depictor)
 
 
-Depictor is a web app that runs on a Raspberry Pi. It provides a simple and clean web interface to easily generate and draw images on an 2d plotter.
-It features automatic background removal, custom gcode settings, print time estimates, gallery with previous prints and many more features. It is currently optimized for GRBL plotter, but the basic feautres should work with most plotter.
+Depictor is a web app that runs on a Raspberry Pi. It provides a simple and clean web interface to easily generate and draw images with a 2d plotter.
+It features automatic background removal, custom gcode settings, print time estimates, gallery with previous prints and many more features. It is currently optimized for GRBL plotter, but the basic features should work with most plotter.
 
 The image conversion is based on the [Drawbot_image_to_gcode_v2](https://github.com/Scott-Cooper/Drawbot_image_to_gcode_v2) project.
 
@@ -127,7 +127,9 @@ To be able to connect the plotter with the rpi you have to select the correct po
 In this text field you can paste some gcode that gets appended to the gcode file before drawing it. Before starting your first print please adjust the feedrate (default: 4000) and the homing command (default: $H) for your plotter. 
 
 ### **Gcode scaling**
-Depictor will automatically scale your gcode to the size of your drawing area. To define the drawing area you have to measure the smallest point and the biggest point on it. Enter these values into the "Drawing area start" and "Drawing area end" fields.
+Depictor will automatically scale your gcode to the size of your drawing area.
+There are 3 default profiles for A5, A4 and A3 paper sizes (They only work if one edge of the paper is in 0,0 and if your plotter coordinates are in mm). If the default profile doesn't fit your drawing area you can also create a custom profile:
+
 
 ### **Pen down command** / **Pen up command**
 Here you can configure the commands to lift and lower the drawing pen. If these commands are different on your plotter please change them here.
@@ -147,7 +149,7 @@ The project was developed and tested with a Raspberry Pi 3B but should work on e
     
 # Acknowledgements
 
- - Huge thanks to [Scott-Cooper](https://github.com/Scott-Cooper), for creating the  [Drawbot_image_to_gcode_v2](https://github.com/Scott-Cooper/Drawbot_image_to_gcode_v2) which is used to convert the images to beautiful gcode.
+ - Huge thanks to [Scott-Cooper](https://github.com/Scott-Cooper), for creating the [Drawbot_image_to_gcode_v2](https://github.com/Scott-Cooper/Drawbot_image_to_gcode_v2) which is used to convert the images to beautiful gcode.
  - [gcode-cli](https://github.com/hzeller)
  - [remove.bg](https://www.remove.bg/de)
 
@@ -166,7 +168,7 @@ Clone the project
 ```
 
 ## Start the backend server
-Go to the projects backend directory:
+Go to the project's backend directory:
 
 ```bash
   cd Depictor/Backend
@@ -189,7 +191,7 @@ or
 ```
 
 ## Serve frontend
-Go to the projects frontend directory:
+Go to the project's frontend directory:
 
 ```bash
   cd Depictor/Frontend

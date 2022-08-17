@@ -1,13 +1,35 @@
 import { Settings } from '../app/modules/shared/components/settings/settings.component';
 const settings: Settings = {
-  endGcode: 'M05;\nG01X0Y0;',
-  startGcode: '$H\nG92X0Y0Z0\nF4000\nG21\nG90\nM05',
-  penDownCommand: 'M03S500;',
-  penUpCommand: 'M05;',
+  endGcode: 'M05;\nG4P0.5;\nG01X0Y0;',
+  startGcode: '$H\nG92X0Y0Z0\nF4000\nG21\nG90\nM05\nG4P0.5;',
+  penDownCommand: 'M03S500;\nG4P0.5',
+  penUpCommand: 'M05;\nG4P0.5;',
   avgTimePerLine: 0.096755719, //in s
   maxImageFileSize: 0.05, //in MB
-  paperMax: [200, 162],
-  drawingOffset: [0, 0],
+  paperProfiles: [
+    {
+      name: 'A5',
+      paperMax: [210, 148],
+      drawingOffset: [0, 0],
+    },
+    {
+      name: 'A4',
+      paperMax: [297, 210],
+      drawingOffset: [0, 0],
+    },
+    {
+      name: 'A3',
+      paperMax: [420, 297],
+      drawingOffset: [0, 0],
+    },
+  ],
+  selectedPaperProfile: {
+    name: 'A4',
+    paperMax: [297, 210],
+    drawingOffset: [0, 0],
+  },
+
+  centerOnDrawingArea: true,
   gcodeDisplayTransform: [true, false, true],
   standardizeGcode: true,
   floatingPoints: 3,
@@ -17,7 +39,7 @@ const settings: Settings = {
     removeUnusedParameter: true,
     scaleToDrawingArea: true,
     transfromToPositiveSpace: true,
-    supportedCommands: 'G1;M3;M03;M5;M05;F;$',
+    supportedCommands: 'G1;G4;M3;M03;M5;M05;F;$',
   },
   port: '',
 };

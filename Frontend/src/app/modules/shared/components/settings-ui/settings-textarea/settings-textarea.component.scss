@@ -1,0 +1,10 @@
+.action-textinput {
+    font-family: "Josefin Sans", sans-serif !important;
+    padding: 6px 5px 4px;
+    font-size: 22px;
+    border: 2px dotted #000;
+    &.area {
+        max-height: 30px;
+        resize: none;
+    }
+}

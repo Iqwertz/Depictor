@@ -1,0 +1,21 @@
+.action-textinput {
+    font-family: "Josefin Sans", sans-serif !important;
+    padding: 6px 5px 4px;
+    font-size: 22px;
+    border: 2px dotted #000;
+    &.area {
+        max-height: 30px;
+        resize: none;
+    }
+    &.short {
+        width: 35px;
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    &.short::-webkit-outer-spin-button,
+    &.short::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+        -moz-appearance: textfield;
+    }
+}

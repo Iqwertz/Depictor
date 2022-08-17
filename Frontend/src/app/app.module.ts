@@ -16,6 +16,7 @@ import { RetakeSelfieButtonComponent } from './components/retake-selfie-button/r
 import { SubmitSelfieComponent } from './components/submit-selfie/submit-selfie.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NgxsModule } from '@ngxs/store';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { AppState } from './store/app.state';
 import { ConnectingComponent } from './sites/connecting/connecting.component';
 import { RemoveBgCheckboxComponent } from './components/remove-bg-checkbox/remove-bg-checkbox.component';
@@ -42,6 +43,8 @@ import { CheckboxChipComponent } from './components/checkbox-chip/checkbox-chip.
   ],
   imports: [
     BrowserModule,
+    NgxsModule.forRoot([AppState]),
+    NgxsReduxDevtoolsPluginModule.forRoot(),
     AppRoutingModule,
     WebcamModule,
     FontAwesomeModule,
@@ -50,7 +53,6 @@ import { CheckboxChipComponent } from './components/checkbox-chip/checkbox-chip.
     HttpClientModule,
     MatCheckboxModule,
     FormsModule,
-    NgxsModule.forRoot([AppState]),
     SharedModule,
     MatSnackBarModule,
   ],
