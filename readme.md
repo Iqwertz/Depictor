@@ -64,6 +64,8 @@ The image conversion is based on the [Drawbot_image_to_gcode_v2](https://github.
 # Installation & Setup
 I couldn't test this guide with a lot of people, so if something isn't clear or doesn't work, please create a new Issue or write an email to juliushussl@gmail.com.
 
+Warning: Currently Depictor isn't designed to work along other programs on your rpi. When installed it will use an apache server on port:80 and an express application on port:3001. So please be careful when installing Depictor on an already used pie and check that all ports are free!
+
 ## Material
 - Raspberry pi
 - min. 4GB micro sd card
@@ -126,7 +128,9 @@ To be able to connect the plotter with the rpi you have to select the correct po
 In this text field you can paste some gcode that gets appended to the gcode file before drawing it. Before starting your first print please adjust the feedrate (default: 4000) and the homing command (default: $H) for your plotter. 
 
 ### **Gcode scaling**
-Depictor will automatically scale your gcode to the size of your drawing area. To define the drawing area you have to measure the smallest point and the biggest point on it. Enter these values into the "Drawing area start" and "Drawing area end" fields.
+Depictor will automatically scale your gcode to the size of your drawing area.
+There are 3 default profiles for A5, A4 and A3 paper sizes (They only work if one edge of the paper is in 0,0 and if your plotter coordinates are in mm). If the default profile doesn't fit your drawing area you can also create a custom profile:
+
 
 ### **Pen down command** / **Pen up command**
 Here you can configure the commands to lift and lower the drawing pen. If these commands are different on your plotter please change them here.
