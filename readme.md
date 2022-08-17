@@ -64,8 +64,7 @@ The image conversion is based on the [Drawbot_image_to_gcode_v2](https://github.
 # Installation & Setup
 I couldn't test this guide with a lot of people, so if something isn't clear or doesn't work, please create a new Issue or write an email to juliushussl@gmail.com.
 
-Warning: Currently Depictor isn't designed to work along other programs on your rpi. When installed it will use an apache server on port:80 and an express application on port:3001. So please be careful when installing Depictor on an already used pie and check that all ports are free!
-
+Warning: Currently Depictor isn't designed to work along other programs on your rpi. When installed it will use an apache server on port:80 and an express application on port:3001. So please be carefull when installing Depictor on an already used pie and check that all ports are free!
 ## Material
 - Raspberry pi
 - min. 4GB micro sd card
