@@ -76,12 +76,11 @@ export class SettingsComponent implements OnInit {
 
   faPowerOff = faPowerOff;
   faTimes = faTimes;
+  faInfo = faInfoCircle;
 
   bgRemoveApiKey = '';
 
   environment = environment;
-
-  faInfo = faInfoCircle;
 
   @Select(AppState.settings) settings$: any;
   settings: Settings = JSON.parse(JSON.stringify(environment.defaultSettings));
@@ -99,6 +98,8 @@ export class SettingsComponent implements OnInit {
 
   updatesAvailable: boolean = false;
   availableUpdateVersion: string = '';
+
+  showLogs: boolean = false;
 
   constructor(
     private backendConnectService: BackendConnectService,

@@ -29,6 +29,7 @@ let zip = require("express-easy-zip");
 const { LinuxBinding, WindowsBinding } = require("@serialport/bindings-cpp");
 import { SerialPort } from "serialport";
 
+const readLastLines = require("read-last-lines");
 var cors = require("cors");
 const app = express();
 app.use(express.json({ limit: "50mb" }));
@@ -754,6 +755,29 @@ app.post("/setSerialPort", (req: Request, res: Response) => {
     logger.warn("setSerialPort: no path provided");
     res.json({ err: "no path provided" });
   }
+});
+
+/*
+post: /getLoggingData
+
+description: returns available serial ports
+
+expected request: 
+  {}
+  
+returns: 
+    unsuccessful 
+      {}
+
+    successful
+    {ports: string[]}
+*/
+app.post("/getLoggingData", async (req: Request, res: Response) => {
+  logger.http("post: getLoggingData");
+  let lines: number = req.body.lines;
+  let lastLines: string = await readLastLines.read("./data/logs/info.log", lines);
+
+  res.json({ data: lastLines.split("\r\n") });
 });
 
 /*

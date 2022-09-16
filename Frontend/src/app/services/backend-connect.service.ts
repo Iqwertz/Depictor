@@ -224,6 +224,20 @@ export class BackendConnectService {
   }
 
   /**
+   *sends a post request to get the last n lines of the log file
+   *
+   * @param {number} n the amout of lines that should be returned
+   * @return {*}  {Observable<LoggingData Json>}
+   * @memberof BackendConnectService
+   */
+  getLoggingData(n: number): Observable<BackendVersion> {
+    return this.http.post<BackendVersion>(
+      'http://' + this.ip + '/getLoggingData',
+      { lines: n }
+    );
+  }
+
+  /**
    *Sends a post request with custom gcode that will be excuted on the machine
    *
    * @param {string} gcode

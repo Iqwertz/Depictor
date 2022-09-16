@@ -282,6 +282,11 @@
             </div>
             <app-settings-ui-button [name]="'Reset'" (clicked)="resetSettings()"></app-settings-ui-button>
         </div>
+
+        <div class="setting-line" *ngIf="siteStateService.serverOnline">
+            <div class="label small">View Logs</div>
+            <app-settings-ui-button [name]="'View'" (clicked)="showLogs = true"></app-settings-ui-button>
+        </div>
         <div class="version">
             Version: {{ backendVersion.tag }} {{ backendVersion.production ? "" : "Development" }}
         </div>
@@ -299,5 +304,5 @@
 
 <app-paper-profile-popup #paperprofilepopup></app-paper-profile-popup>
 <app-confirm-dialog #dialog (yes)="shutdown()"></app-confirm-dialog>
-
 <app-confirm-dialog #deleteSaved [text]="'You have unsaved changes! Do you want to save them?'" [buttons]="['Discard', 'Save']" (no)="discardSettings()" (yes)="setSettings(); close.emit()"></app-confirm-dialog>
+<app-log-display *ngIf="showLogs" (close)="showLogs = false"></app-log-display>

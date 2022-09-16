@@ -1,0 +1,14 @@
+<div class="pop-up-container">
+    <div class="header">
+        <div class="titel">Logs</div>
+        <div class="close-button" (click)="closeTerminal()">
+            <fa-icon [icon]="faTimes"></fa-icon>
+        </div>
+    </div>
+
+    <div class="terminal-container">
+        <div class="line" *ngFor="let line of loggingData">
+            [{{ line.level }} - {{ line.timestamp }}] {{ line.message }}
+        </div>
+    </div>
+</div>
