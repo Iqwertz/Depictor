@@ -44,8 +44,57 @@
         height: calc(90vh - 10px);
         color: #fff;
         border: 0px;
+        .ui-elements {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 250px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            .action-select {
+                font-size: 20px;
+                font-family: "Josefin Sans", sans-serif !important;
+                border: none;
+                border-radius: 5px;
+                background-color: #50505088;
+                color: #fff;
+                height: 35px;
+                align-items: center;
+                justify-content: center;
+                padding: 4px 5px 3px;
+                margin-left: 10px;
+                width: 110px;
+                cursor: pointer;
+            }
+            .loadedLines {
+                margin: 0;
+                height: 33px;
+                border: none;
+                border-radius: 5px;
+                background-color: #50505088;
+                color: #fff;
+                width: 50px;
+                padding: 0 10px;
+            }
+            .reload {
+                cursor: pointer;
+            }
+        }
         .line {
             margin: 3px 0;
+            .error {
+                color: red;
+            }
+            .info {
+                color: #fff;
+            }
+            .warn {
+                color: orange;
+            }
+            .http {
+                color: grey;
+            }
         }
     }
 }

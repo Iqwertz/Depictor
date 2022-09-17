@@ -8,7 +8,25 @@
 
     <div class="terminal-container">
         <div class="line" *ngFor="let line of loggingData">
-            [{{ line.level }} - {{ line.timestamp }}] {{ line.message }}
-        </div>
+            <span [ngClass]="line.level">[{{ line.level }} - {{ line.timestamp }}]</span
+      >
+      {{ line.message }}
     </div>
+    <div class="ui-elements">
+      <!--- debug level-->
+      <select
+        class="action-select"
+        [(ngModel)]="logLevel"
+        (ngModelChange)="reload()"
+      >
+        <option *ngFor="let level of logLevelOptions" [value]="level">
+          {{ level }}
+        </option>
+      </select>
+      <!--number of lines-->
+      <input class="loadedLines" type="number" [(ngModel)]="loadedLines" />
+      <!--reload-->
+      <fa-icon class="reload" [icon]="faReload" (click)="reload()"></fa-icon>
+    </div>
+  </div>
 </div>

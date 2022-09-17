@@ -1,3 +1,4 @@
+import { LogLevel } from './../modules/shared/components/log-display/log-display.component';
 /**
  * backend-connect service
  *
@@ -227,13 +228,14 @@ export class BackendConnectService {
    *sends a post request to get the last n lines of the log file
    *
    * @param {number} n the amout of lines that should be returned
+   * @param {LogLevel} level the amout of lines that should be returned
    * @return {*}  {Observable<LoggingData Json>}
    * @memberof BackendConnectService
    */
-  getLoggingData(n: number): Observable<BackendVersion> {
+  getLoggingData(n: number, level: LogLevel): Observable<BackendVersion> {
     return this.http.post<BackendVersion>(
       'http://' + this.ip + '/getLoggingData',
-      { lines: n }
+      { lines: n, level: level }
     );
   }
 

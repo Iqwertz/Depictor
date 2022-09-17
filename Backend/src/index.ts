@@ -763,20 +763,22 @@ post: /getLoggingData
 description: returns available serial ports
 
 expected request: 
-  {}
+  {
+    lines: number,
+    level: "debug" | "error" | "http" | "info" | "warn"
+  }
   
 returns: 
     unsuccessful 
       {}
 
     successful
-    {ports: string[]}
+    {data: string[]}
 */
 app.post("/getLoggingData", async (req: Request, res: Response) => {
   logger.http("post: getLoggingData");
   let lines: number = req.body.lines;
-  let lastLines: string = await readLastLines.read("./data/logs/info.log", lines);
-
+  let lastLines: string = await readLastLines.read(`./data/logs/${req.body.level}.log`, lines);
   res.json({ data: lastLines.split("\r\n") });
 });
 
