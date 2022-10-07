@@ -15,22 +15,21 @@ PrintWriter output;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Constants 
-float global_gcode_scale = 0.25; //if 0 scale is auto. calculated
-boolean flip_gcode_xy = true;
-boolean skip_gcode_negative_values = true;
-float   paper_top_to_origin = 9;      //mm, make smaller to move drawing down on paper
-float   pen_width = 0.65;               //mm, determines image_scale, reduce, if solid black areas are speckled with white holes. //0.65
-int     pen_count = 1;
-char    gcode_decimal_seperator = '.';    
-int     gcode_decimals = 2;             // Number of digits right of the decimal point in the gcode files.
-int     svg_decimals = 2;               // Number of digits right of the decimal point in the SVG file.
-float   grid_scale = 10.0;              // Use 10.0 for centimeters, 25.4 for inches, and between 444 and 529.2 for cubits.
-
 final float scale_factor = 10;
+final float global_gcode_scale = 0.25; //if 0 scale is auto. calculated
+final boolean flip_gcode_xy = true;
+final boolean skip_gcode_negative_values = true;
 final float   paper_size_x = 16 * scale_factor;
 final float   paper_size_y = 20 * scale_factor;
 final float   image_size_x = 28 * 15;
 final float   image_size_y = 36 * 15;
+final float   paper_top_to_origin = 9;      //mm, make smaller to move drawing down on paper
+final float   pen_width = 0.65;               //mm, determines image_scale, reduce, if solid black areas are speckled with white holes. //0.65
+final int     pen_count = 1;
+final char    gcode_decimal_seperator = '.';    
+final int     gcode_decimals = 2;             // Number of digits right of the decimal point in the gcode files.
+final int     svg_decimals = 2;               // Number of digits right of the decimal point in the SVG file.
+final float   grid_scale = 10.0;              // Use 10.0 for centimeters, 25.4 for inches, and between 444 and 529.2 for cubits.
 
 final String input_image_path = "input/image.jpg";
 
@@ -80,8 +79,6 @@ float[] pen_distribution = new float[pen_count];
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup() {
-    setSettings();
-    
     output = createWriter("log.txt"); 
     size(500, 500);
     frame.setLocation(200, 200);
@@ -91,9 +88,9 @@ void setup() {
     frameRate(999);
     //randomSeed(millis());
     randomSeed(3);
-    d1 = new botDrawing();
-    dx = new Limit(); 
-    dy = new Limit(); 
+    d1= new botDrawing();
+    dx= new Limit(); 
+    dy= new Limit(); 
     loadInClass(pfms[current_pfm]);
     loadImageFromPath();
     background(0);
@@ -109,25 +106,10 @@ void draw() {
     drawfunctions();
 }
 
-void setSettings() {
-    JSONObject json = loadJSONObject("settings.json").getJSONObject("main");
-    
-    global_gcode_scale = json.getFloat("global_gcode_scale");
-    flip_gcode_xy = json.getBoolean("flip_gcode_xy");
-    skip_gcode_negative_values = json.getBoolean("skip_gcode_negative_values");
-    paper_top_to_origin =  json.getFloat("paper_top_to_origin");
-    pen_width = json.getFloat("pen_width");
-    pen_count =    json.getInt("pen_count");
-    gcode_decimal_seperator = json.getString("gcode_decimal_seperator").charAt(0);;    
-    gcode_decimals = json.getInt("gcode_decimals");
-    svg_decimals = json.getInt("svg_decimals");
-    grid_scale = json.getFloat("grid_scale");
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void drawfunctions() {
     // background(255,0,0);
-    if (state != 3) { background(255, 255, 255); }
+    if(state != 3) { background(255, 255, 255); }
     scale(screen_scale);
     translate(mx, my);
     rotate(HALF_PI * screen_rotate);
@@ -169,11 +151,11 @@ void drawfunctions() {
             state++;
             break;
         case 5 : 
-            if (drawToScreen) {
-                render_all();
-            }
+        if(drawToScreen){
+           render_all();
+    }
             noLoop();
-            save("gcode/render.png");
+           save("gcode/render.png");
             create_gcode_files(display_line_count);
             create_svg_file(display_line_count);
             exit();
@@ -193,7 +175,7 @@ void loadImageFromPath() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void fileSelected(File selection) {
-    if (selection == null) {
+    if(selection == null) {
         println("no image file selected, exiting program.");
         exit();
     } else {
@@ -253,37 +235,37 @@ void setup_squiggles() {
 void render_all() {
     println("render_all: " + display_mode + ", " + display_line_count + " lines, with pen set " + current_copic_set);
     
-    if (display_mode == "drawing") {
+    if(display_mode == "drawing") {
         //<d1.render_all();
-        d1.render_some(display_line_count);
+       d1.render_some(display_line_count);
     }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void keyPressed() {
-    if (key == 'p') {
+    if(key == 'p') {
         current_pfm ++;
         if (current_pfm >= pfms.length) { current_pfm = 0; }
         //display_line_count = 0;
         loadInClass(pfms[current_pfm]); 
         state = 2;
     }
-    if (key == 'g') { 
+    if(key == 'g') { 
         create_gcode_files(display_line_count);
     }
-    if (key == '<') {
+    if(key == '<') {
         int delta = -5000;
         display_line_count = int(display_line_count + delta);
         display_line_count = constrain(display_line_count, 0, d1.line_count);
         //println("display_line_count: " + display_line_count);
     }
-    if (key == '>') {
+    if(key == '>') {
         int delta = 5000;
         display_line_count = int(display_line_count + delta);
         display_line_count = constrain(display_line_count, 0, d1.line_count);
         //println("display_line_count: " + display_line_count);
     }
-    if (key == 'r') { 
+    if(key == 'r') { 
         screen_rotate ++;
         if (screen_rotate == 4) { screen_rotate = 0; }
         
@@ -300,7 +282,7 @@ void keyPressed() {
             case 3 : 
                 mx -= img.height;
                 break;
-        }
+    }
     }
     //surface.setSize(img.width, img.height);
     redraw();
@@ -319,17 +301,17 @@ void set_even_distribution() {
 public void loadInClass(String pfm_name) {
     String className = this.getClass().getName() + "$" + pfm_name;
     try {
-        cl = Class.forName(className);
+        cl =Class.forName(className);
     } catch(ClassNotFoundException e) { 
         println("\nError unknown PFM: " + className); 
     }
     
     ocl = null;
-    if (cl != null) {
+    if(cl != null) {
         try {
-            // Getthe constructor(s)
+           // Getthe constructor(s)
             java.lang.reflect.Constructor[] ctors = cl.getDeclaredConstructors();
-            // Create an instance with the parent object as parameter (needed for inner classes)
+           // Create an instance with the parent object as parameter (needed for inner classes)
             ocl = (pfm) ctors[0].newInstance(new Object[] { this });
         } catch(InstantiationException e) {
             println("Cannot create an instance of " + className);
@@ -351,8 +333,8 @@ void mousePressed() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void mouseDragged() {
-    mx = mouseX - morgx; 
-    my = mouseY - morgy; 
+    mx= mouseX - morgx; 
+    my= mouseY - morgy; 
     redraw();
 }
 
