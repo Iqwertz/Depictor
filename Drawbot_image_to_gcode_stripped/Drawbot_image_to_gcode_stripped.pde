@@ -33,6 +33,7 @@ final float   image_size_x = 28 * 15;
 final float   image_size_y = 36 * 15;
 
 final String input_image_path = "input/image.jpg";
+final String settings_path = "settings.json";
 
 // Every good program should have a shit pile of badly named globals.
 Class cl = null;
@@ -110,7 +111,7 @@ void draw() {
 }
 
 void setSettings() {
-    JSONObject json = loadJSONObject("settings.json").getJSONObject("main");
+    JSONObject json = loadJSONObject(settings_path).getJSONObject("main");
     
     global_gcode_scale = json.getFloat("global_gcode_scale");
     flip_gcode_xy = json.getBoolean("flip_gcode_xy");
@@ -118,7 +119,7 @@ void setSettings() {
     paper_top_to_origin =  json.getFloat("paper_top_to_origin");
     pen_width = json.getFloat("pen_width");
     pen_count =    json.getInt("pen_count");
-    gcode_decimal_seperator = json.getString("gcode_decimal_seperator").charAt(0);;    
+    gcode_decimal_seperator = json.getString("gcode_decimal_seperator").charAt(0);
     gcode_decimals = json.getInt("gcode_decimals");
     svg_decimals = json.getInt("svg_decimals");
     grid_scale = json.getFloat("grid_scale");

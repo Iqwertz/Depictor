@@ -196,7 +196,7 @@ class PFM_original implements pfm {
     }
     
     private void setSettings() {
-        JSONObject json = loadJSONObject("settings.json").getJSONObject("PFM_original");
+        JSONObject json = loadJSONObject(settings_path).getJSONObject("PFM_original");
         
         squiggle_length = json.getInt("squiggle_length");
         adjustbrightness = json.getInt("adjustbrightness");

@@ -153,7 +153,7 @@ class PFM_squares implements pfm {
                                         }
                                             
                                        private void setSettings() {
-                                                JSONObject json = loadJSONObject("settings.json").getJSONObject("PFM_squares");
+                                                JSONObject json = loadJSONObject(settings_path).getJSONObject("PFM_squares");
                                                 
                                                 squiggle_length = json.getInt("squiggle_length");
                                                adjustbrightness = json.getInt("adjustbrightness");
