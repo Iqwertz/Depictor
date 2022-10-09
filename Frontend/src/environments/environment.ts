@@ -45,6 +45,10 @@ const settings: Settings = {
     supportedCommands: 'G1;G4;M3;M03;M5;M05;F;$',
   },
   port: '',
+  converter: {
+    availableConverter: [],
+    selectedConverter: '',
+  },
 };
 
 export const environment = {

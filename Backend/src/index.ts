@@ -62,6 +62,10 @@ interface SerialPortEntry {
   manufacturer: string;
 }
 
+interface Config {
+  converters: string[];
+}
+
 let appState: AppStates = "idle"; //var to track the current appstate
 let isDrawing: boolean = false; //var to track if the bot is currently drawing
 let drawingProgress: number = 0; //var to track the progress of the current drawing //when -1 drawing failed
@@ -661,29 +665,38 @@ returns:
 */
 app.post("/changeSettings", (req: Request, res: Response) => {
   logger.http("post: changeSettings");
+  setSettings(req.body.settings);
+  res.json(readSettingsFile());
+});
 
-  if (req.body.settings) {
-    logger.debug(JSON.stringify(req.body.settings));
-    fse.outputFileSync("data/settings.json", JSON.stringify(req.body.settings), "utf8", function (err: any, data: any) {
+function setSettings(settings: Object) {
+  if (settings) {
+    logger.debug(JSON.stringify(settings));
+    fse.outputFileSync("data/settings.json", JSON.stringify(settings), "utf8", function (err: any, data: any) {
       if (err) {
         logger.error(err);
-        res.json({});
         return;
       } else {
         logger.info("successfully saved settings");
       }
     });
   }
+}
 
+function readSettingsFile(): Object {
   if (fs.existsSync("data/settings.json")) {
-    let settings = fs.readFileSync("data/settings.json", "utf8");
-    res.json({ settings: JSON.parse(settings) });
+    let settings = JSON.parse(fs.readFileSync("data/settings.json", "utf8"));
     logger.info("found settings");
+    let config = loadConfig();
+    if (config) {
+      settings.converter.availableConverter = config.converters;
+    }
+    return { settings: settings };
   } else {
     logger.warn("no settings found");
-    res.json({});
+    return {};
   }
-});
+}
 
 /*
 post: /getAvailableSerialPorts
@@ -770,16 +783,20 @@ expected request:
   
 returns: 
     unsuccessful 
-      {}
+      {err: string}
 
     successful
     {data: string[]}
 */
 app.post("/getLoggingData", async (req: Request, res: Response) => {
   logger.http("post: getLoggingData");
+  if (!req.body.lines || !["debug", "error", "http", "info", "warn"].includes(req.body.level)) {
+    res.json({ err: "faulty_input" });
+    return;
+  }
   let lines: number = req.body.lines;
   let lastLines: string = await readLastLines.read(`./data/logs/${req.body.level}.log`, lines);
-  res.json({ data: lastLines.split("\r\n") });
+  res.json({ data: lastLines.split("\n") });
 });
 
 /*
@@ -865,7 +882,19 @@ httpServer!.listen(enviroment.port, () => {
   logger.info("started Server");
   logger.info("listening on *:" + enviroment.port);
   logger.info("Detected Linux: " + isLinux);
+  logger.info("Loading Config file");
 });
+
+function loadConfig(): Config | undefined {
+  if (fs.existsSync("data/config.json")) {
+    logger.info("found config");
+    let config = JSON.parse(fs.readFileSync("data/config.json", "utf8"));
+    return config;
+  } else {
+    logger.error("coldnt find converter config");
+    return undefined;
+  }
+}
 
 /**
  *drawGcode()

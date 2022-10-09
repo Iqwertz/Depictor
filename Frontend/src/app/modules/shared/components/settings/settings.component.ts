@@ -47,6 +47,12 @@ export interface Settings {
   standardizerSettings: StandartizerSettings;
   floatingPoints: number;
   port: string;
+  converter: ConverterSettings;
+}
+
+export interface ConverterSettings {
+  availableConverter: string[];
+  selectedConverter: string;
 }
 
 export interface SerialPort {
