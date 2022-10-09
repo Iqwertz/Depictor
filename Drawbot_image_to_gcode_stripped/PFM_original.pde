@@ -5,6 +5,7 @@
 
 class PFM_original implements pfm {
     
+  boolean addBoarder = true;
     int    squiggle_length = 5000;      // How often to lift the pen
     int    adjustbrightness = 10;       // How fast it moves from dark to light, over-draw
     float  desired_brightness = 250;   // How long to process.  You can always stop early with "s" key
@@ -41,8 +42,10 @@ class PFM_original implements pfm {
         //image_dilate();
         //image_invert();
         //image_blur(2);
-        image_boarder("b1.png", 0, 0);
-        image_boarder("b11.png", 0, 0);
+        if(addBoarder){
+           image_boarder("b1.png", 0, 0);
+           image_boarder("b11.png", 0, 0);
+        }
         image_desaturate();
     }
     
@@ -198,6 +201,7 @@ class PFM_original implements pfm {
     private void setSettings() {
         JSONObject json = loadJSONObject(settings_path).getJSONObject("PFM_original");
         
+        addBoarder = json.getBoolean("addBoarder");
         squiggle_length = json.getInt("squiggle_length");
         adjustbrightness = json.getInt("adjustbrightness");
         desired_brightness = json.getFloat("desired_brightness");

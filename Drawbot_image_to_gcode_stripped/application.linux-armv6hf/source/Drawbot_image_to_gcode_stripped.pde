@@ -32,7 +32,7 @@ final float   paper_size_y = 20 * scale_factor;
 final float   image_size_x = 28 * 15;
 final float   image_size_y = 36 * 15;
 
-final String input_image_path = "input/image.jpg";
+final String input_image_path = "../input/image.jpg";
 final String settings_path = "settings.json";
 
 // Every good program should have a shit pile of badly named globals.
@@ -174,7 +174,7 @@ void drawfunctions() {
                 render_all();
             }
             noLoop();
-            save("gcode/render.png");
+            save("output/preview.png");
             create_gcode_files(display_line_count);
             create_svg_file(display_line_count);
             exit();

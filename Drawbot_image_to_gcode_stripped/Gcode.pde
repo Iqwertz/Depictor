@@ -67,7 +67,7 @@ void create_gcode_files(int line_count) {
         lines_drawn = 0;
         x = 0;
         y = 0;
-        String gname = "gcode/gcode_" + basefile_selected + ".nc";
+        String gname = "output/gcode.nc";
         OUTPUT = createWriter(sketchPath("") + gname);
         gcode_header();
         
@@ -164,7 +164,7 @@ void create_svg_file (int line_count) {
   // Inkscape versions before 0.91 used 90dpi, Today most software assumes 96dpi.
   float svgdpi = 96.0 / 25.4;
   
-  String gname = "gcode\\gcode_" + basefile_selected + ".svg";
+  String gname = "output/image.svg";
   OUTPUT = createWriter(sketchPath("") + gname);
   OUTPUT.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
   OUTPUT.println("<svg width=\"" + svg_format(img.width * gcode_scale) + "mm\" height=\"" + svg_format(img.height * gcode_scale) + "mm\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">");
