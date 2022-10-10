@@ -1,170 +1,242 @@
 <div class="pop-up-container">
-    <div class="settings-container">
-        <div class="close" (click)="checkChanges()">
-            <fa-icon [icon]="faTimes"></fa-icon>
-        </div>
-        <h1>Settings</h1>
+  <app-json-settings
+    *ngIf="currentJsonSettings != null"
+    [jsonSetting]="currentJsonSettings"
+    [name]="currentJsonSettingsName"
+    (close)="saveCurrentJsonSettings()"
+  ></app-json-settings>
+  <div class="settings-container">
+    <div class="close" (click)="checkChanges()">
+      <fa-icon [icon]="faTimes"></fa-icon>
+    </div>
+    <h1>Settings</h1>
 
-        <div class="divider" *ngIf="siteStateService.serverOnline">
-            <div class="label">General</div>
-        </div>
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label">Shutdown</div>
-            <app-settings-ui-button [offButton]="true" (clicked)="confirmDialog!.show()"></app-settings-ui-button>
-        </div>
+    <div class="divider" *ngIf="siteStateService.serverOnline">
+      <div class="label">General</div>
+    </div>
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label">Shutdown</div>
+      <app-settings-ui-button
+        [offButton]="true"
+        (clicked)="confirmDialog!.show()"
+      ></app-settings-ui-button>
+    </div>
 
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">Serial Port</div>
-            <!--html select for serial port options-->
-            <select class="action-select" [(ngModel)]="settings.port" (change)="setSerialPort()">
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">Serial Port</div>
+      <!--html select for serial port options-->
+      <select
+        class="action-select"
+        [(ngModel)]="settings.port"
+        (change)="setSerialPort()"
+      >
         <option *ngFor="let port of availableSerialPorts" [value]="port.path">
           {{ port.path }} ({{ port.manufacturer }})
         </option>
       </select>
-        </div>
+    </div>
 
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">
-                BgRemove API key
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">
-                        API Key for the remove.bg api. If you want to be able to automatically remove the background of your pictures you have to provide an api key.
-                        <br />
-                        <br /> To get one go to https://www.remove.bg/ and create an account than go to https://www.remove.bg/de/dashboard#api-key and copy the key.
-                    </div>
-                </div>
-            </div>
-            <app-settings-textinput [(ngModel)]="bgRemoveApiKey"></app-settings-textinput>
-            <app-settings-ui-button [name]="'Set'" (clicked)="setBgRemoveApiKey()"></app-settings-ui-button>
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">
+        BgRemove API key
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            API Key for the remove.bg api. If you want to be able to
+            automatically remove the background of your pictures you have to
+            provide an api key.
+            <br />
+            <br />
+            To get one go to https://www.remove.bg/ and create an account than
+            go to https://www.remove.bg/de/dashboard#api-key and copy the key.
+          </div>
         </div>
+      </div>
+      <app-settings-textinput
+        [(ngModel)]="bgRemoveApiKey"
+      ></app-settings-textinput>
+      <app-settings-ui-button
+        [name]="'Set'"
+        (clicked)="setBgRemoveApiKey()"
+      ></app-settings-ui-button>
+    </div>
 
-        <div class="setting-line">
-            <div class="label">API endpoint</div>
-            <app-settings-textinput [(ngModel)]="ip"></app-settings-textinput>
-            <app-settings-ui-button [name]="'Set'" (clicked)="setNewIp()"></app-settings-ui-button>
+    <div class="setting-line">
+      <div class="label">API endpoint</div>
+      <app-settings-textinput [(ngModel)]="ip"></app-settings-textinput>
+      <app-settings-ui-button
+        [name]="'Set'"
+        (clicked)="setNewIp()"
+      ></app-settings-ui-button>
+    </div>
+
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">
+        Time per line
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            The average time in seconds it takes to draw one line. This value is
+            used in the time estimations, adjust it if they are not correct.
+          </div>
         </div>
+      </div>
+      <app-settings-textinput
+        [type]="'number'"
+        [(ngModel)]="settings.avgTimePerLine"
+      ></app-settings-textinput>
+    </div>
 
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">
-                Time per line
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">
-                        The average time in seconds it takes to draw one line. This value is used in the time estimations, adjust it if they are not correct.
-                    </div>
-                </div>
-            </div>
-            <app-settings-textinput [type]="'number'" [(ngModel)]="settings.avgTimePerLine"></app-settings-textinput>
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">
+        Image size (MB)
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            The size to which an uploaded image gets compressed. Attention: to
+            high file sizes can crash the program on a raspberry pie!
+          </div>
         </div>
+      </div>
+      <app-settings-textinput
+        [type]="'number'"
+        [(ngModel)]="settings.maxImageFileSize"
+      ></app-settings-textinput>
+    </div>
 
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">
-                Image size (MB)
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">
-                        The size to which an uploaded image gets compressed. Attention: to high file sizes can crash the program on a raspberry pie!
-                    </div>
-                </div>
-            </div>
-            <app-settings-textinput [type]="'number'" [(ngModel)]="settings.maxImageFileSize"></app-settings-textinput>
+    <div class="divider" *ngIf="siteStateService.serverOnline">
+      <div class="label">Gcode upload</div>
+    </div>
+
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label">Standardize gcode</div>
+      <app-settings-checkbox
+        [(ngModel)]="settings.standardizeGcode"
+      ></app-settings-checkbox>
+    </div>
+
+    <div
+      class="setting-line indent"
+      *ngIf="siteStateService.serverOnline && settings.standardizeGcode"
+    >
+      <div class="label small">
+        Convert G0 to G1
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            Converts all G0, G01 or G00 commands to G1 commands.
+          </div>
         </div>
+      </div>
+      <app-settings-checkbox
+        [(ngModel)]="settings.standardizerSettings.convertG0"
+      ></app-settings-checkbox>
+    </div>
 
-        <div class="divider" *ngIf="siteStateService.serverOnline">
-            <div class="label">Gcode upload</div>
+    <div
+      class="setting-line indent"
+      *ngIf="siteStateService.serverOnline && settings.standardizeGcode"
+    >
+      <div class="label small">
+        Remove unnecessary parameter
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            Removes unnecessary (F and Z) parameter in G1 commands.
+          </div>
         </div>
+      </div>
+      <app-settings-checkbox
+        [(ngModel)]="settings.standardizerSettings.removeUnusedParameter"
+      ></app-settings-checkbox>
+    </div>
 
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label">Standardize gcode</div>
-            <app-settings-checkbox [(ngModel)]="settings.standardizeGcode"></app-settings-checkbox>
+    <div
+      class="setting-line indent"
+      *ngIf="siteStateService.serverOnline && settings.standardizeGcode"
+    >
+      <div class="label small">
+        Transform to positive
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            Transforms all coordinates in the drawing to ensure that there are
+            no negative coordinates.
+          </div>
         </div>
+      </div>
+      <app-settings-checkbox
+        [(ngModel)]="settings.standardizerSettings.transfromToPositiveSpace"
+      ></app-settings-checkbox>
+    </div>
 
-        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
-            <div class="label small">
-                Convert G0 to G1
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">
-                        Converts all G0, G01 or G00 commands to G1 commands.
-                    </div>
-                </div>
-            </div>
-            <app-settings-checkbox [(ngModel)]="settings.standardizerSettings.convertG0"></app-settings-checkbox>
+    <div
+      class="setting-line indent"
+      *ngIf="siteStateService.serverOnline && settings.standardizeGcode"
+    >
+      <div class="label small">
+        Scale Gcode
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            Scales the gcode to fit exactly into the drawing area
+          </div>
         </div>
+      </div>
+      <app-settings-checkbox
+        [(ngModel)]="settings.standardizerSettings.scaleToDrawingArea"
+      ></app-settings-checkbox>
+    </div>
 
-        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
-            <div class="label small">
-                Remove unnecessary parameter
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">
-                        Removes unnecessary (F and Z) parameter in G1 commands.
-                    </div>
-                </div>
-            </div>
-            <app-settings-checkbox [(ngModel)]="settings.standardizerSettings.removeUnusedParameter"></app-settings-checkbox>
+    <div
+      class="setting-line indent"
+      *ngIf="siteStateService.serverOnline && settings.standardizeGcode"
+    >
+      <div class="label small">
+        Remove unsupported Commands
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            This will remove all lines in the gcode that aren't starting with
+            the commands defined below.
+          </div>
         </div>
+      </div>
+      <app-settings-checkbox
+        [(ngModel)]="settings.standardizerSettings.removeUnsupportedCommands"
+      ></app-settings-checkbox>
+    </div>
 
-        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
-            <div class="label small">
-                Transform to positive
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">
-                        Transforms all coordinates in the drawing to ensure that there are no negative coordinates.
-                    </div>
-                </div>
-            </div>
-            <app-settings-checkbox [(ngModel)]="settings.standardizerSettings.transfromToPositiveSpace"></app-settings-checkbox>
+    <div
+      class="setting-line indent"
+      *ngIf="siteStateService.serverOnline && settings.standardizeGcode"
+    >
+      <div class="label small">
+        Supported Commands
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            Commands supported by your drawing machine. Commands are separated
+            by a ';'
+          </div>
         </div>
+      </div>
+      <app-settings-textinput
+        [(ngModel)]="settings.standardizerSettings.supportedCommands"
+      ></app-settings-textinput>
+    </div>
 
-        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
-            <div class="label small">
-                Scale Gcode
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">
-                        Scales the gcode to fit exactly into the drawing area
-                    </div>
-                </div>
-            </div>
-            <app-settings-checkbox [(ngModel)]="settings.standardizerSettings.scaleToDrawingArea"></app-settings-checkbox>
-        </div>
+    <div class="divider" *ngIf="siteStateService.serverOnline">
+      <div class="label">Drawing area</div>
+    </div>
 
-        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
-            <div class="label small">
-                Remove unsupported Commands
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">
-                        This will remove all lines in the gcode that aren't starting with the commands defined below.
-                    </div>
-                </div>
-            </div>
-            <app-settings-checkbox [(ngModel)]="settings.standardizerSettings.removeUnsupportedCommands"></app-settings-checkbox>
-        </div>
-
-        <div class="setting-line indent" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
-            <div class="label small">
-                Supported Commands
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">
-                        Commands supported by your drawing machine. Commands are separated by a ';'
-                    </div>
-                </div>
-            </div>
-            <app-settings-textinput [(ngModel)]="settings.standardizerSettings.supportedCommands"></app-settings-textinput>
-        </div>
-
-        <div class="divider" *ngIf="siteStateService.serverOnline">
-            <div class="label">Drawing area</div>
-        </div>
-
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">Paper profile</div>
-            <select class="action-select" [ngModel]="settings.selectedPaperProfile.name" (ngModelChange)="updatePaperProfile($event)">
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">Paper profile</div>
+      <select
+        class="action-select"
+        [ngModel]="settings.selectedPaperProfile.name"
+        (ngModelChange)="updatePaperProfile($event)"
+      >
         <option
           *ngFor="let profile of settings.paperProfiles"
           [value]="profile.name"
@@ -172,137 +244,205 @@
           {{ profile.name }}
         </option>
       </select>
-            <app-settings-ui-button [name]="'Edit'" (clicked)="editPaperProfile()"></app-settings-ui-button>
-        </div>
-
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">Create new profile</div>
-            <app-settings-ui-button [name]="'Create'" (clicked)="createPaperProfile()"></app-settings-ui-button>
-        </div>
-
-        <div class="setting-line" *ngIf="siteStateService.serverOnline && settings.standardizeGcode">
-            <div class="label small">
-                Center gcode
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">Center the gcode in the drawing area.</div>
-                </div>
-            </div>
-            <app-settings-checkbox [(ngModel)]="settings.centerOnDrawingArea"></app-settings-checkbox>
-        </div>
-
-        <div class="divider" *ngIf="siteStateService.serverOnline">
-            <div class="label">Plotter controls</div>
-        </div>
-
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label">Home pen</div>
-            <app-settings-ui-button [name]="'Home'" (clicked)="home()"></app-settings-ui-button>
-        </div>
-
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label">Move pen</div>
-            <div class="button-group">
-                <app-settings-ui-button [name]="'Up'" (clicked)="penUp()"></app-settings-ui-button>
-                <app-settings-ui-button [name]="'Down'" (clicked)="penDown()"></app-settings-ui-button>
-            </div>
-        </div>
-
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">Pen up command</div>
-            <app-settings-textarea [(ngModel)]="settings.penUpCommand"></app-settings-textarea>
-        </div>
-
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">Pen down command</div>
-            <app-settings-textarea [(ngModel)]="settings.penDownCommand"></app-settings-textarea>
-        </div>
-
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">
-                Start gcode
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">
-                        This gcode gets appended at the start of every gcode that gets drawn.
-                    </div>
-                </div>
-            </div>
-            <app-settings-textarea [(ngModel)]="settings.startGcode"></app-settings-textarea>
-        </div>
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">
-                End gcode
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">
-                        This gcode gets appended at the end of every gcode that gets drawn.
-                    </div>
-                </div>
-            </div>
-            <app-settings-textarea [(ngModel)]="settings.endGcode"></app-settings-textarea>
-        </div>
-
-        <div class="divider" *ngIf="siteStateService.serverOnline">
-            <div class="label">Updates & Data</div>
-        </div>
-
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">Available updates</div>
-            <div class="label small wide" *ngIf="!updatesAvailable">
-                <b>System is on the newest version</b>
-            </div>
-            <app-settings-ui-button *ngIf="updatesAvailable" [name]="availableUpdateVersion" (clicked)="update()"></app-settings-ui-button>
-        </div>
-
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">
-                Download data
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">
-                        Zips all data and downloads it locally. This includes all images, gcodes, logs and the system settings.
-                    </div>
-                </div>
-            </div>
-            <a href="/zipData" [href]="'http://' + ip + '/zipData'" download>
-                <app-settings-ui-button [name]="'Download'"></app-settings-ui-button>
-            </a>
-        </div>
-
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">
-                Reset settings
-                <div class="tooltip">
-                    <fa-icon [icon]="faInfo"></fa-icon>
-                    <div class="content">
-                        Resets all settings to their default values.
-                    </div>
-                </div>
-            </div>
-            <app-settings-ui-button [name]="'Reset'" (clicked)="resetSettings()"></app-settings-ui-button>
-        </div>
-
-        <div class="setting-line" *ngIf="siteStateService.serverOnline">
-            <div class="label small">View Logs</div>
-            <app-settings-ui-button [name]="'View'" (clicked)="showLogs = true"></app-settings-ui-button>
-        </div>
-        <div class="version">
-            Version: {{ backendVersion.tag }} {{ backendVersion.production ? "" : "Development" }}
-        </div>
+      <app-settings-ui-button
+        [name]="'Edit'"
+        (clicked)="editPaperProfile()"
+      ></app-settings-ui-button>
     </div>
 
-    <div class="save-container" *ngIf="!compareSettings(settingsBefore, settings)">
-        <div class="button-group">
-            <app-settings-ui-button [name]="'Cancel'" (clicked)="discardSettings()">
-            </app-settings-ui-button>
-            <app-settings-ui-button [name]="'Save'" (clicked)="setSettings(); close.emit()">
-            </app-settings-ui-button>
-        </div>
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">Create new profile</div>
+      <app-settings-ui-button
+        [name]="'Create'"
+        (clicked)="createPaperProfile()"
+      ></app-settings-ui-button>
     </div>
+
+    <div
+      class="setting-line"
+      *ngIf="siteStateService.serverOnline && settings.standardizeGcode"
+    >
+      <div class="label small">
+        Center gcode
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">Center the gcode in the drawing area.</div>
+        </div>
+      </div>
+      <app-settings-checkbox
+        [(ngModel)]="settings.centerOnDrawingArea"
+      ></app-settings-checkbox>
+    </div>
+
+    <div class="divider" *ngIf="siteStateService.serverOnline">
+      <div class="label">Plotter controls</div>
+    </div>
+
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label">Home pen</div>
+      <app-settings-ui-button
+        [name]="'Home'"
+        (clicked)="home()"
+      ></app-settings-ui-button>
+    </div>
+
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label">Move pen</div>
+      <div class="button-group">
+        <app-settings-ui-button
+          [name]="'Up'"
+          (clicked)="penUp()"
+        ></app-settings-ui-button>
+        <app-settings-ui-button
+          [name]="'Down'"
+          (clicked)="penDown()"
+        ></app-settings-ui-button>
+      </div>
+    </div>
+
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">Pen up command</div>
+      <app-settings-textarea
+        [(ngModel)]="settings.penUpCommand"
+      ></app-settings-textarea>
+    </div>
+
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">Pen down command</div>
+      <app-settings-textarea
+        [(ngModel)]="settings.penDownCommand"
+      ></app-settings-textarea>
+    </div>
+
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">
+        Start gcode
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            This gcode gets appended at the start of every gcode that gets
+            drawn.
+          </div>
+        </div>
+      </div>
+      <app-settings-textarea
+        [(ngModel)]="settings.startGcode"
+      ></app-settings-textarea>
+    </div>
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">
+        End gcode
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            This gcode gets appended at the end of every gcode that gets drawn.
+          </div>
+        </div>
+      </div>
+      <app-settings-textarea
+        [(ngModel)]="settings.endGcode"
+      ></app-settings-textarea>
+    </div>
+
+    <div class="divider" *ngIf="siteStateService.serverOnline">
+      <div class="label">Image Converter</div>
+    </div>
+    <ng-container
+      *ngFor="let converter of settings.converter.availableConverter"
+    >
+      <div class="setting-line" *ngIf="siteStateService.serverOnline">
+        <div class="label small">{{ converter }}</div>
+        <app-settings-ui-button
+          [name]="'>'"
+          (clicked)="openConverterSettings(converter)"
+        ></app-settings-ui-button>
+      </div>
+    </ng-container>
+
+    <div class="divider" *ngIf="siteStateService.serverOnline">
+      <div class="label">Updates & Data</div>
+    </div>
+
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">Available updates</div>
+      <div class="label small wide" *ngIf="!updatesAvailable">
+        <b>System is on the newest version</b>
+      </div>
+      <app-settings-ui-button
+        *ngIf="updatesAvailable"
+        [name]="availableUpdateVersion"
+        (clicked)="update()"
+      ></app-settings-ui-button>
+    </div>
+
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">
+        Download data
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            Zips all data and downloads it locally. This includes all images,
+            gcodes, logs and the system settings.
+          </div>
+        </div>
+      </div>
+      <a href="/zipData" [href]="'http://' + ip + '/zipData'" download>
+        <app-settings-ui-button [name]="'Download'"></app-settings-ui-button>
+      </a>
+    </div>
+
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">
+        Reset settings
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            Resets all settings to their default values.
+          </div>
+        </div>
+      </div>
+      <app-settings-ui-button
+        [name]="'Reset'"
+        (clicked)="resetSettings()"
+      ></app-settings-ui-button>
+    </div>
+
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">View Logs</div>
+      <app-settings-ui-button
+        [name]="'View'"
+        (clicked)="showLogs = true"
+      ></app-settings-ui-button>
+    </div>
+    <div class="version">
+      Version: {{ backendVersion.tag }}
+      {{ backendVersion.production ? "" : "Development" }}
+    </div>
+  </div>
+
+  <div
+    class="save-container"
+    *ngIf="!compareSettings(settingsBefore, settings)"
+  >
+    <div class="button-group">
+      <app-settings-ui-button [name]="'Cancel'" (clicked)="discardSettings()">
+      </app-settings-ui-button>
+      <app-settings-ui-button
+        [name]="'Save'"
+        (clicked)="setSettings(); close.emit()"
+      >
+      </app-settings-ui-button>
+    </div>
+  </div>
 </div>
 
 <app-paper-profile-popup #paperprofilepopup></app-paper-profile-popup>
 <app-confirm-dialog #dialog (yes)="shutdown()"></app-confirm-dialog>
-<app-confirm-dialog #deleteSaved [text]="'You have unsaved changes! Do you want to save them?'" [buttons]="['Discard', 'Save']" (no)="discardSettings()" (yes)="setSettings(); close.emit()"></app-confirm-dialog>
+<app-confirm-dialog
+  #deleteSaved
+  [text]="'You have unsaved changes! Do you want to save them?'"
+  [buttons]="['Discard', 'Save']"
+  (no)="discardSettings()"
+  (yes)="setSettings(); close.emit()"
+></app-confirm-dialog>
 <app-log-display *ngIf="showLogs" (close)="showLogs = false"></app-log-display>

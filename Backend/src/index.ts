@@ -721,6 +721,60 @@ function readSettingsFile(): Settings | null {
 }
 
 /*
+post: /changeConverterSettings
+
+description: returns content of the settings.json in the defined converter and sets new settings if provided
+
+expected request: 
+  {
+    converter: string
+    settings?: object
+  }
+  
+returns: 
+    unsuccessful 
+      {}
+
+    successful
+    {settings: object}
+*/
+app.post("/changeConverterSettings", (req: Request, res: Response) => {
+  logger.http("post: changeConverterSettings");
+  setConverterSettings(req.body.converter, req.body.settings);
+  res.json(readConverterSettingsFile(req.body.converter));
+});
+
+function setConverterSettings(converter: string, settings: Object | null) {
+  if (settings) {
+    logger.debug(JSON.stringify(settings));
+    fse.outputFileSync(
+      "assets/imageConverter/" + converter + "/settings.json",
+      JSON.stringify(settings),
+      "utf8",
+      function (err: any, data: any) {
+        if (err) {
+          logger.error(err);
+          return;
+        } else {
+          logger.info("successfully saved" + converter + " settings");
+        }
+      }
+    );
+  }
+}
+
+function readConverterSettingsFile(converter: string): object | null {
+  if (fs.existsSync("assets/imageConverter/" + converter + "/settings.json")) {
+    let settings = JSON.parse(fs.readFileSync("assets/imageConverter/" + converter + "/settings.json", "utf8"));
+    logger.info("found " + converter + " settings");
+    return settings;
+  } else {
+    logger.warn("no settings found");
+    return null;
+  }
+}
+
+/*
 post: /getAvailableSerialPorts
 
 description: returns available serial ports

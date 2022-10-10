@@ -1,4 +1,7 @@
-<div *ngIf="!showSettings" (click)="showSettings = true" class="settings-button">
-    <fa-icon [icon]="faCog"></fa-icon>
+<div (click)="showSettings = true" class="settings-button">
+  <fa-icon [icon]="faCog"></fa-icon>
 </div>
-<app-settings *ngIf="showSettings" (close)="showSettings = false"></app-settings>
+<app-settings
+  *ngIf="showSettings"
+  (close)="showSettings = false"
+></app-settings>

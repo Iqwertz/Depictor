@@ -20,6 +20,7 @@ import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { SnackbarService } from './snackbar.service';
 import { GalleryEntryUpload } from '../modules/gcode/sites/gcode-edit/gcode-edit.component';
+import { JsonSetting } from '../modules/shared/components/json-settings/json-settings.component';
 
 export interface BackendVersion {
   tag: string; //version tag is used to check if a newer version is available
@@ -349,6 +350,25 @@ export class BackendConnectService {
   }
 
   /**
+   *updates the converter settings of the defined converter by sending a post request to change them on the server
+   *
+   * @param {string} converter
+   * @param {Settings} settings
+   * @memberof BackendConnectService
+   */
+  setConverterSettings(converter: string, settings: JsonSetting) {
+    this.http
+      .post('http://' + this.ip + '/changeConverterSettings', {
+        converter: converter,
+        settings: settings,
+      })
+      .subscribe((res: any) => {
+        this.snackbarService.success('converter settings saved successfully!');
+        //optional error handling
+      });
+  }
+
+  /**
    *syncs the settings with the backend by sending a post request, merging them with the default settings and updating the settings store
    *
    * @memberof BackendConnectService
@@ -387,6 +407,19 @@ export class BackendConnectService {
         return res.settings;
       })
     );
+  }
+
+  /**
+   * gets the settings for the defined converter from the backend by sending a post request and returns them as a observable.
+   *
+   * @param {string} converter
+   * @return {*}  {Observable<any>}
+   * @memberof BackendConnectService
+   */
+  getConverterSettings(converter: string): Observable<any> {
+    return this.http.post('http://' + this.ip + '/changeConverterSettings', {
+      converter: converter,
+    });
   }
 
   uploadGcodeToGallery(uploadData: GalleryEntryUpload, redirect: boolean) {

@@ -1,0 +1,56 @@
+<app-json-settings
+  *ngIf="subSettings"
+  [zIndex]="zIndex + 1"
+  [jsonSetting]="subSettings"
+  [name]="subSettingName"
+  (close)="subSettings = null"
+></app-json-settings>
+<div
+  class="json-settings-container"
+  [ngStyle]="{ 'z-index': zIndex }"
+  [ngClass]="{ open: open }"
+  *ngIf="jsonSetting"
+>
+  <h1>{{ name }}</h1>
+
+  <div class="back-button" (click)="closeSelfe()">
+    <fa-icon [icon]="backIcon"></fa-icon>
+  </div>
+
+  <ng-container *ngFor="let item of jsonSetting | keyvalue; trackBy: trackByFn">
+    <ng-container [ngSwitch]="getType(item.value)">
+      <div *ngSwitchCase="'object'" class="setting-line">
+        <div class="label small">{{ item.key }}</div>
+        <app-settings-ui-button
+          [name]="'>'"
+          (clicked)="setSubSettings(item)"
+        ></app-settings-ui-button>
+      </div>
+
+      <div *ngSwitchCase="'boolean'" class="setting-line">
+        <div class="label small">{{ item.key }}</div>
+        <app-settings-checkbox
+          [(ngModel)]="jsonSetting[item.key]"
+        ></app-settings-checkbox>
+      </div>
+
+      <div *ngSwitchCase="'number'" class="setting-line">
+        <div class="label small">{{ item.key }}</div>
+        <app-settings-textinput
+          [(ngModel)]="jsonSetting[item.key]"
+          [type]="'number'"
+        ></app-settings-textinput>
+      </div>
+
+      <div *ngSwitchCase="'string'" class="setting-line">
+        <div class="label small">{{ item.key }}</div>
+        <app-settings-textinput
+          [(ngModel)]="jsonSetting[item.key]"
+        ></app-settings-textinput>
+      </div>
+      <p *ngSwitchDefault>
+        {{ item.key }}: type {{ getType(item.value) }} not supported
+      </p>
+    </ng-container>
+  </ng-container>
+</div>
