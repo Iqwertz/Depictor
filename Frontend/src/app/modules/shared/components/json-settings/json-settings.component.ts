@@ -2,8 +2,16 @@ import { KeyValue } from '@angular/common';
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
+/*
+Supported types for json settings:
+string, number, boolean, object (with properties of supported types), array (with elements of supported types)
+
+to add a select option add an array with the options and an string variable called "selected"+arrayVariableName
+
+if a variable starts with _ it will be hidden from the settings
+*/
 export interface JsonSetting {
-  [key: string]: string | number | boolean | JsonSetting;
+  [key: string]: string | number | boolean | string[] | JsonSetting;
 }
 
 @Component({
@@ -34,16 +42,35 @@ export class JsonSettingsComponent implements OnInit {
   }
 
   getType(value: any): string {
-    return typeof value;
+    let type: string = typeof value;
+    if (Array.isArray(value)) {
+      type = 'array';
+    }
+    return type;
+  }
+
+  //just for ts to not complain
+  makeIterable(value: any): string[] {
+    if (Array.isArray(value)) {
+      return value;
+    } else {
+      return [];
+    }
   }
 
   setSubSettings(
-    value: KeyValue<string, string | number | boolean | JsonSetting>
+    value: KeyValue<string, string | string[] | number | boolean | JsonSetting>
   ): void {
     if (typeof value.value === 'object') {
-      this.subSettings = value.value;
-      this.subSettingName = value.key;
+      if (!Array.isArray(value.value)) {
+        this.subSettings = value.value;
+        this.subSettingName = value.key;
+      }
     }
+  }
+
+  setSelect(event: any) {
+    console.log(event);
   }
 
   closeSelfe(): void {

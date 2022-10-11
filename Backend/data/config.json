@@ -1,5 +1,9 @@
 {
     "converters":[
-        "DrawbotV2"
+        
+        {
+            "name": "DrawbotV2",
+            "imageInput": true
+        }
     ]
 }

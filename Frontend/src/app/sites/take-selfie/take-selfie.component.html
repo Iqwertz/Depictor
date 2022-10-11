@@ -8,6 +8,16 @@
 <div class="open-camera" *ngIf="!cameraService.showWebcam">
   <app-open-camera-button></app-open-camera-button>
 </div>
+<div class="converter-selector">
+  <app-select-chip
+    [label]="'Converter'"
+    [options]="
+      generateConverterNameArray(settings.converter.availableConverter)
+    "
+    [(ngModel)]="settings.converter.selectedConverter"
+    (ngModelChange)="onConverterSelectChange()"
+  ></app-select-chip>
+</div>
 <div class="snapshot-controls" *ngIf="cameraService.base64Image">
   <app-checkbox-chip
     [label]="'Remove background'"

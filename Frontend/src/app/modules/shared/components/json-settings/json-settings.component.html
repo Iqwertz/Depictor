@@ -18,7 +18,10 @@
   </div>
 
   <ng-container *ngFor="let item of jsonSetting | keyvalue; trackBy: trackByFn">
-    <ng-container [ngSwitch]="getType(item.value)">
+    <ng-container
+      *ngIf="!item.key.startsWith('_') && !item.key.startsWith('selected')"
+      [ngSwitch]="getType(item.value)"
+    >
       <div *ngSwitchCase="'object'" class="setting-line">
         <div class="label small">{{ item.key }}</div>
         <app-settings-ui-button
@@ -47,6 +50,22 @@
         <app-settings-textinput
           [(ngModel)]="jsonSetting[item.key]"
         ></app-settings-textinput>
+      </div>
+
+      <div *ngSwitchCase="'array'" class="setting-line">
+        <div class="label small">{{ item.key }}</div>
+        <select
+          class="action-select"
+          [(ngModel)]="jsonSetting['selected' + item.key]"
+          (change)="setSelect($event)"
+        >
+          <option
+            *ngFor="let element of makeIterable(jsonSetting[item.key])"
+            [value]="element"
+          >
+            {{ element }}
+          </option>
+        </select>
       </div>
       <p *ngSwitchDefault>
         {{ item.key }}: type {{ getType(item.value) }} not supported

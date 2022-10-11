@@ -26,6 +26,16 @@
     justify-content: center;
 }
 
+.converter-selector{
+    position: absolute;
+    top: calc(50% + 50px);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 35;
+}
+
 .selfie-display {
     position: absolute;
     width: 100%;

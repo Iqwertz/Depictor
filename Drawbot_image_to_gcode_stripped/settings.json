@@ -9,7 +9,9 @@
         "gcode_decimal_seperator" : ".",    
         "gcode_decimals" : 2,           
         "svg_decimals" : 2,             
-        "grid_scale" : 10.0   
+        "grid_scale" : 10.0,
+        "selectedMode": "PFM_squares",
+        "Mode": ["PFM_original", "PFM_squares"]
     },
     "PFM_original": {
         "addBoarder": true,
@@ -23,10 +25,10 @@
     },
      "PFM_squares":{
         "addBoarder": true,
-        "squiggle_length": 1000,
-        "adjustbrightness": 9,
+        "squiggle_length": 100,
+        "adjustbrightness": 100,
         "desired_brightness": 250,
         "tests": 4,
-        "line_length": 3
+        "line_length": 10
      }
 }

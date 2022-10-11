@@ -351,10 +351,10 @@
       *ngFor="let converter of settings.converter.availableConverter"
     >
       <div class="setting-line" *ngIf="siteStateService.serverOnline">
-        <div class="label small">{{ converter }}</div>
+        <div class="label small">{{ converter.name }}</div>
         <app-settings-ui-button
           [name]="'>'"
-          (clicked)="openConverterSettings(converter)"
+          (clicked)="openConverterSettings(converter.name)"
         ></app-settings-ui-button>
       </div>
     </ng-container>

@@ -1,5 +1,6 @@
 PrintWriter output;
 
+//Modified version for Depictor
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // My Drawbot, "Death to Sharpie"
 // Jpeg to gcode simplified (kinda sorta works version, v3.75 (beta))
@@ -123,6 +124,20 @@ void setSettings() {
     gcode_decimals = json.getInt("gcode_decimals");
     svg_decimals = json.getInt("svg_decimals");
     grid_scale = json.getFloat("grid_scale");
+    
+    String jsonMode = json.getString("selectedMode");
+    for(int i=0; i<pfms.length; i++){
+      if(jsonMode.equals(pfms[i])){
+        current_pfm = i;
+        break;
+      }
+      if(i==pfms.length-1){
+        current_pfm = 0;
+      }
+    }
+    println(current_pfm);
+    println(jsonMode);
+    
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,11 @@
+<div class="container">
+  <select
+    class="action-select"
+    [(ngModel)]="selectedOption"
+    (ngModelChange)="onModelChange()"
+  >
+    <option *ngFor="let element of options" [value]="element">
+      {{ element }}
+    </option>
+  </select>
+</div>

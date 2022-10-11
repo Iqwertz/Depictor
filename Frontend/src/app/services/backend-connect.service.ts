@@ -363,7 +363,9 @@ export class BackendConnectService {
         settings: settings,
       })
       .subscribe((res: any) => {
-        this.snackbarService.success('converter settings saved successfully!');
+        this.snackbarService.success(
+          'Settings for ' + converter + ' saved successfully!'
+        );
         //optional error handling
       });
   }

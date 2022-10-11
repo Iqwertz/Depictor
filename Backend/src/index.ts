@@ -63,16 +63,16 @@ interface SerialPortEntry {
 }
 
 interface Config {
-  converters: string[];
+  converters: ConverterConfig[];
 }
 
-export interface PaperProfile {
+interface PaperProfile {
   name: string;
   paperMax: number[]; //Maximum coordinates of the drawing area ("Drawing area end" in the settings UI)
   drawingOffset: number[]; //Offset of the drawing area from the origin ("Drawing area start" in the settings UI)
 }
 
-export interface Settings {
+interface Settings {
   endGcode: string;
   startGcode: string;
   penDownCommand: string;
@@ -90,9 +90,14 @@ export interface Settings {
   converter: ConverterSettings;
 }
 
-export interface ConverterSettings {
-  availableConverter: string[];
+interface ConverterSettings {
+  availableConverter: ConverterConfig[];
   selectedConverter: string;
+}
+
+interface ConverterConfig {
+  name: string;
+  imageInput: boolean; //true if the converter needs an image as input
 }
 
 let appState: AppStates = "idle"; //var to track the current appstate
@@ -973,14 +978,18 @@ function loadConfig(): Config | undefined {
 }
 function chmodConverters() {
   logger.info("chmoding converters");
-  let config = loadConfig();
+  let config: Config | undefined = loadConfig();
   if (config) {
     for (let converter of config.converters) {
-      execFile("chmod", ["+x", "./assets/imageConverter/" + converter + "/run.sh"], function (err: any, data: any) {
-        if (err) {
-          logger.error(err);
+      execFile(
+        "chmod",
+        ["+x", "./assets/imageConverter/" + converter.name + "/run.sh"],
+        function (err: any, data: any) {
+          if (err) {
+            logger.error(err);
+          }
         }
-      });
+      );
     }
   } else {
     logger.error("no config found - chmoding converters canceled");
@@ -1173,7 +1182,7 @@ function convertBase64ToGcode(base64: string) {
   let selectedImageConverter = settings.converter.selectedConverter; //get selected image converter
   if (!selectedImageConverter || selectedImageConverter == "") {
     console.warn("no image converter selected - selecting first one in list");
-    selectedImageConverter = settings.converter.availableConverter[0];
+    selectedImageConverter = settings.converter.availableConverter[0].name;
     if (!selectedImageConverter) {
       console.error("no image converter registerd");
       return;

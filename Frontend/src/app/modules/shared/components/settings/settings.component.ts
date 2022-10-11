@@ -52,8 +52,13 @@ export interface Settings {
 }
 
 export interface ConverterSettings {
-  availableConverter: string[];
+  availableConverter: ConverterConfig[];
   selectedConverter: string;
+}
+
+export interface ConverterConfig {
+  name: string;
+  imageInput: boolean; //true if the converter needs an image as input
 }
 
 export interface SerialPort {
@@ -284,8 +289,6 @@ export class SettingsComponent implements OnInit {
 
   saveCurrentJsonSettings() {
     if (!this.currentJsonSettings) return;
-
-    console.log(this.currentJsonSettings);
     this.backendConnectService.setConverterSettings(
       this.currentJsonSettingsName,
       this.currentJsonSettings
