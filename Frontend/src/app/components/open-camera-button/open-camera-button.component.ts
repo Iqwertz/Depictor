@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { CameraServiceService } from '../../services/camera-service.service';
 import { environment } from '../../../environments/environment';
 import { LoadingService } from '../../modules/shared/services/loading.service';
@@ -6,6 +6,7 @@ import { FileUploadService } from '../../services/file-upload.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { BackendConnectService } from 'src/app/services/backend-connect.service';
 
 @Component({
   selector: 'app-open-camera-button',
@@ -17,19 +18,33 @@ export class OpenCameraButtonComponent implements OnInit {
     public cameraService: CameraServiceService,
     private loadingService: LoadingService,
     private fileUploadService: FileUploadService,
-    private deviceService: DeviceDetectorService
+    private deviceService: DeviceDetectorService,
+    private backendConnectService: BackendConnectService
   ) {}
 
   @ViewChild('uploader') fileinput: any;
 
+  @Input() skipImageUpload: boolean = false;
+
   faCamera = faCamera;
-  buttonText:string = ""
+  buttonText: string = '';
 
   ngOnInit(): void {
-    this.buttonText = this.deviceService.isMobile() ? 'Take a Selfie!' : 'Upload image or gcode';
+    if (!this.skipImageUpload) {
+      this.buttonText = this.deviceService.isMobile()
+        ? 'Take a Selfie!'
+        : 'Upload image or gcode';
+    } else {
+      this.buttonText = 'Generate Gcode';
+    }
   }
 
   open() {
+    console.log(this.skipImageUpload);
+    if (this.skipImageUpload) {
+      this.backendConnectService.sendImageConvertionRequst('', false);
+      return;
+    }
     if (environment.useCameraAPI) {
       this.cameraService.toggleCameraWindow();
     } else {

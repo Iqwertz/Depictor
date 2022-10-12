@@ -41,7 +41,7 @@ export class TakeSelfieComponent implements OnInit {
   }
 
   postSelfie() {
-    this.connectService.postSelfie(this.removeBg);
+    this.connectService.sendSelfie(this.removeBg);
   }
 
   ngOnInit(): void {

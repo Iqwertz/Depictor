@@ -6,7 +6,11 @@
   <app-camera-window></app-camera-window>
 </div>
 <div class="open-camera" *ngIf="!cameraService.showWebcam">
-  <app-open-camera-button></app-open-camera-button>
+  <app-open-camera-button
+    [skipImageUpload]="
+      !converterNeedsPicture(settings.converter.selectedConverter)
+    "
+  ></app-open-camera-button>
 </div>
 <div class="converter-selector">
   <app-select-chip

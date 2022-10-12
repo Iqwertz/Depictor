@@ -4,7 +4,7 @@
     [(ngModel)]="selectedOption"
     (ngModelChange)="onModelChange()"
   >
-    <option *ngFor="let element of options" [value]="element">
+    <option *ngFor="let element of options" [ngValue]="element">
       {{ element }}
     </option>
   </select>
