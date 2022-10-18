@@ -7,6 +7,7 @@ import { SnackbarService } from '../../services/snackbar.service';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { BackendConnectService } from 'src/app/services/backend-connect.service';
+import { ConverterConfig } from 'src/app/modules/shared/components/settings/settings.component';
 
 @Component({
   selector: 'app-open-camera-button',
@@ -27,16 +28,20 @@ export class OpenCameraButtonComponent implements OnInit {
   @Input() skipImageUpload: boolean = false;
 
   faCamera = faCamera;
-  buttonText: string = '';
 
-  ngOnInit(): void {
-    if (!this.skipImageUpload) {
-      this.buttonText = this.deviceService.isMobile()
+  ngOnInit(): void {}
+
+  getButtonText(skipImageUpload: boolean): string {
+    let buttonText: string = '';
+    if (!skipImageUpload) {
+      buttonText = this.deviceService.isMobile()
         ? 'Take a Selfie!'
         : 'Upload image or gcode';
     } else {
-      this.buttonText = 'Generate Gcode';
+      buttonText = 'Generate Gcode';
     }
+
+    return buttonText;
   }
 
   open() {

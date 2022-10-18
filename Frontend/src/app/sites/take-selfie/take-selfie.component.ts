@@ -4,7 +4,7 @@ import { CameraServiceService } from '../../services/camera-service.service';
 import { SiteStateService } from '../../services/site-state.service';
 import { BackendConnectService } from '../../services/backend-connect.service';
 import { Select, Store } from '@ngxs/store';
-import { SetAutoRouting } from '../../store/app.action';
+import { SetAutoRouting, SetSettings } from '../../store/app.action';
 import { LoadingService } from '../../modules/shared/services/loading.service';
 import { AppState } from 'src/app/store/app.state';
 import {
@@ -29,6 +29,7 @@ export class TakeSelfieComponent implements OnInit {
 
   @Select(AppState.settings) settings$: any;
   settings: Settings = JSON.parse(JSON.stringify(environment.defaultSettings));
+  settingsLoaded: boolean = false;
 
   enableCameraAPI: boolean = environment.useCameraAPI;
 
@@ -52,6 +53,11 @@ export class TakeSelfieComponent implements OnInit {
     this.loadingService.loadingText = 'loading...';
     this.siteStateService.checkServerState();
 
+    this.backendConnectService.getSettings().subscribe((res: any) => {
+      this.store.dispatch(new SetSettings(res));
+      this.settingsLoaded = true;
+    });
+
     this.settings$.subscribe((settings: Settings) => {
       this.settings = settings;
     });
@@ -66,7 +72,10 @@ export class TakeSelfieComponent implements OnInit {
   }
 
   onConverterSelectChange() {
-    this.backendConnectService.setSettings(this.settings);
+    if (this.settingsLoaded) {
+      console.log('changed');
+      this.backendConnectService.setSettings(this.settings);
+    }
   }
 
   converterNeedsPicture(converter: string): boolean {
