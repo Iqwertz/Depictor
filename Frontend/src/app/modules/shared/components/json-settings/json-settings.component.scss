@@ -1,0 +1,80 @@
+.json-settings-container {
+  position: absolute;
+   display: flex;
+   align-items: center;
+   flex-flow: column;
+   width: 700px;
+   overflow-y: scroll;
+   height: 95vh;
+   transform: translateX(100%);
+   background-color: white;
+    transition: transform .5s ease-in-out;
+
+    &.open {
+      transform: translateX(0);
+    }
+
+   h1 {
+     font-size: 3em;
+   }
+
+   .back-button {
+     position: fixed;
+     top: 15px;
+     left: 15px;
+     font-size: 2em;
+     cursor: pointer;
+   }
+
+   .divider {
+     margin: 50px 0 20px 0;
+     height: 0px;
+     border: 1px dashed #000;
+     width: 90%;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+
+     .label {
+       padding: 0 15px;
+       font-size: 2em;
+       background-color: #fff;
+       width: fit-content;
+     }
+   }
+
+   .setting-line {
+     width: 90%;
+     height: 50px;
+     border-bottom: 2px solid #000;
+     margin-bottom: 6px;
+     padding-bottom: 5px;
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     font-size: 30px;
+
+     &.indent {
+       width: 85%;
+       margin-left: 5%;
+     }
+
+     .label {
+       width: 250px;
+       display: flex;
+   }
+ }
+}
+
+ .action-select {
+   font-size: 20px;
+   font-family: "Josefin Sans", sans-serif !important;
+   border: 2px dotted #000;
+   height: 35px;
+   align-items: center;
+   justify-content: center;
+   padding: 4px 5px 3px;
+   margin-left: 10px;
+   width: 210px;
+   cursor: pointer;
+ }

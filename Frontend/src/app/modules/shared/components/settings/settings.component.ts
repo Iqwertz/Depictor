@@ -25,6 +25,7 @@ import { LoadingService } from '../../services/loading.service';
 import { SiteStateService } from '../../../../services/site-state.service';
 import { StandartizerSettings } from '../../../gcode/services/gcode-viewer.service';
 import { PaperProfilePopupComponent } from '../paper-profile-popup/paper-profile-popup.component';
+import { JsonSetting } from '../json-settings/json-settings.component';
 
 export interface PaperProfile {
   name: string;
@@ -47,6 +48,17 @@ export interface Settings {
   standardizerSettings: StandartizerSettings;
   floatingPoints: number;
   port: string;
+  converter: ConverterSettings;
+}
+
+export interface ConverterSettings {
+  availableConverter: ConverterConfig[];
+  selectedConverter: string;
+}
+
+export interface ConverterConfig {
+  name: string;
+  imageInput: boolean; //true if the converter needs an image as input
 }
 
 export interface SerialPort {
@@ -81,6 +93,9 @@ export class SettingsComponent implements OnInit {
   bgRemoveApiKey = '';
 
   environment = environment;
+
+  currentJsonSettings: JsonSetting | null = null;
+  currentJsonSettingsName: string = '';
 
   @Select(AppState.settings) settings$: any;
   settings: Settings = JSON.parse(JSON.stringify(environment.defaultSettings));
@@ -261,5 +276,23 @@ export class SettingsComponent implements OnInit {
     this.settings = JSON.parse(
       JSON.stringify(this.environment.defaultSettings)
     );
+  }
+
+  openConverterSettings(converter: string) {
+    this.backendConnectService
+      .getConverterSettings(converter)
+      .subscribe((converterSettings) => {
+        this.currentJsonSettings = converterSettings;
+        this.currentJsonSettingsName = converter;
+      });
+  }
+
+  saveCurrentJsonSettings() {
+    if (!this.currentJsonSettings) return;
+    this.backendConnectService.setConverterSettings(
+      this.currentJsonSettingsName,
+      this.currentJsonSettings
+    );
+    this.currentJsonSettings = null;
   }
 }

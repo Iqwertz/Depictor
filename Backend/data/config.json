@@ -1,0 +1,13 @@
+{
+    "converters":[
+        
+        {
+            "name": "DrawbotV2",
+            "imageInput": true
+        },
+        {
+            "name": "Sudoku",
+            "imageInput": false
+        }
+    ]
+}
