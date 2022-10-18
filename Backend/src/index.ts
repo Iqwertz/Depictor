@@ -1253,7 +1253,7 @@ function convertBase64ToGcode(base64: string) {
 
           //check if an svg image exists
           if (fse.existsSync(img2gcodePath + "/output/image.svg")) {
-            fse.copy(img2gcodePath + "/output/image.svg", "data/savedGcodes/" + fName + ".ssvg", function (err: any) {
+            fse.copy(img2gcodePath + "/output/image.svg", "data/savedGcodes/" + fName + ".svg", function (err: any) {
               if (err) {
                 logger.error(err);
               }
