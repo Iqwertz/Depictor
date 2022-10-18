@@ -202,3 +202,5 @@ application.windows/
 application.windows32/
 application.windows64/
 java/
+GcodeGenerator/Drawbot_image_to_gcode_stripped/output/previewtest.png
+output/
