@@ -432,17 +432,26 @@ app.post("/getGcodeGallery", (req: Request, res: Response) => {
 
   fs.readdirSync("data/savedGcodes/").forEach((file: any) => {
     //read all saved gcode files
-    if (file.includes("png")) {
-      let image: string = fs.readFileSync("data/savedGcodes/" + file, {
+    let imagePath: string = "data/savedGcodes/" + file.split(".")[0] + ".png";
+
+    //check if file exists
+    let image: string = "";
+    if (fs.existsSync(imagePath)) {
+      image = fs.readFileSync(imagePath, {
         encoding: "base64",
       }); //read preview image as base64 string
-      let entry: GcodeEntry = {
-        //create entry
-        image: image,
-        name: file.split(".")[0],
-      };
-      gallery.push(entry); //push entry to gallery array
+    } else {
+      //use default image if no preview image exists
+      image = fs.readFileSync("assets/images/nopreview.png", {
+        encoding: "base64",
+      }); //read preview image as base64 string
     }
+    let entry: GcodeEntry = {
+      //create entry
+      image: image,
+      name: file.split(".")[0],
+    };
+    gallery.push(entry); //push entry to gallery array
   });
 
   gallery.reverse(); //reverse gallery to show newest first
