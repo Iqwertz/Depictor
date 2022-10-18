@@ -18,6 +18,7 @@ import { DeleteButtonComponent } from './components/delete-button/delete-button.
 import { StopDrawingButtonComponent } from './components/stop-drawing-button/stop-drawing-button.component';
 import { CanvasGcodeRendererComponent } from './components/canvas-gcode-renderer/canvas-gcode-renderer.component';
 import { UploadComponent } from './components/upload/upload.component';
+import { DownloadButtonComponent } from './components/download-button/download-button.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { UploadComponent } from './components/upload/upload.component';
     StopDrawingButtonComponent,
     CanvasGcodeRendererComponent,
     UploadComponent,
+    DownloadButtonComponent,
   ],
   imports: [
     CommonModule,

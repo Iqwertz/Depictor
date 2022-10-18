@@ -1,0 +1,33 @@
+<!-- Html/Css from: https://codepen.io/octa022/pen/MPjjRd -->
+
+<a class="float" *ngIf="downloadableFileTypes.length > 0">
+  <fa-icon class="icon" [icon]="faDownload"></fa-icon>
+</a>
+
+<ul *ngIf="downloadableFileTypes.length > 0">
+  <li *ngIf="downloadableFileTypes.includes('png')">
+    <a
+      href="/downloadPNG"
+      [href]="'http://' + ip + '/downloadPNG?name=' + fileId"
+    >
+      .png
+    </a>
+  </li>
+  <li *ngIf="downloadableFileTypes.includes('svg')">
+    <a
+      href="/downloadSVG"
+      [href]="'http://' + ip + '/downloadSVG?name=' + fileId"
+    >
+      .svg
+    </a>
+  </li>
+  <li *ngIf="downloadableFileTypes.includes('nc')">
+    <a
+      href="/downloadGcode"
+      [href]="'http://' + ip + '/downloadGcode?name=' + fileId"
+      download
+    >
+      .nc
+    </a>
+  </li>
+</ul>

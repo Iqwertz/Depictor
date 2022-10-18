@@ -967,6 +967,85 @@ app.get("/zipData", async function (req: any, res: any) {
   });
 });
 
+/*
+get: /downloadSVG
+
+description: reads an svg file and response with it
+*/
+app.get("/downloadSVG", async function (req: any, res: any) {
+  logger.http("get: downloadSVG");
+  var dirPath = "./data/savedGcodes/" + req.query.name + ".svg";
+  if (fs.existsSync(dirPath)) {
+    res.download(dirPath);
+  } else {
+    logger.error("File: " + dirPath + " does not exist");
+    res.send("file not found");
+  }
+});
+
+/*
+get: /downloadGcode
+
+description: reads an nc file and response with it
+*/
+app.get("/downloadGcode", async function (req: any, res: any) {
+  logger.http("get: downloadGcode");
+  var dirPath = "./data/savedGcodes/" + req.query.name + ".nc";
+  if (fs.existsSync(dirPath)) {
+    res.download(dirPath);
+  } else {
+    logger.error("File: " + dirPath + " does not exist");
+    res.send("file not found");
+  }
+});
+
+/*
+post: /availableFiles
+checks which type of files are available in the given id
+
+expected request: 
+  {id: string}
+  
+returns: 
+    unsuccessful 
+      {err: string}
+
+    successful
+    {fileTypes: string[]}
+*/
+app.post("/availableFiles", (req: Request, res: Response) => {
+  logger.http("post: availableFiles");
+  let fileTypes: string[] = [];
+
+  if (fs.existsSync("./data/savedGcodes/" + req.body.id + ".svg")) {
+    fileTypes.push("svg");
+  }
+  if (fs.existsSync("./data/savedGcodes/" + req.body.id + ".nc")) {
+    fileTypes.push("nc");
+  }
+  if (fs.existsSync("./data/savedGcodes/" + req.body.id + ".png")) {
+    fileTypes.push("png");
+  }
+
+  res.json({ fileTypes: fileTypes });
+});
+
+/*
+get: /downloadSVG
+
+description: reads an png file and response with it
+*/
+app.get("/downloadPNG", async function (req: any, res: any) {
+  logger.http("get: downloadPNG");
+  var dirPath = "./data/savedGcodes/" + req.query.name + ".png";
+  if (fs.existsSync(dirPath)) {
+    res.download(dirPath);
+  } else {
+    logger.error("File: " + dirPath + " does not exist");
+    res.send("file not found");
+  }
+});
+
 httpServer!.listen(enviroment.port, () => {
   //start http server
   logger.info("started Server");

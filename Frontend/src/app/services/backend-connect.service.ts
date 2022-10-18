@@ -220,6 +220,18 @@ export class BackendConnectService {
   }
 
   /**
+   *sends a post request to get all downloadable file types for a given gcodeID
+   *
+   * @return {*}  {Observable<string[]>}
+   * @memberof BackendConnectService
+   */
+  getAvailableFileTypes(id: string): Observable<string[]> {
+    return this.http.post<string[]>('http://' + this.ip + '/availableFiles', {
+      id: id,
+    });
+  }
+
+  /**
    *sends a post request to set a new serial port
    *
    * @return {*}  {Observable<BackendVersion>}

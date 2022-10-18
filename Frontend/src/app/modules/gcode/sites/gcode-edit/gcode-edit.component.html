@@ -1,17 +1,35 @@
 <app-loading></app-loading>
 <div class="navbar">
-    <app-navbar></app-navbar>
+  <app-navbar></app-navbar>
 </div>
 <div class="gcode-container">
-    <!-- <app-gcode-renderer></app-gcode-renderer> -->
+  <!-- <app-gcode-renderer></app-gcode-renderer> -->
+
+  <div class="canvas">
     <app-canvas-gcode-renderer></app-canvas-gcode-renderer>
-    <app-select-lines-slider (sliderUpdate)="sliderUpdated($event)" [timeEstimate]="estimatedSeconds"></app-select-lines-slider>
-    <div class="controls">
-        <app-start-draw (clicked)="startDraw()"> </app-start-draw>
-        <app-upload (clicked)="upload(true)" *ngIf="gcodeViewerService.gcodeType == 'upload'"></app-upload>
-        <app-cancle-button> </app-cancle-button>
-        <app-delete-button *ngIf="gcodeViewerService.gcodeId.length > 0"></app-delete-button>
+
+    <div class="download-button">
+      <app-download-button
+        [fileId]="gcodeViewerService.gcodeId"
+      ></app-download-button>
     </div>
+  </div>
+
+  <app-select-lines-slider
+    (sliderUpdate)="sliderUpdated($event)"
+    [timeEstimate]="estimatedSeconds"
+  ></app-select-lines-slider>
+  <div class="controls">
+    <app-start-draw (clicked)="startDraw()"> </app-start-draw>
+    <app-upload
+      (clicked)="upload(true)"
+      *ngIf="gcodeViewerService.gcodeType == 'upload'"
+    ></app-upload>
+    <app-cancle-button> </app-cancle-button>
+    <app-delete-button
+      *ngIf="gcodeViewerService.gcodeId.length > 0"
+    ></app-delete-button>
+  </div>
 </div>
 <app-terminal-button></app-terminal-button>
 <app-settings-button></app-settings-button>
