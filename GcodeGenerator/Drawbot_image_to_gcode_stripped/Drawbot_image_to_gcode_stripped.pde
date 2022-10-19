@@ -40,7 +40,7 @@ final String settings_path = "settings.json";
 Class cl = null;
 pfm ocl;
 int current_pfm = 0;
-String[] pfms = {"PFM_original", "PFM_squares"}; 
+String[] pfms = {"PFM_original", "PFM_spiral", "PFM_squares"}; 
 
 int     state = 1;
 int     pen_selected = 0;

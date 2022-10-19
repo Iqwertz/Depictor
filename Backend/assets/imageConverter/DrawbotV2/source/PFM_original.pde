@@ -5,7 +5,7 @@
 
 class PFM_original implements pfm {
     
-  boolean addBoarder = true;
+    boolean addBoarder = true;
     int    squiggle_length = 5000;      // How often to lift the pen
     int    adjustbrightness = 10;       // How fast it moves from dark to light, over-draw
     float  desired_brightness = 250;   // How long to process.  You can always stop early with "s" key
@@ -210,5 +210,4 @@ class PFM_original implements pfm {
         tests = json.getInt("tests");                 
         line_length = int(random(json.getInt("line_length_min"), json.getInt("line_length_max")));
     }
-    
 }

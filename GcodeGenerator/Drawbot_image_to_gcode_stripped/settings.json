@@ -10,8 +10,8 @@
         "gcode_decimals" : 2,           
         "svg_decimals" : 2,             
         "grid_scale" : 10.0,
-        "selectedMode": "PFM_squares",
-        "Mode": ["PFM_original", "PFM_squares"]
+        "selectedMode": "PFM_spiral",
+        "Mode": ["PFM_original", "PFM_spiral", "PFM_squares"]
     },
     "PFM_original": {
         "addBoarder": true,
@@ -22,6 +22,18 @@
         "tests": 13,
         "line_length_min": 3,
         "line_length_max": 40
+    },
+    "PFM_spiral": {
+        "ringDistance": 7,
+        "aRadius": 1,
+        "bRadius": 1,
+        "density": 75,
+        "amplitudeScale": 4.5,
+        "maskColor": {
+            "R": 240,
+            "G": 240,
+            "B": 240
+        }
     },
      "PFM_squares":{
         "addBoarder": true,
