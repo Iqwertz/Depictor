@@ -1,14 +1,16 @@
 <div class="pop-up-container">
-    <div class="header">
-        <div class="titel">Logs</div>
-        <div class="close-button" (click)="closeTerminal()">
-            <fa-icon [icon]="faTimes"></fa-icon>
-        </div>
+  <div class="header">
+    <div class="titel">Logs</div>
+    <div class="close-button" (click)="closeTerminal()">
+      <fa-icon [icon]="faTimes"></fa-icon>
     </div>
+  </div>
 
-    <div class="terminal-container">
-        <div class="line" *ngFor="let line of loggingData">
-            <span [ngClass]="line.level">[{{ line.level }} - {{ line.timestamp }}]</span
+  <div class="terminal-container">
+    <app-simple-loader [show]="loading"></app-simple-loader>
+    <div class="line" *ngFor="let line of loggingData">
+      <span [ngClass]="line.level"
+        >[{{ line.level }} - {{ line.timestamp }}]</span
       >
       {{ line.message }}
     </div>

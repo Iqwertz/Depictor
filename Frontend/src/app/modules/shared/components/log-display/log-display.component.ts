@@ -27,6 +27,8 @@ export class LogDisplayComponent implements OnInit {
   logLevelOptions: LogLevel[] = ['http', 'debug', 'info', 'warn', 'error'];
   loadedLines: number = 100;
 
+  loading: boolean = false;
+
   constructor(private backendConnectService: BackendConnectService) {}
 
   ngOnInit(): void {
@@ -38,6 +40,7 @@ export class LogDisplayComponent implements OnInit {
   }
 
   reload() {
+    this.loading = true;
     this.backendConnectService
       .getLoggingData(this.loadedLines, this.logLevel)
       .subscribe((rawdata: any) => {
@@ -47,6 +50,7 @@ export class LogDisplayComponent implements OnInit {
         for (let line of rawdata.data) {
           this.loggingData.push(JSON.parse(line));
         }
+        this.loading = false;
       });
   }
 }

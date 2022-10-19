@@ -20,6 +20,7 @@ import { SettingsUiButtonComponent } from './components/settings-ui/settings-ui-
 import { SettingsCheckboxComponent } from './components/settings-ui/settings-checkbox/settings-checkbox.component';
 import { LogDisplayComponent } from './components/log-display/log-display.component';
 import { JsonSettingsComponent } from './components/json-settings/json-settings.component';
+import { SimpleLoaderComponent } from './components/simple-loader/simple-loader.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { JsonSettingsComponent } from './components/json-settings/json-settings.
     SettingsCheckboxComponent,
     LogDisplayComponent,
     JsonSettingsComponent,
+    SimpleLoaderComponent,
   ],
   imports: [
     CommonModule,
