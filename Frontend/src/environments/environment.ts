@@ -46,8 +46,13 @@ const settings: Settings = {
   },
   port: '',
   converter: {
-    availableConverter: [],
-    selectedConverter: '',
+    availableConverter: [
+      {
+        name: 'DrawbotV2',
+        imageInput: true,
+      },
+    ],
+    selectedConverter: 'DrawbotV2',
   },
 };
 

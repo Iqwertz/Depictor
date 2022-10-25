@@ -1264,16 +1264,16 @@ function convertBase64ToGcode(base64: string) {
 
   let settings = readSettingsFile(); //read settings file
   if (!settings) {
-    console.error("couldnt read settings file");
+    logger.error("couldnt read settings file");
     return;
   }
 
   let selectedImageConverter = settings.converter.selectedConverter; //get selected image converter
   if (!selectedImageConverter || selectedImageConverter == "") {
-    console.warn("no image converter selected - selecting first one in list");
+    logger.warn("no image converter selected - selecting first one in list");
     selectedImageConverter = settings.converter.availableConverter[0].name;
     if (!selectedImageConverter) {
-      console.error("no image converter registerd");
+      logger.error("no image converter registerd");
       return;
     }
   }

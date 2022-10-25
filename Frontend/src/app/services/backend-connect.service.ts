@@ -359,7 +359,7 @@ export class BackendConnectService {
    */
   setSettings(settings: Settings) {
     this.store.dispatch(new SetSettings(settings));
-    console.log(settings);
+    console.info(settings);
     this.http
       .post('http://' + this.ip + '/changeSettings', {
         settings: settings,
@@ -406,6 +406,10 @@ export class BackendConnectService {
             ...res.settings,
           };
           this.store.dispatch(new SetSettings(mergedSettings));
+        } else {
+          //Can be improved by communicating with error codes, Now it assumes that no settings means that there werent any settings found...
+          this.store.dispatch(new SetSettings(environment.defaultSettings));
+          this.setSettings(environment.defaultSettings);
         }
       });
   }
