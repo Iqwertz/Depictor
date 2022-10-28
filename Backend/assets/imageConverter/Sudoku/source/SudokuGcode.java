@@ -6,6 +6,9 @@ import processing.opengl.*;
 import de.sfuhrm.sudoku.*; 
 import de.sfuhrm.sudoku.output.*; 
 
+import de.sfuhrm.sudoku.*; 
+import de.sfuhrm.sudoku.output.*; 
+
 import java.util.HashMap; 
 import java.util.ArrayList; 
 import java.io.File; 
@@ -42,8 +45,14 @@ int gridSize = 9;  //Number of rows and cols in the grid (currently only 9 works
 int gridDimension = 500;  //Width and Height of the grid
 boolean generateSvgSolution = true;  //Should the generated SVG include the solution?
 
+String penUpCommand = "M05";
+String penDownCommand = "M03S500";
+String startGcode = "";
+String endGcode = "";
+String rotation = "up";
+boolean invert = false; 
 ////////////Programm Vars////////////
-final String settings_path = "settings.json";  //path to the settings file (an external settings file is used to be compatible with Depictor)
+final String settings_path = "../settings.json";  //path to the settings file (an external settings file is used to be compatible with Depictor)
 
 int pathCount = 0;  //elements in the paths array
 continuesLine[] paths = new continuesLine[5000]; //all paths of the sudoku (without solution)
@@ -97,7 +106,6 @@ public void setup() {
 
   generateSudoku();
   addSudokuNumbers();
-  generateGcode(paths, pathCount);
   if (generateSvgSolution) {
     generateSudokuSolutionPath();
     generateSolvedSVG(paths, pathCount, solutionPaths, solutionPathCount);
@@ -105,6 +113,7 @@ public void setup() {
     generateSVG(paths, pathCount);
   }
   generateImage(paths, pathCount);
+  generateGcode(paths, pathCount);
 }
 
 public void setSettings() {  //Checkis if a settings file exists and updates settings if
@@ -113,13 +122,16 @@ public void setSettings() {  //Checkis if a settings file exists and updates set
     JSONObject json = loadJSONObject(settings_path);
     gridDimension = json.getInt("gridSize");
     generateSvgSolution = json.getBoolean("generateSvgSolution");
+    rotation = json.getString("selectedRotate");
+    invert = json.getBoolean("invert");
+    println(invert);
+    println(rotation);
   }
 }
 
 public void draw() {
   exit();
 }
-
 
 //class representing a 2d float point
 class floatPoint {
@@ -149,21 +161,84 @@ public void generateGcode(continuesLine[] gcodePaths, int pathsLineCount) {  //g
   String gname = "output/gcode.nc";
   OUTPUT = createWriter(sketchPath("") + gname);
 
+  OUTPUT.println(startGcode);
+
+  continuesLine[] transformedPaths = transform(gcodePaths, pathsLineCount, rotation, invert);
+
   for (int i=0; i<pathsLineCount; i++) {
-    continuesLine conLine = gcodePaths[i];
+    continuesLine conLine = transformedPaths[i];
 
     OUTPUT.println("G01 X" + conLine.points[0].x + " Y" + conLine.points[0].y);
-    OUTPUT.println("M03S300");
+    OUTPUT.println(penDownCommand);
     for (int j=1; j<conLine.pointCount; j++) {
       OUTPUT.println("G01 X" + conLine.points[j].x + " Y" + conLine.points[j].y);
     }
-    OUTPUT.println("M05");
+    OUTPUT.println(penUpCommand);
   }
 
+  OUTPUT.println(endGcode);
   OUTPUT.flush();
   OUTPUT.close();
-  
+
   println("Saved Gcode");
+}
+
+public continuesLine[] transform(continuesLine[] _lines, int _linesSize, String _rotate, boolean _invert) {
+
+  float middle = gridDimension/2;
+
+  if (_invert) {
+
+    println("inverting");
+    for (int i=0; i<_linesSize; i++) {
+      continuesLine line = _lines[i];
+      for (int j=0; j<line.pointCount; j++) {
+        _lines[i].points[j].x = middle + (middle - line.points[j].x);
+      }
+    }
+  }
+
+
+  for (int i=0; i<_linesSize; i++) {
+    continuesLine line = _lines[i];
+    for (int j=0; j<line.pointCount; j++) {
+      _lines[i].points[j].x = middle + (middle - line.points[j].x);
+
+      float a = 0; //temp var
+
+      switch (_rotate) {
+      case "left":
+        a = line.points[j].x;
+        _lines[i].points[j].x = middle*2 - line.points[j].y;
+        _lines[i].points[j].y = a;
+        break;
+      case "down":
+        a = line.points[j].x;
+        _lines[i].points[j].x = middle*2 - line.points[j].y;
+        _lines[i].points[j].y = a;
+
+        a = line.points[j].x;
+        _lines[i].points[j].x = middle*2 - line.points[j].y;
+        _lines[i].points[j].y = a;
+        break;
+      case "right":
+        a = line.points[j].x;
+        _lines[i].points[j].x = middle*2 - line.points[j].y;
+        _lines[i].points[j].y = a;
+
+        a = line.points[j].x;
+        _lines[i].points[j].x = middle*2 - line.points[j].y;
+        _lines[i].points[j].y = a;
+
+        a = line.points[j].x;
+        _lines[i].points[j].x = middle*2 - line.points[j].y;
+        _lines[i].points[j].y = a;
+        break;
+      }
+    }
+  }
+
+  return _lines;
 }
 public void generateImage(continuesLine[] gcodePaths, int pathsLineCount) {  //generates a image from the given paths array
 
@@ -584,7 +659,6 @@ public String svg_format (Float n) {
   s = s.replace(regional_decimal_separator, svg_decimal_seperator);
   return s;
 }
-
   public void settings() {  size(500, 500); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "SudokuGcode" };

@@ -23,8 +23,14 @@ int gridSize = 9;  //Number of rows and cols in the grid (currently only 9 works
 int gridDimension = 500;  //Width and Height of the grid
 boolean generateSvgSolution = true;  //Should the generated SVG include the solution?
 
+String penUpCommand = "M05";
+String penDownCommand = "M03S500";
+String startGcode = "";
+String endGcode = "";
+String rotation = "up";
+boolean invert = false; 
 ////////////Programm Vars////////////
-final String settings_path = "settings.json";  //path to the settings file (an external settings file is used to be compatible with Depictor)
+final String settings_path = "../settings.json";  //path to the settings file (an external settings file is used to be compatible with Depictor)
 
 int pathCount = 0;  //elements in the paths array
 continuesLine[] paths = new continuesLine[5000]; //all paths of the sudoku (without solution)
@@ -78,7 +84,6 @@ void setup() {
 
   generateSudoku();
   addSudokuNumbers();
-  generateGcode(paths, pathCount);
   if (generateSvgSolution) {
     generateSudokuSolutionPath();
     generateSolvedSVG(paths, pathCount, solutionPaths, solutionPathCount);
@@ -86,6 +91,7 @@ void setup() {
     generateSVG(paths, pathCount);
   }
   generateImage(paths, pathCount);
+  generateGcode(paths, pathCount);
 }
 
 void setSettings() {  //Checkis if a settings file exists and updates settings if
@@ -94,6 +100,10 @@ void setSettings() {  //Checkis if a settings file exists and updates settings i
     JSONObject json = loadJSONObject(settings_path);
     gridDimension = json.getInt("gridSize");
     generateSvgSolution = json.getBoolean("generateSvgSolution");
+    rotation = json.getString("selectedRotate");
+    invert = json.getBoolean("invert");
+    println(invert);
+    println(rotation);
   }
 }
 

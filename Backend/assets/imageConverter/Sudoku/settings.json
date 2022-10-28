@@ -1,1 +1,7 @@
-{"gridDimension":500,"generateSvgSolution":true}
+{
+    "gridSize": 500,
+    "generateSvgSolution": true,
+    "selectedRotate": "left",
+    "Rotate": ["up", "right", "down", "left"],
+    "invert": false
+}

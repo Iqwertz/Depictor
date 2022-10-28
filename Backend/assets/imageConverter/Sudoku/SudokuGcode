@@ -2,4 +2,4 @@
 
 APPDIR=$(readlink -f "$0")
 APPDIR=$(dirname "$APPDIR")
-java -Djna.nosys=true -Djava.library.path="$APPDIR:$APPDIR/lib" -cp "$APPDIR:$APPDIR/lib/SudokuGcode.jar:$APPDIR/lib/core.jar:$APPDIR/lib/jogl-all.jar:$APPDIR/lib/gluegen-rt.jar:$APPDIR/lib/jogl-all-natives-linux-armv6hf.jar:$APPDIR/lib/gluegen-rt-natives-linux-armv6hf.jar:$APPDIR/lib/sudoku.jar" SudokuGcode "$@"
+java -Djna.nosys=true -Djava.library.path="$APPDIR:$APPDIR/lib" -cp "$APPDIR:$APPDIR/lib/sudoku-3.1.1.jar:$APPDIR/lib/SudokuGcode.jar:$APPDIR/lib/core.jar:$APPDIR/lib/jogl-all.jar:$APPDIR/lib/gluegen-rt.jar:$APPDIR/lib/jogl-all-natives-linux-armv6hf.jar:$APPDIR/lib/gluegen-rt-natives-linux-armv6hf.jar" SudokuGcode "$@"
