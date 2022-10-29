@@ -17,7 +17,8 @@ echo "Frontend Build Successfull"
 echo "Building Backend"
 mkdir buildTemp/
 cp -r ./Backend/* ./buildTemp
-rm removeBGAPIKey.txt
+#remove test.txt if exists
+rm -f removeBGAPIKey.txt
 rm -r ./buildTemp/node_modules
 rm -r ./buildTemp/data
 
