@@ -7,7 +7,7 @@ cd Frontend
 npm install
 ng build
 cd ../
-powershell Compress-Archive ".\Frontend\dist\Depictor\*" "Dev-Depictor-Frontend-Build.zip"
+tar -zcf "Dev-Depictor-Frontend-Build.tar.gz" ".\Frontend\dist\Depictor\*"
  
 echo "Frontend Build Successfull"
 
@@ -23,7 +23,7 @@ cat > ./buildTemp/src/version.ts << ENDOFFILE
 export const version = { tag: "$vn", production: true };
 ENDOFFILE
 
-powershell Compress-Archive ".\buildTemp\*" "Dev-Depictor-Backend.zip"
+tar -zcf "Dev-Depictor-Backend.tar.gz" ".\buildTemp\*"
 rm -r buildTemp
 
 echo "Backend Build Successfull"
