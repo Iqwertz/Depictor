@@ -13,5 +13,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "16"
+      - name: Install angular
+        run: npm install -g @angular/cli
       - name: running transform
         run: . build-dev.sh
