@@ -10,7 +10,10 @@ cd Frontend
 npm install
 ng build
 cd ../
-zip -r "Dev-Depictor-Frontend-Build.zip" "Frontend/dist/Depictor/" 
+pushd Frontend/dist/Depictor
+zip -r "Dev-Depictor-Frontend-Build.zip" "./" 
+popd
+mv Frontend/dist/Depictor/Dev-Depictor-Frontend-Build.zip .
 
 echo "Frontend Build Successfull"
 
@@ -28,7 +31,10 @@ ENDOFFILE
 
 cd ../
 
-zip -r "Dev-Depictor-Backend.zip" "./buildTemp/" 
+pushd buildTemp
+zip -r "Dev-Depictor-Backend.zip" "./" 
+popd
+mv buildTemp/Dev-Depictor-Backend.zip .
 rm -r buildTemp
 
 echo "Backend Build Successfull"

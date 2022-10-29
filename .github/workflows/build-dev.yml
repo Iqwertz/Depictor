@@ -24,4 +24,4 @@ jobs:
           name: dev-build
           path: |
             Dev-Depictor-Frontend-Build.zip
-            Dev-Depictor-Frontend-Build.zip
+            Dev-Depictor-Backend-Build.zip
