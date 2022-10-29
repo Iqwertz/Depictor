@@ -19,8 +19,8 @@ mkdir buildTemp/
 cp -r ./Backend/* ./buildTemp
 cd buildTemp
 rm -f removeBGAPIKey.txt
-rm -r node_modules
-rm -r data
+rm -rf node_modules
+rm -rf data
 
 cat > ./src/version.ts << ENDOFFILE
 export const version = { tag: "$vn", production: true };
