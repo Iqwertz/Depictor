@@ -27,3 +27,5 @@ powershell Compress-Archive ".\buildTemp\*" "Dev-Depictor-Backend.zip"
 rm -r buildTemp
 
 echo "Backend Build Successfull"
+
+echo "Build Successfull"

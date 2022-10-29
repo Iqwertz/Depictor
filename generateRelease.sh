@@ -22,7 +22,6 @@ cd ../
 powershell Compress-Archive ".\Frontend\dist\Depictor\*" "Depictor-Frontend-Build.zip"
  
 echo "Frontend Build Successfull"
-
 echo "Building Backend"
 mkdir buildTemp/
 cp -r ./Backend/* ./buildTemp
