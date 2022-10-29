@@ -10,7 +10,7 @@ cd Frontend
 npm install
 ng build
 cd ../
-zip -r "Depictor-Frontend-Build.zip" "./Frontend/dist/Depictor/*" 
+zip -r "Dev-Depictor-Frontend-Build.zip" "Frontend/dist/Depictor/" 
 
 echo "Frontend Build Successfull"
 
@@ -20,13 +20,12 @@ cp -r ./Backend/* ./buildTemp
 rm removeBGAPIKey.txt
 rm -r ./buildTemp/node_modules
 rm -r ./buildTemp/data
-rm -r ./buildTemp/assets/image2gcode/windows
 
 cat > ./buildTemp/src/version.ts << ENDOFFILE
 export const version = { tag: "$vn", production: true };
 ENDOFFILE
 
-zip -r "Depictor-Backend.zip" "./buildTemp/*" 
+zip -r "Dev-Depictor-Backend.zip" "./buildTemp/" 
 rm -r buildTemp
 
 echo "Backend Build Successfull"
