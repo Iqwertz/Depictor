@@ -1,5 +1,8 @@
 #!/bin/bash
 
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+cd "$parent_path"
+
 vn="v0.0.0 dev"
 
 echo "Building Frontend"
@@ -7,8 +10,8 @@ cd Frontend
 npm install
 ng build
 cd ../
-tar -zcf "Dev-Depictor-Frontend-Build.tar.gz" "./Frontend/dist/Depictor/*"
- 
+zip -r "Depictor-Frontend-Build.zip" ".\Frontend\dist\Depictor\*" 
+
 echo "Frontend Build Successfull"
 
 echo "Building Backend"
@@ -23,7 +26,7 @@ cat > ./buildTemp/src/version.ts << ENDOFFILE
 export const version = { tag: "$vn", production: true };
 ENDOFFILE
 
-tar -zcf "Dev-Depictor-Backend.tar.gz" "./buildTemp/*"
+zip -r "Depictor-Backend.zip" ".\buildTemp\*" 
 rm -r buildTemp
 
 echo "Backend Build Successfull"

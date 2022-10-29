@@ -15,5 +15,7 @@ jobs:
           node-version: "16"
       - name: Install angular
         run: npm install -g @angular/cli
+      - name: Install zip
+        uses: montudor/action-zip@v1
       - name: running transform
         run: . build-dev.sh
