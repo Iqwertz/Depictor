@@ -19,3 +19,9 @@ jobs:
         uses: montudor/action-zip@v1
       - name: running transform
         run: . build-dev.sh
+      - uses: actions/upload-artifact@v3
+        with:
+          name: dev-build
+          path: |
+            Dev-Depictor-Frontend-Build.zip
+            Dev-Depictor-Frontend-Build.zip
