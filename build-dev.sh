@@ -17,14 +17,16 @@ echo "Frontend Build Successfull"
 echo "Building Backend"
 mkdir buildTemp/
 cp -r ./Backend/* ./buildTemp
-#remove test.txt if exists
+cd buildTemp
 rm -f removeBGAPIKey.txt
-rm -r ./buildTemp/node_modules
-rm -r ./buildTemp/data
+rm -r node_modules
+rm -r data
 
-cat > ./buildTemp/src/version.ts << ENDOFFILE
+cat > ./src/version.ts << ENDOFFILE
 export const version = { tag: "$vn", production: true };
 ENDOFFILE
+
+cd ../
 
 zip -r "Dev-Depictor-Backend.zip" "./buildTemp/" 
 rm -r buildTemp
