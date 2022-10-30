@@ -52,7 +52,7 @@ String endGcode = "";
 String rotation = "up";
 boolean invert = false; 
 ////////////Programm Vars////////////
-final String settings_path = "../settings.json";  //path to the settings file (an external settings file is used to be compatible with Depictor)
+final String settings_path = "settings.json";  //path to the settings file (an external settings file is used to be compatible with Depictor)
 
 int pathCount = 0;  //elements in the paths array
 continuesLine[] paths = new continuesLine[5000]; //all paths of the sudoku (without solution)
