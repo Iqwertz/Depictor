@@ -41,6 +41,7 @@ public class SudokuGcode extends PApplet {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////Settings////////////
+boolean useSettingsFile = true;
 int gridSize = 9;  //Number of rows and cols in the grid (currently only 9 works, because the sudoku generater can only generate 9x9 sudokus)
 int gridDimension = 500;  //Width and Height of the grid
 boolean generateSvgSolution = true;  //Should the generated SVG include the solution?
@@ -52,7 +53,7 @@ String endGcode = "";
 String rotation = "up";
 boolean invert = false; 
 ////////////Programm Vars////////////
-final String settings_path = "../settings.json";  //path to the settings file (an external settings file is used to be compatible with Depictor)
+final String settings_path = "settings.json";  //path to the settings file (an external settings file is used to be compatible with Depictor)
 
 int pathCount = 0;  //elements in the paths array
 continuesLine[] paths = new continuesLine[5000]; //all paths of the sudoku (without solution)
@@ -116,9 +117,8 @@ public void setup() {
 }
 
 public void setSettings() {  //Checkis if a settings file exists and updates settings if
-  File f = dataFile(settings_path);
-  if (f.isFile()) {
-    println("Found settings");
+  if (useSettingsFile) {
+    println("using external settings");
     JSONObject json = loadJSONObject(settings_path);
     gridDimension = json.getInt("gridSize");
     generateSvgSolution = json.getBoolean("generateSvgSolution");
@@ -127,7 +127,7 @@ public void setSettings() {  //Checkis if a settings file exists and updates set
     println(invert);
     println(rotation);
   }else{
-    println("no settings found"); 
+    println("using fixed settings"); 
   }
 }
 
