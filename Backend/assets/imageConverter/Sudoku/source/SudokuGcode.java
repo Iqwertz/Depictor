@@ -52,7 +52,7 @@ String endGcode = "";
 String rotation = "up";
 boolean invert = false; 
 ////////////Programm Vars////////////
-final String settings_path = "settings.json";  //path to the settings file (an external settings file is used to be compatible with Depictor)
+final String settings_path = "../settings.json";  //path to the settings file (an external settings file is used to be compatible with Depictor)
 
 int pathCount = 0;  //elements in the paths array
 continuesLine[] paths = new continuesLine[5000]; //all paths of the sudoku (without solution)
@@ -69,7 +69,6 @@ PrintWriter JSON;
 public void setup() {
   
   background(255);
-
   setSettings(); //set settings from the settings.json
 
   float cellSize = gridDimension/gridSize;
@@ -119,6 +118,7 @@ public void setup() {
 public void setSettings() {  //Checkis if a settings file exists and updates settings if
   File f = dataFile(settings_path);
   if (f.isFile()) {
+    println("Found settings");
     JSONObject json = loadJSONObject(settings_path);
     gridDimension = json.getInt("gridSize");
     generateSvgSolution = json.getBoolean("generateSvgSolution");
@@ -126,6 +126,8 @@ public void setSettings() {  //Checkis if a settings file exists and updates set
     invert = json.getBoolean("invert");
     println(invert);
     println(rotation);
+  }else{
+    println("no settings found"); 
   }
 }
 
