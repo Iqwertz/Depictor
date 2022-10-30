@@ -1,7 +1,8 @@
 {
     "gridSize": 500,
     "generateSvgSolution": true,
-    "selectedRotate": "left",
+    "selectedRotate": "right",
     "Rotate": ["up", "right", "down", "left"],
-    "invert": false
+    "invert": false,
+    "numberInset": 2
 }
