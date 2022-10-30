@@ -44,6 +44,7 @@ public class SudokuGcode extends PApplet {
 boolean useSettingsFile = true;
 int gridSize = 9;  //Number of rows and cols in the grid (currently only 9 works, because the sudoku generater can only generate 9x9 sudokus)
 int gridDimension = 500;  //Width and Height of the grid
+float numberInset = 2;
 boolean generateSvgSolution = true;  //Should the generated SVG include the solution?
 
 String penUpCommand = "M05";
@@ -124,8 +125,7 @@ public void setSettings() {  //Checkis if a settings file exists and updates set
     generateSvgSolution = json.getBoolean("generateSvgSolution");
     rotation = json.getString("selectedRotate");
     invert = json.getBoolean("invert");
-    println(invert);
-    println(rotation);
+    numberInset = json.getFloat("numberInset");
   }else{
     println("using fixed settings"); 
   }
@@ -565,8 +565,14 @@ public void addSudokuNumbers() {  //transforms the generated sudoku to paths and
   for (int i=0; i<gridSize; i++) {
     for (int j=0; j<gridSize; j++) {
       if (sudoku.get(i, j)!=0) {
-        continuesLine numberLine = getScaledNumber(sudoku.get(i, j), cellSize);
-        numberLine.translate(i*cellSize, j*cellSize);
+        
+        float nI = numberInset;
+        if(nI*2>=cellSize){
+          nI=cellSize/2-1;
+        }
+        
+        continuesLine numberLine = getScaledNumber(sudoku.get(i, j), cellSize-nI*2);
+        numberLine.translate(i*cellSize+nI, j*cellSize+nI);
 
         paths[pathCount] = numberLine;
         pathCount++;

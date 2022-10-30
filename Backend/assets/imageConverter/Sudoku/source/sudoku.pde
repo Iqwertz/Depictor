@@ -9,8 +9,14 @@ void addSudokuNumbers() {  //transforms the generated sudoku to paths and adds t
   for (int i=0; i<gridSize; i++) {
     for (int j=0; j<gridSize; j++) {
       if (sudoku.get(i, j)!=0) {
-        continuesLine numberLine = getScaledNumber(sudoku.get(i, j), cellSize);
-        numberLine.translate(i*cellSize, j*cellSize);
+        
+        float nI = numberInset;
+        if(nI*2>=cellSize){
+          nI=cellSize/2-1;
+        }
+        
+        continuesLine numberLine = getScaledNumber(sudoku.get(i, j), cellSize-nI*2);
+        numberLine.translate(i*cellSize+nI, j*cellSize+nI);
 
         paths[pathCount] = numberLine;
         pathCount++;

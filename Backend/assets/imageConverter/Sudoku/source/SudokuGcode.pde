@@ -22,6 +22,7 @@ import de.sfuhrm.sudoku.output.*;
 boolean useSettingsFile = true;
 int gridSize = 9;  //Number of rows and cols in the grid (currently only 9 works, because the sudoku generater can only generate 9x9 sudokus)
 int gridDimension = 500;  //Width and Height of the grid
+float numberInset = 2;
 boolean generateSvgSolution = true;  //Should the generated SVG include the solution?
 
 String penUpCommand = "M05";
@@ -102,8 +103,7 @@ void setSettings() {  //Checkis if a settings file exists and updates settings i
     generateSvgSolution = json.getBoolean("generateSvgSolution");
     rotation = json.getString("selectedRotate");
     invert = json.getBoolean("invert");
-    println(invert);
-    println(rotation);
+    numberInset = json.getFloat("numberInset");
   }else{
     println("using fixed settings"); 
   }
