@@ -4,5 +4,6 @@
     "selectedRotate": "right",
     "Rotate": ["up", "right", "down", "left"],
     "invert": false,
-    "numberInset": 2
+    "numberInset": 2,
+    "penWidth": 1
 }

@@ -46,6 +46,7 @@ int gridSize = 9;  //Number of rows and cols in the grid (currently only 9 works
 int gridDimension = 500;  //Width and Height of the grid
 float numberInset = 2;
 boolean generateSvgSolution = true;  //Should the generated SVG include the solution?
+float penWidth = 1;
 
 String penUpCommand = "M05";
 String penDownCommand = "M03S500";
@@ -78,7 +79,15 @@ public void setup() {
   //generate Row lines
   for (int i = 0; i<=gridSize; i++) {
     continuesLine row;
-    if (i%2==0) { //all uneven rows are reversed to minimize travel paths
+
+    if (i%3==0) {
+      row = new continuesLine(i*cellSize-penWidth, gridSize*cellSize);
+      row.add(i*cellSize-penWidth, 0);
+      row.add(i*cellSize, 0);
+      row.add(i*cellSize, gridSize*cellSize);
+      row.add(i*cellSize+penWidth, gridSize*cellSize);
+      row.add(i*cellSize+penWidth, 0);
+    } else if (i%2==0 && i!=0) { //all uneven rows are reversed to minimize travel paths
       row = new continuesLine(i*cellSize, 0);
       row.add(i*cellSize, gridSize*cellSize);
     } else {
@@ -93,7 +102,15 @@ public void setup() {
   //generate Column lines
   for (int i = 0; i<=gridSize; i++) {
     continuesLine row;
-    if (i%2==0) { //all uneven columns are reversed to minimze travel paths
+
+    if (i%3==0) {
+      row = new continuesLine(gridSize*cellSize, i*cellSize-penWidth);
+      row.add(0, i*cellSize-penWidth);
+      row.add(0, i*cellSize);
+      row.add(gridSize*cellSize, i*cellSize);
+      row.add(gridSize*cellSize, i*cellSize+penWidth);
+      row.add(0, i*cellSize+penWidth);
+    } else if (i%2==0 && i!=0) { //all uneven columns are reversed to minimize travel paths
       row = new continuesLine(0, i*cellSize);
       row.add(gridSize*cellSize, i*cellSize);
     } else {
@@ -126,14 +143,16 @@ public void setSettings() {  //Checkis if a settings file exists and updates set
     rotation = json.getString("selectedRotate");
     invert = json.getBoolean("invert");
     numberInset = json.getFloat("numberInset");
-  }else{
-    println("using fixed settings"); 
+    penWidth = json.getFloat("penWidth");
+  } else {
+    println("using fixed settings");
   }
 }
 
 public void draw() {
   exit();
 }
+
 
 //class representing a 2d float point
 class floatPoint {
