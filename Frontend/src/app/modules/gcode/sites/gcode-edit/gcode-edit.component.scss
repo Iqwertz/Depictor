@@ -1,48 +1,56 @@
 .gcode-container {
-    padding-top: 25px;
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-flow: column;
-    width: 100%;
-    height: calc(100% - 25px);
-    overflow: hidden;
+  padding-top: 25px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column;
+  width: 100%;
+  height: calc(100% - 25px);
+  overflow: hidden;
 
-    .canvas{
-      display: flex;
-      flex-flow: row;
-      align-items: baseline;
-    .download-button{
+  .canvas {
+    display: flex;
+    flex-flow: row;
+    align-items: baseline;
+    .download-button {
       position: relative;
       top: 20px;
       left: 50px;
       width: 0;
-height: 0;
+      height: 0;
     }
   }
 
-    .controls {
-        display: flex;
-        flex-flow: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-    }
+  .controls {
+    display: flex;
+    flex-flow: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .navbar {
-    position: fixed;
-    top: 20px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 35;
+  position: fixed;
+  top: 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 35;
 }
 
 @media screen and (max-width: 700px) {
-    .gcode-container {
-        padding-top: 40px;
+  .gcode-container {
+    padding-top: 40px;
+
+    .canvas {
+      .download-button {
+        position: relative;
+        top: 17px;
+        left: -15px;
+      }
     }
+  }
 }
