@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { WebcamUtil, WebcamInitError, WebcamImage } from 'ngx-webcam';
 import { Subject, Observable } from 'rxjs';
+import { ConverterConfig } from '../modules/shared/components/settings/settings.component';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,9 @@ export class CameraServiceService {
   // latest snapshot
   public webcamImage: WebcamImage | null = null;
   public base64Image: string | null = null;
+
+  // configs
+  public converterConfig: ConverterConfig | undefined = undefined;
 
   // webcam snapshot trigger
   private trigger: Subject<void> = new Subject<void>();

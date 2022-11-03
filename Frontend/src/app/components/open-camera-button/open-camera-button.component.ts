@@ -25,18 +25,18 @@ export class OpenCameraButtonComponent implements OnInit {
 
   @ViewChild('uploader') fileinput: any;
 
-  @Input() skipImageUpload: boolean = false;
+  @Input('converterConfig') converterConfig: ConverterConfig | undefined;
 
   faCamera = faCamera;
 
   ngOnInit(): void {}
 
-  getButtonText(skipImageUpload: boolean): string {
+  getButtonText(skipImageUpload: boolean | undefined): string {
     let buttonText: string = '';
     if (!skipImageUpload) {
       buttonText = this.deviceService.isMobile()
         ? 'Take a Selfie!'
-        : 'Upload image or gcode';
+        : 'Upload file';
     } else {
       buttonText = 'Generate Gcode';
     }
@@ -45,9 +45,12 @@ export class OpenCameraButtonComponent implements OnInit {
   }
 
   open() {
-    console.log(this.skipImageUpload);
-    if (this.skipImageUpload) {
-      this.backendConnectService.sendImageConvertionRequst('', false);
+    if (!this.converterConfig || !this.converterConfig.needInputFile) {
+      this.backendConnectService.sendImageConvertionRequst(
+        '',
+        false,
+        this.converterConfig!
+      );
       return;
     }
     if (environment.useCameraAPI) {
@@ -61,6 +64,9 @@ export class OpenCameraButtonComponent implements OnInit {
 
   uploadFile($event: any) {
     this.loadingService.isLoading = false;
-    this.fileUploadService.parseFile($event.target.files[0]);
+    this.fileUploadService.parseFile(
+      $event.target.files[0],
+      this.converterConfig!
+    );
   }
 }

@@ -58,7 +58,9 @@ export interface ConverterSettings {
 
 export interface ConverterConfig {
   name: string;
-  imageInput: boolean; //true if the converter needs an image as input
+  needInputFile: boolean; //true if the converter needs an image as input
+  inputFiletype: string; //filetype of the input file
+  acceptedFiletypes: string; //filetypes that are allowed to upload (e.g. "image/*" for all image types)
 }
 
 export interface SerialPort {

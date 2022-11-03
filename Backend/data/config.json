@@ -3,11 +3,15 @@
         
         {
             "name": "DrawbotV2",
-            "imageInput": true
+            "needInputFile": true,
+            "inputFiletype": "jpg",
+            "acceptedFiletypes": "image/png,image/jpeg"
         },
         {
             "name": "Sudoku",
-            "imageInput": false
+            "needInputFile": false,
+            "inputFiletype": "",
+            "acceptedFiletypes": ""
         }
     ]
 }

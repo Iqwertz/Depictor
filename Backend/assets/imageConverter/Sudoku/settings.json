@@ -1,9 +1,1 @@
-{
-    "gridSize": 500,
-    "generateSvgSolution": true,
-    "selectedRotate": "right",
-    "Rotate": ["up", "right", "down", "left"],
-    "invert": false,
-    "numberInset": 2,
-    "penWidth": 1
-}
+{"gridSize":500,"generateSvgSolution":true,"selectedRotate":"right","Rotate":["up","right","down","left"],"invert":false,"numberInset":2,"penWidth":1}

@@ -78,14 +78,9 @@ export class TakeSelfieComponent implements OnInit {
     }
   }
 
-  converterNeedsPicture(converter: string): boolean {
-    if (
-      this.settings.converter.availableConverter.find(
-        (c) => c.name == converter
-      )?.imageInput
-    ) {
-      return true;
-    }
-    return false;
+  getConverterConfigByName(converter: string): ConverterConfig | undefined {
+    return this.settings.converter.availableConverter.find(
+      (c) => c.name == converter
+    );
   }
 }

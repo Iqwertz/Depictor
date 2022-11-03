@@ -97,7 +97,9 @@ interface ConverterSettings {
 
 interface ConverterConfig {
   name: string;
-  imageInput: boolean; //true if the converter needs an image as input
+  needInputFile: boolean; //true if the converter needs an image as input
+  inputFiletype: string; //filetype of the input file
+  acceptedFiletypes: string; //filetypes that are allowed to upload (e.g. "image/*" for all image types)
 }
 
 let appState: AppStates = "idle"; //var to track the current appstate
@@ -1282,7 +1284,14 @@ function convertBase64ToGcode(base64: string) {
 
   fse.outputFile(
     //save file to input folder of the convert
-    img2gcodePath + "/input/image.jpg",
+
+    //select object from arry by name
+
+    img2gcodePath +
+      "/input/image." +
+      settings.converter.availableConverter.find((obj) => {
+        return obj.name === selectedImageConverter;
+      })?.inputFiletype,
     base64,
     "base64",
     function (err: any, data: any) {

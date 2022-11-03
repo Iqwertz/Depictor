@@ -5,11 +5,15 @@ import { environment } from '../../environments/environment';
 import { LoadingService } from '../modules/shared/services/loading.service';
 import { AppState } from '../store/app.state';
 import { Select, Store } from '@ngxs/store';
-import { Settings } from '../modules/shared/components/settings/settings.component';
+import {
+  ConverterConfig,
+  Settings,
+} from '../modules/shared/components/settings/settings.component';
 import { SnackbarService } from './snackbar.service';
 import { GcodeViewerService } from '../modules/gcode/services/gcode-viewer.service';
 import { Router } from '@angular/router';
 import { SetAutoRouting } from '../store/app.action';
+import { BackendConnectService } from './backend-connect.service';
 
 @Injectable({
   providedIn: 'root',
@@ -24,27 +28,29 @@ export class FileUploadService {
     private snackbarService: SnackbarService,
     private gcodeViewerService: GcodeViewerService,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private backendConnectService: BackendConnectService
   ) {
     this.settings$.subscribe((settings: Settings) => {
       this.settings = settings;
     });
   }
 
-  parseFile(file: File) {
+  parseFile(file: File, config: ConverterConfig) {
     this.loadingService.isLoading = true;
     this.loadingService.loadingText = 'processing File';
     let fileType = file.name.split('.').pop();
     if (fileType == 'nc' || fileType == 'gcode') {
-      this.parseGcodeUpload(file);
+      this.parseGcodeUpload(file, config);
     } else if (this.isFileImage(file)) {
-      this.parseImageUpload(file);
+      this.parseImageUpload(file, config);
     } else {
+      this.parseFileUpload(file, config);
       this.snackbarService.error('Error: Filetype is not supported');
     }
   }
 
-  private parseGcodeUpload(file: File) {
+  private parseGcodeUpload(file: File, config: ConverterConfig) {
     this.blobToText(file).then((result: string | ArrayBuffer | null) => {
       if (typeof result === 'string') {
         this.gcodeViewerService.gcodeId = '';
@@ -69,9 +75,9 @@ export class FileUploadService {
     });
   }
 
-  private parseImageUpload(file: File) {
+  private parseImageUpload(file: File, config: ConverterConfig) {
     if (!this.isFileImage(file)) {
-      this.snackbarService.error('Error: Filetype is not supported');
+      this.snackbarService.error('Error: File is not an Image');
       return;
     }
 
@@ -88,7 +94,7 @@ export class FileUploadService {
               imageCompression.getDataUrlFromFile(file).then((b64: string) => {
                 this.loadingService.isLoading = false;
                 this.loadingService.loadingText = '';
-                this.setUploadedImage(b64);
+                this.setUploadedImage(b64, config);
               });
             });
           });
@@ -100,14 +106,34 @@ export class FileUploadService {
     });
   }
 
+  private parseFileUpload(file: File, config: ConverterConfig) {
+    //Todo: parse file, upload immadiately, pass config file alongside file data,
+    this.blobToBase64(file).then((result: string | ArrayBuffer | null) => {
+      if (typeof result === 'string') {
+        this.loadingService.isLoading = true;
+        this.loadingService.loadingText = 'uploading image';
+        this.backendConnectService.sendImageConvertionRequst(
+          result,
+          false,
+          config
+        );
+      } else {
+        this.snackbarService.error(
+          'There was an error when uploading the file'
+        );
+      }
+    });
+  }
+
   private isFileImage(file: File) {
     return file && file['type'].split('/')[0] === 'image';
   }
 
-  setUploadedImage(b64Data: string) {
+  setUploadedImage(b64Data: string, config: ConverterConfig) {
     this.cameraService.base64Image = b64Data;
     this.cameraService.setFlash();
     this.cameraService.toggleCameraWindow();
+    this.cameraService.converterConfig = config;
     setTimeout(() => {
       this.cameraService.minimizeSnapshot();
     }, 1500);

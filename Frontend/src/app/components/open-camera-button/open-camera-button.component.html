@@ -8,7 +8,7 @@
 >
   <button class="bn9">
     <span>
-      <b>{{ getButtonText(skipImageUpload) }}</b>
+      <b>{{ getButtonText(converterConfig?.needInputFile) }}</b>
       <!-- <fa-icon [icon]="faCamera"></fa-icon> -->
     </span>
   </button>
@@ -17,7 +17,7 @@
 <input
   hidden
   type="file"
-  accept="image/png, image/jpeg, .gcode, .nc"
+  [accept]="converterConfig?.acceptedFiletypes + '.gcode, .nc'"
   #uploader
   (change)="uploadFile($event)"
 />

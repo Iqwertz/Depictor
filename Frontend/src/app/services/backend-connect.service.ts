@@ -14,7 +14,10 @@ import { AppState } from '../store/app.state';
 import { Observable } from 'rxjs';
 import { StateResponse } from './site-state.service';
 import { environment } from '../../environments/environment';
-import { Settings } from '../modules/shared/components/settings/settings.component';
+import {
+  ConverterConfig,
+  Settings,
+} from '../modules/shared/components/settings/settings.component';
 import { SetSettings } from '../store/app.action';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -59,7 +62,18 @@ export class BackendConnectService {
     if (this.cameraService.base64Image) {
       //check if there is a image
       let img = this.cameraService.base64Image.split('base64,')[1];
-      this.sendImageConvertionRequst(img, removeBg);
+
+      let config: ConverterConfig | undefined =
+        this.cameraService.converterConfig;
+
+      if (!config) {
+        this.snackbarService.error(
+          'Missing converter config! Cant upload Picture!'
+        );
+        return;
+      }
+
+      this.sendImageConvertionRequst(img, removeBg, config);
     } else {
       console.error('No image saved!');
     }
@@ -71,13 +85,18 @@ export class BackendConnectService {
    * @param img
    * @param removeBg
    */
-  sendImageConvertionRequst(img: string, removeBg: boolean) {
+  sendImageConvertionRequst(
+    img: string,
+    removeBg: boolean,
+    converterConfig: ConverterConfig
+  ) {
     this.loadingService.isLoading = true;
     this.http
       .post('http://' + this.ip + '/newPicture', {
         //post image data with parameter
         img: img,
         removeBg: removeBg,
+        config: converterConfig,
       })
       .subscribe((res) => {
         if (res.hasOwnProperty('err')) {

@@ -49,7 +49,9 @@ const settings: Settings = {
     availableConverter: [
       {
         name: 'DrawbotV2',
-        imageInput: true,
+        needInputFile: true,
+        inputFiletype: 'jpg',
+        acceptedFiletypes: 'image/',
       },
     ],
     selectedConverter: 'DrawbotV2',
