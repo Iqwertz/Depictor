@@ -5,13 +5,22 @@
             "name": "DrawbotV2",
             "needInputFile": true,
             "inputFiletype": "jpg",
-            "acceptedFiletypes": "image/png,image/jpeg"
+            "acceptedFiletypes": "image/png,image/jpeg",
+            "isBinary": true
+        },
+                {
+            "name": "Svg2Gcode",
+            "needInputFile": true,
+            "inputFiletype": "svg",
+            "acceptedFiletypes": ".svg",
+            "isBinary": false
         },
         {
             "name": "Sudoku",
             "needInputFile": false,
             "inputFiletype": "",
-            "acceptedFiletypes": ""
+            "acceptedFiletypes": "",
+            "isBinary": false
         }
     ]
 }

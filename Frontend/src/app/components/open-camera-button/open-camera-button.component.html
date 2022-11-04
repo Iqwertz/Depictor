@@ -17,7 +17,7 @@
 <input
   hidden
   type="file"
-  [accept]="converterConfig?.acceptedFiletypes + '.gcode, .nc'"
+  [accept]="converterConfig?.acceptedFiletypes + ', .gcode, .nc'"
   #uploader
   (change)="uploadFile($event)"
 />

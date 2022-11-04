@@ -45,6 +45,7 @@ export class OpenCameraButtonComponent implements OnInit {
   }
 
   open() {
+    console.log(this.converterConfig?.acceptedFiletypes);
     if (!this.converterConfig || !this.converterConfig.needInputFile) {
       this.backendConnectService.sendImageConvertionRequst(
         '',

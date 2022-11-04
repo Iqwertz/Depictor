@@ -43,10 +43,11 @@ export class FileUploadService {
     if (fileType == 'nc' || fileType == 'gcode') {
       this.parseGcodeUpload(file, config);
     } else if (this.isFileImage(file)) {
+      console.log('image');
       this.parseImageUpload(file, config);
     } else {
+      console.log('file');
       this.parseFileUpload(file, config);
-      this.snackbarService.error('Error: Filetype is not supported');
     }
   }
 
@@ -107,26 +108,39 @@ export class FileUploadService {
   }
 
   private parseFileUpload(file: File, config: ConverterConfig) {
-    //Todo: parse file, upload immadiately, pass config file alongside file data,
-    this.blobToBase64(file).then((result: string | ArrayBuffer | null) => {
-      if (typeof result === 'string') {
-        this.loadingService.isLoading = true;
-        this.loadingService.loadingText = 'uploading image';
-        this.backendConnectService.sendImageConvertionRequst(
-          result,
-          false,
-          config
-        );
-      } else {
-        this.snackbarService.error(
-          'There was an error when uploading the file'
-        );
-      }
-    });
+    if (config.isBinary) {
+      this.blobToBase64(file).then((result: string | ArrayBuffer | null) => {
+        if (typeof result === 'string') {
+          this.loadingService.isLoading = true;
+          this.loadingService.loadingText = 'uploading image';
+          this.backendConnectService.sendFileConvertionRequst(result, config);
+        } else {
+          this.snackbarService.error(
+            'There was an error when uploading the file'
+          );
+        }
+      });
+    } else {
+      this.blobToText(file).then((result: string | ArrayBuffer | null) => {
+        if (typeof result === 'string') {
+          this.loadingService.isLoading = true;
+          this.loadingService.loadingText = 'uploading image';
+          this.backendConnectService.sendFileConvertionRequst(result, config);
+        } else {
+          this.snackbarService.error(
+            'There was an error when uploading the file'
+          );
+        }
+      });
+    }
   }
 
   private isFileImage(file: File) {
-    return file && file['type'].split('/')[0] === 'image';
+    return (
+      file &&
+      file['type'].split('/')[0] === 'image' &&
+      file.name.split('.').pop() !== 'svg'
+    );
   }
 
   setUploadedImage(b64Data: string, config: ConverterConfig) {

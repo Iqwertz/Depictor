@@ -100,6 +100,7 @@ interface ConverterConfig {
   needInputFile: boolean; //true if the converter needs an image as input
   inputFiletype: string; //filetype of the input file
   acceptedFiletypes: string; //filetypes that are allowed to upload (e.g. "image/*" for all image types)
+  isBinary: boolean; //is the file binary or text
 }
 
 let appState: AppStates = "idle"; //var to track the current appstate
@@ -130,6 +131,7 @@ expected request:
   {
     removeBg: boolean //use removeBg to removeBackground
     img: string //an base64 encoded picture
+    config: ConverterConfig //the converter config to use
   }
   
 returns: 
@@ -168,6 +170,38 @@ app.post("/newPicture", (req: Request, res: Response) => {
       }
     );
 
+    res.json({}); //return emmpty on success
+  }
+});
+
+/*
+post: /newFile
+
+description: when the post request is made with an valid request body the file will be uploaded and converted with the selected converter
+
+expected request: 
+  {
+    img: string //an base64 encoded picture
+    config: ConverterConfig //the converter config to use
+  }
+  
+returns: 
+  unsuccessful: 
+    {
+      err: string [errMessage]
+    }
+  successful:
+    {}
+*/
+app.post("/newFile", (req: Request, res: Response) => {
+  logger.http("post: newFile");
+  if (appState != "idle") {
+    //check if maschine is ready
+    logger.warn("req denied: not in idle");
+    res.json({ err: "not_ready: " + appState }); //return error if not
+  } else {
+    appState = "processingImage"; //update appState
+    convertBase64ToGcode(req.body.img, req.body.config); //convert the base64 to gcode
     res.json({}); //return emmpty on success
   }
 });
@@ -1268,6 +1302,8 @@ function convertBase64ToGcode(base64: string, config: ConverterConfig) {
 
   let img2gcodePath: string = "./assets/imageConverter/" + selectedImageConverter.name;
 
+  let fileFormat: string = config.isBinary ? "base64" : "utf8";
+
   fse.outputFile(
     //save file to input folder of the convert
 
@@ -1275,7 +1311,7 @@ function convertBase64ToGcode(base64: string, config: ConverterConfig) {
 
     img2gcodePath + "/input/image." + selectedImageConverter.inputFiletype,
     base64,
-    "base64",
+    fileFormat,
     function (err: any, data: any) {
       if (err) {
         logger.error(err);
@@ -1326,7 +1362,7 @@ function convertBase64ToGcode(base64: string, config: ConverterConfig) {
             logger.warn("cant find preview image - using original image");
             fse.copy(img2gcodePath + "/input/image.jpg", "data/savedGcodes/" + fName + ".png", function (err: any) {
               if (err) {
-                logger.error(err);
+                logger.warn(err);
               }
             });
           }

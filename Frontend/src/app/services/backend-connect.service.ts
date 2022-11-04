@@ -108,6 +108,29 @@ export class BackendConnectService {
   }
 
   /**
+   * Sends a post request to start the file convertion process with the given file
+   *
+   * @param img
+   * @param converterConfig
+   */
+  sendFileConvertionRequst(img: string, converterConfig: ConverterConfig) {
+    this.loadingService.isLoading = true;
+    this.http
+      .post('http://' + this.ip + '/newFile', {
+        //post image data with parameter
+        img: img,
+        config: converterConfig,
+      })
+      .subscribe((res) => {
+        if (res.hasOwnProperty('err')) {
+          //check for errors in response
+          this.loadingService.isLoading = false;
+          console.log('error starting image convertion');
+        }
+      });
+  }
+
+  /**
    *sends a post request to check the current backend server state
    *
    * @return {*}  {Observable<StateResponse>}

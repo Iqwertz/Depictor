@@ -52,6 +52,7 @@ const settings: Settings = {
         needInputFile: true,
         inputFiletype: 'jpg',
         acceptedFiletypes: 'image/',
+        isBinary: true,
       },
     ],
     selectedConverter: 'DrawbotV2',
