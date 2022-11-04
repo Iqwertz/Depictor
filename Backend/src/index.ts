@@ -151,9 +151,9 @@ app.post("/newPicture", (req: Request, res: Response) => {
     if (useBGApi && req.body.removeBg) {
       //check if removeBG API should be used
       logger.info("starting removing bg process");
-      removeBg(req.body.img); //remove background with removebg //this function will call convertBase64ToGcode asynchronous
+      removeBg(req.body.img, req.body.config); //remove background with removebg //this function will call convertBase64ToGcode asynchronous
     } else {
-      skipRemoveBg(req.body.img);
+      skipRemoveBg(req.body.img, req.body.config);
     }
 
     fse.outputFile(
@@ -1183,13 +1183,13 @@ function drawGcode(gcode: string) {
  *
  * @param {string} base64img
  */
-function removeBg(base64img: string) {
+function removeBg(base64img: string, config: ConverterConfig) {
   const outputFile = outputDir + "bgremoved-current.jpg"; //define the output file
 
   checkBGremoveAPIkey();
   if (!isBGRemoveAPIKey) {
     logger.warn("cant remove bg - no apiKey");
-    skipRemoveBg(base64img);
+    skipRemoveBg(base64img, config);
     return;
   }
   const apiKey = fs.readFileSync("removeBGAPIKey.txt", "utf8");
@@ -1222,11 +1222,11 @@ function removeBg(base64img: string) {
         }
       );
 
-      convertBase64ToGcode(removedBgBase64); //convert image to gcode
+      convertBase64ToGcode(removedBgBase64, config); //convert image to gcode
     })
     .catch((errors: Array<RemoveBgError>) => {
       logger.error(JSON.stringify(errors)); //log errors
-      skipRemoveBg(base64img);
+      skipRemoveBg(base64img, config);
     });
 }
 
@@ -1236,7 +1236,7 @@ function removeBg(base64img: string) {
  *
  * @param {string} base64img
  */
-function skipRemoveBg(base64img: string) {
+function skipRemoveBg(base64img: string, config: ConverterConfig) {
   logger.info("removebg skipped");
   removedBgBase64 = base64img; //set the removedBgBase64 Image without bgremove
   fse.outputFile(
@@ -1251,7 +1251,7 @@ function skipRemoveBg(base64img: string) {
     }
   );
 
-  convertBase64ToGcode(removedBgBase64); //convert the image to gcode
+  convertBase64ToGcode(removedBgBase64, config); //convert the image to gcode
 }
 
 /**
@@ -1260,38 +1260,20 @@ function skipRemoveBg(base64img: string) {
  * converts an base64image to gcode with an java based image to gcode converter. It is based on this project: https://github.com/Scott-Cooper/Drawbot_image_to_gcode_v2.
  * @param {string} base64
  */
-function convertBase64ToGcode(base64: string) {
+function convertBase64ToGcode(base64: string, config: ConverterConfig) {
   logger.info("start converting image to gcode");
   appState = "processingImage"; //update appState
 
-  let settings = readSettingsFile(); //read settings file
-  if (!settings) {
-    logger.error("couldnt read settings file");
-    return;
-  }
+  let selectedImageConverter = config; //get selected image converter
 
-  let selectedImageConverter = settings.converter.selectedConverter; //get selected image converter
-  if (!selectedImageConverter || selectedImageConverter == "") {
-    logger.warn("no image converter selected - selecting first one in list");
-    selectedImageConverter = settings.converter.availableConverter[0].name;
-    if (!selectedImageConverter) {
-      logger.error("no image converter registerd");
-      return;
-    }
-  }
-
-  let img2gcodePath: string = "./assets/imageConverter/" + selectedImageConverter;
+  let img2gcodePath: string = "./assets/imageConverter/" + selectedImageConverter.name;
 
   fse.outputFile(
     //save file to input folder of the convert
 
     //select object from arry by name
 
-    img2gcodePath +
-      "/input/image." +
-      settings.converter.availableConverter.find((obj) => {
-        return obj.name === selectedImageConverter;
-      })?.inputFiletype,
+    img2gcodePath + "/input/image." + selectedImageConverter.inputFiletype,
     base64,
     "base64",
     function (err: any, data: any) {
@@ -1305,7 +1287,7 @@ function convertBase64ToGcode(base64: string) {
         return;
       }
 
-      logger.info("converting image with: " + selectedImageConverter);
+      logger.info("converting image with: " + selectedImageConverter.name);
 
       let launchFile: string = img2gcodePath + "/run.sh"; //define the launch file
       execFile(launchFile, function (err: any, data: any) {

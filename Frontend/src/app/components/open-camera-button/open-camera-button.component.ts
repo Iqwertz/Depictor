@@ -31,9 +31,9 @@ export class OpenCameraButtonComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  getButtonText(skipImageUpload: boolean | undefined): string {
+  getButtonText(needImageUpload: boolean | undefined): string {
     let buttonText: string = '';
-    if (!skipImageUpload) {
+    if (needImageUpload) {
       buttonText = this.deviceService.isMobile()
         ? 'Take a Selfie!'
         : 'Upload file';
