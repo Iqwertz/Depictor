@@ -128,7 +128,7 @@ public void draw() {
 }
 
 public void setSettings() {
-    JSONObject json = loadJSONObject(settings_path).getJSONObject("main");
+    JSONObject json = loadJSONObject(settings_path);
     
     global_gcode_scale = json.getFloat("global_gcode_scale");
     flip_gcode_xy = json.getBoolean("flip_gcode_xy");
