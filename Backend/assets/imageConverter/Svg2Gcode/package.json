@@ -7,8 +7,7 @@
   },
   "dependencies": {
     "canvg": "0.0.6",
-    "commander": "^2.5.0",
-    "svg-to-png": "^4.0.0"
+    "commander": "^2.5.0"
   },
   "repository": {
     "type": "git",

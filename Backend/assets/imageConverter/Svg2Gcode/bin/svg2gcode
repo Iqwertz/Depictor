@@ -4,8 +4,6 @@ var fs = require('fs')
   , program = require('commander')
   , GCanvas = require('../gcanvas/index.js') 
   , canvg = require("canvg")
-  , svg_to_png = require('svg-to-png')
-  , path = require("path");
 
 
 
@@ -13,7 +11,6 @@ program
   .version(require('../package.json').version)
   .usage('[options]')
   .option('-o, --output <file>', 'Output file', 'out.nc')
-  .option('-i, --image <file>', 'Folder for the preview image', '')
   .option('-s, --speed <number>', 'spindle speed', eval)
   .option('-f, --feed <number>', 'feed rate', eval)
   .option('-d, --depth <number>', 'z of final cut depth', eval)
@@ -28,7 +25,6 @@ program.parse(process.argv);
 
 let generatedGcode = '';
 let outputFile = 'out.nc';
-let imgOutputFile = '';
 
 var driver = new GCanvas.GcodeDriver({
   write: function(cmd) {
@@ -39,7 +35,6 @@ var driver = new GCanvas.GcodeDriver({
 var gctx = new GCanvas(driver);
 
 if(program.output) outputFile = program.output;
-if(program.image) imgOutputFile = program.image;
 if(program.speed) gctx.speed = program.speed;
 if(program.feed) gctx.feed = program.feed;
 if(program.depth) gctx.depth = program.depth;
@@ -67,16 +62,7 @@ function run() {
 
   fs.writeFileSync(outputFile, generatedGcode);
   console.log('Generated Gcode File: ' + outputFile);
-
-  if(imgOutputFile.length > 0) {
-    svg_to_png.convert(path.resolve('input/image.svg'), imgOutputFile, {compress: true, defaultWidth: 200, defaultHeight: 350}).then(()=>{
-      console.log('Generated Image File: ' + imgOutputFile);
-        process.exit(0);
-    })
-  }else{
-    process.exit(0);
-  }
-
+  process.exit(0);
 }
 
 if(program.args.length === 0 && process.stdin.isTTY) {
