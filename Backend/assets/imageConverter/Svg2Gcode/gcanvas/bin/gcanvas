@@ -1,0 +1,150 @@
+#!/usr/bin/env node
+
+var fs = require('fs')
+  , program = require('commander')
+  , path = require('path')
+  , basename = path.basename
+  , dirname = path.dirname
+  , resolve = path.resolve
+  , exists = fs.existsSync || path.existsSync
+  , GCanvas = require('../');
+
+program
+  .version(require('../package.json').version)
+  .usage('[options] <file ...>')
+  .option('-s, --speed <number>', 'spindle speed', eval)
+  .option('-f, --feed <number>', 'effective feed rate', eval)
+  .option('-d, --depth <number>', 'total depth to cut (relative to work surface)', eval)
+  .option('-c, --depthofcut <number>', 'incremental depth of cut per layer', eval)
+  .option('-t, --top <number>', 'distance to work surface zero', eval)
+  .option('-r, --retract <number>', 'distance to retract for rapid moves', eval)
+  .option('-D, --tooldiameter <number>', 'diameter of tool', eval)
+  .option('-b, --bounds <width>x<height>x<depth>', 'standard canvas width/height + depth', String)
+  .option('-e, --entry <name>', 'name of entry function to call  (default: main)', 'main')
+  .option('--mm', 'set unit mode to metric')
+  .option('--inch', 'set unit mode to imperial')
+  .option('--step <number>', 'skip to step n', eval)
+  .option('--only <number>', 'run step n and stop', eval)
+
+program.parse(process.argv);
+
+var gctx = new GCanvas();
+
+if(program.bounds) {
+  var parts = program.bounds.split('x');
+  gctx.canvas.width = eval(parts[0]);
+  gctx.canvas.height = eval(parts[1]);
+  gctx.canvas.depth = eval(parts[2]);
+}
+
+if(program.mm) gctx.unit = 'mm';
+if(program.inch) gctx.unit = 'inch';
+if(program.speed) gctx.speed = program.speed;
+if(program.feed) gctx.feed = program.feed;
+if(program.depth) gctx.depth = program.depth;
+if(program.depthofcut) gctx.depthOfCut = program.depthofcut;
+if(program.top) gctx.top = program.top;
+if(program.retract) gctx.retract = program.retract;
+if(program.width) gctx.canvas.width = program.width;
+if(program.height) gctx.canvas.height = program.height;
+if(program.tooldiameter) gctx.toolDiameter = program.tooldiameter;
+
+var setupNum = 0;
+var setupOffset = program.only || program.step || 0;
+var queue = [];
+var finished = false;
+
+function setup(desc, fn) {
+  if(finished) return;
+
+  setupNum++;
+
+  if(arguments.length === 1) {
+    fn = desc;
+    desc = setupNum;
+  }
+
+  if(setupNum == program.only) {
+    gctx.save();
+    fn(gctx);
+    gctx.restore();
+  }
+
+  if(!program.only && setupNum >= setupOffset) {
+     queue.push({desc: desc, fn: fn});
+  }
+}
+
+function processQueue() {
+  if(queue.length === 0) return;
+
+  var readline = require('readline'),
+      rl = readline.createInterface(process.stdin, process.stderr);
+  var currentStep;
+
+  function next() {
+    currentStep = queue.shift();
+    if(!currentStep) {
+      rl.close();
+      return;
+    }
+
+    gctx.motion.rapid({z:0});
+    rl.setPrompt('(setup '+currentStep.desc+')');
+    rl.prompt();
+  }
+
+  rl.on('line', function() {
+    gctx.save();
+    currentStep.fn(gctx);
+    gctx.restore();
+    next();
+  }).on('close', function() {
+    process.exit(0);
+  });
+
+  next();
+}
+
+function run(file) {
+  var util = require('util'),
+      vm = require('vm'),
+      sandbox = {
+        setup: setup,
+        step: setup,
+        ctx: gctx,
+        console: console
+      };
+
+  var code = ''+fs.readFileSync(file);
+
+  // Remove #! declaration if there is one
+  if(code[0] == '#') {
+    code = code.split('\n').slice(1).join('\n');
+  }
+
+  var script = vm.createScript(code, file);
+  script.runInNewContext(sandbox);
+
+  if(sandbox[program.entry]) {
+    sandbox[program.entry](gctx);
+  }
+
+  processQueue();
+}
+
+if(program.args.length === 0) {
+  program.outputHelp();
+}
+else {
+  program.args.forEach(function(file) {
+    run(file);
+  });
+
+  gctx.motion.retract();
+  gctx.motion.rapid({x:0,y:0});
+  gctx.driver.send('M30');
+}
+
+// cleanup
+// gctx.motion.rapid({x:0,y:0,z:0});

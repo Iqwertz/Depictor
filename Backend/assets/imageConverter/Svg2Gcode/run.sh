@@ -2,8 +2,8 @@
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd "$parent_path"
 
-chmod +x juicy-gcode
+chmod +x ./bin/svg2gcode
 mkdir -p output
-juicy-gcode input/image.svg -o output/gcode.nc -f juicy.conf
+./bin/svg2gcode --output output/gcode.nc --image output/ 
 cp input/image.svg output/image.svg
-
+mv output/image.png output/preview.png
