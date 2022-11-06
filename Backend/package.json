@@ -6,8 +6,7 @@
     "scripts": {
         "start": "sudo ./scripts/setUSBChmod.sh && ts-node src/index.ts",
         "start-dev": "nodemon",
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "postinstall": "cd assets/imageConverter/Svg2Gcode/ && npm i"
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
         "type": "git",

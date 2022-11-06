@@ -9,7 +9,7 @@
             "isBinary": true
         },
                 {
-            "name": "Svg2Gcode",
+            "name": "SvgToGcode",
             "needInputFile": true,
             "inputFiletype": "svg",
             "acceptedFiletypes": ".svg",
