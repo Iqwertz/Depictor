@@ -26,6 +26,7 @@ import { SiteStateService } from '../../../../services/site-state.service';
 import { StandartizerSettings } from '../../../gcode/services/gcode-viewer.service';
 import { PaperProfilePopupComponent } from '../paper-profile-popup/paper-profile-popup.component';
 import { JsonSetting } from '../json-settings/json-settings.component';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 export interface PaperProfile {
   name: string;
@@ -125,7 +126,8 @@ export class SettingsComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private loadingService: LoadingService,
-    public siteStateService: SiteStateService
+    public siteStateService: SiteStateService,
+    private snackBar: SnackbarService
   ) {}
 
   ngOnInit(): void {
@@ -285,8 +287,16 @@ export class SettingsComponent implements OnInit {
     this.backendConnectService
       .getConverterSettings(converter)
       .subscribe((converterSettings) => {
-        this.currentJsonSettings = converterSettings;
-        this.currentJsonSettingsName = converter;
+        if (converterSettings.err == 'no_settings_found') {
+          this.snackBar.error("Converter doesn't have settings");
+        } else if (!converterSettings) {
+          this.snackBar.error(
+            'Unexpected Error when trying to load settings of: ' + converter
+          );
+        } else {
+          this.currentJsonSettings = converterSettings;
+          this.currentJsonSettingsName = converter;
+        }
       });
   }
 

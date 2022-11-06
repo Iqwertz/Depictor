@@ -784,7 +784,7 @@ expected request:
   
 returns: 
     unsuccessful 
-      {}
+      {err: string}
 
     successful
     {settings: object}
@@ -820,8 +820,8 @@ function readConverterSettingsFile(converter: string): object | null {
     logger.info("found " + converter + " settings");
     return settings;
   } else {
-    logger.warn("no settings found");
-    return null;
+    logger.warn("no settings found for " + converter);
+    return { err: "no_settings_found" };
   }
 }
 
