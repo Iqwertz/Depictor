@@ -34,7 +34,7 @@
         "socket.io": "^4.5.1",
         "tail": "^2.2.4",
         "tree-kill": "^1.2.2",
-        "winston": "^3.7.2"
+        "winston": "^3.8.2"
     },
     "devDependencies": {
         "ts-node": "^10.7.0",
