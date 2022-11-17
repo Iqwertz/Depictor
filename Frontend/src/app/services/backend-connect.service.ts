@@ -1,3 +1,4 @@
+import { LogLevel } from './../modules/shared/components/log-display/log-display.component';
 /**
  * backend-connect service
  *
@@ -13,12 +14,16 @@ import { AppState } from '../store/app.state';
 import { Observable } from 'rxjs';
 import { StateResponse } from './site-state.service';
 import { environment } from '../../environments/environment';
-import { Settings } from '../modules/shared/components/settings/settings.component';
+import {
+  ConverterConfig,
+  Settings,
+} from '../modules/shared/components/settings/settings.component';
 import { SetSettings } from '../store/app.action';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { SnackbarService } from './snackbar.service';
 import { GalleryEntryUpload } from '../modules/gcode/sites/gcode-edit/gcode-edit.component';
+import { JsonSetting } from '../modules/shared/components/json-settings/json-settings.component';
 
 export interface BackendVersion {
   tag: string; //version tag is used to check if a newer version is available
@@ -48,35 +53,81 @@ export class BackendConnectService {
   }
 
   /**
-   *sends a post request with the image saved in cameraService to the backend.
+   *processes the cameraService base64 image and sends it to the backend
    *
    * @param {boolean} removeBg true when the background of the image should get removed
-   * @param {boolean} useBoarder true when a smoothing boarder should be applied onto the image
    * @memberof BackendConnectService
    */
-  postSelfie(removeBg: boolean, useBoarder: boolean) {
+  sendSelfie(removeBg: boolean) {
     if (this.cameraService.base64Image) {
       //check if there is a image
       let img = this.cameraService.base64Image.split('base64,')[1];
-      this.loadingService.isLoading = true;
-      this.http
-        .post('http://' + this.ip + '/newPicture', {
-          //post image data with parameter
-          img: img,
-          removeBg: removeBg,
-          addBoarder: useBoarder,
-        })
-        .subscribe((res) => {
-          console.log(res);
-          if (res.hasOwnProperty('err')) {
-            //check for errors in response
-            this.loadingService.isLoading = false;
-            console.log('error sending image');
-          }
-        });
+
+      let config: ConverterConfig | undefined =
+        this.cameraService.converterConfig;
+
+      if (!config) {
+        this.snackbarService.error(
+          'Missing converter config! Cant upload Picture!'
+        );
+        return;
+      }
+
+      this.sendImageConvertionRequst(img, removeBg, config);
     } else {
       console.error('No image saved!');
     }
+  }
+
+  /**
+   * Sends a post request to start the image convertion process with the given image
+   *
+   * @param img
+   * @param removeBg
+   */
+  sendImageConvertionRequst(
+    img: string,
+    removeBg: boolean,
+    converterConfig: ConverterConfig
+  ) {
+    this.loadingService.isLoading = true;
+    this.http
+      .post('http://' + this.ip + '/newPicture', {
+        //post image data with parameter
+        img: img,
+        removeBg: removeBg,
+        config: converterConfig,
+      })
+      .subscribe((res) => {
+        if (res.hasOwnProperty('err')) {
+          //check for errors in response
+          this.loadingService.isLoading = false;
+          console.log('error starting image convertion');
+        }
+      });
+  }
+
+  /**
+   * Sends a post request to start the file convertion process with the given file
+   *
+   * @param img
+   * @param converterConfig
+   */
+  sendFileConvertionRequst(img: string, converterConfig: ConverterConfig) {
+    this.loadingService.isLoading = true;
+    this.http
+      .post('http://' + this.ip + '/newFile', {
+        //post image data with parameter
+        img: img,
+        config: converterConfig,
+      })
+      .subscribe((res) => {
+        if (res.hasOwnProperty('err')) {
+          //check for errors in response
+          this.loadingService.isLoading = false;
+          console.log('error starting image convertion');
+        }
+      });
   }
 
   /**
@@ -211,6 +262,18 @@ export class BackendConnectService {
   }
 
   /**
+   *sends a post request to get all downloadable file types for a given gcodeID
+   *
+   * @return {*}  {Observable<string[]>}
+   * @memberof BackendConnectService
+   */
+  getAvailableFileTypes(id: string): Observable<string[]> {
+    return this.http.post<string[]>('http://' + this.ip + '/availableFiles', {
+      id: id,
+    });
+  }
+
+  /**
    *sends a post request to set a new serial port
    *
    * @return {*}  {Observable<BackendVersion>}
@@ -220,6 +283,21 @@ export class BackendConnectService {
     return this.http.post<BackendVersion>(
       'http://' + this.ip + '/setSerialPort',
       { path: path }
+    );
+  }
+
+  /**
+   *sends a post request to get the last n lines of the log file
+   *
+   * @param {number} n the amout of lines that should be returned
+   * @param {LogLevel} level the amout of lines that should be returned
+   * @return {*}  {Observable<LoggingData Json>}
+   * @memberof BackendConnectService
+   */
+  getLoggingData(n: number, level: LogLevel): Observable<BackendVersion> {
+    return this.http.post<BackendVersion>(
+      'http://' + this.ip + '/getLoggingData',
+      { lines: n, level: level }
     );
   }
 
@@ -323,13 +401,34 @@ export class BackendConnectService {
    */
   setSettings(settings: Settings) {
     this.store.dispatch(new SetSettings(settings));
-    console.log(settings);
+    console.info(settings);
     this.http
       .post('http://' + this.ip + '/changeSettings', {
         settings: settings,
       })
       .subscribe((res: any) => {
         this.snackbarService.success('settings saved successfully!');
+        //optional error handling
+      });
+  }
+
+  /**
+   *updates the converter settings of the defined converter by sending a post request to change them on the server
+   *
+   * @param {string} converter
+   * @param {Settings} settings
+   * @memberof BackendConnectService
+   */
+  setConverterSettings(converter: string, settings: JsonSetting) {
+    this.http
+      .post('http://' + this.ip + '/changeConverterSettings', {
+        converter: converter,
+        settings: settings,
+      })
+      .subscribe((res: any) => {
+        this.snackbarService.success(
+          'Settings for ' + converter + ' saved successfully!'
+        );
         //optional error handling
       });
   }
@@ -349,6 +448,10 @@ export class BackendConnectService {
             ...res.settings,
           };
           this.store.dispatch(new SetSettings(mergedSettings));
+        } else {
+          //Can be improved by communicating with error codes, Now it assumes that no settings means that there werent any settings found...
+          this.store.dispatch(new SetSettings(environment.defaultSettings));
+          this.setSettings(environment.defaultSettings);
         }
       });
   }
@@ -373,6 +476,19 @@ export class BackendConnectService {
         return res.settings;
       })
     );
+  }
+
+  /**
+   * gets the settings for the defined converter from the backend by sending a post request and returns them as a observable.
+   *
+   * @param {string} converter
+   * @return {*}  {Observable<any>}
+   * @memberof BackendConnectService
+   */
+  getConverterSettings(converter: string): Observable<any> {
+    return this.http.post('http://' + this.ip + '/changeConverterSettings', {
+      converter: converter,
+    });
   }
 
   uploadGcodeToGallery(uploadData: GalleryEntryUpload, redirect: boolean) {

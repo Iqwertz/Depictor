@@ -1,0 +1,163 @@
+.float {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  bottom: 40px;
+  right: 40px;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  border: 3px solid #000;
+  border-radius: 50px;
+  text-align: center;
+  box-shadow: 2px 2px 3px #999;
+  z-index: 36;
+  animation: bot-to-top 2s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+a {
+  all: unset;
+
+  cursor: pointer;
+}
+
+/*
+ * Submenu - Buttons
+ */
+ul {
+  position: relative;
+  right: 47px;
+  padding-bottom: 5px;
+  bottom: 335px;
+  height: 210px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+ul li {
+  list-style: none;
+  margin-bottom: 5px;
+}
+
+ul li a {
+  width: 60px;
+  height: 60px;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  border: 1px solid #000;
+  border-radius: 50px;
+  text-align: center;
+  box-shadow: 2px 2px 3px #999;
+  font-size: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hidden Buttons */
+a.float + ul {
+  visibility: hidden;
+  transition: 0.5s;
+  transform: scale(0);
+  opacity: 0;
+}
+
+/* Visible Buttons */
+a.float:hover + ul {
+  visibility: visible;
+  transform: scale(1);
+  opacity: 1;
+}
+
+ul:hover {
+  visibility: visible !important;
+  transform: scale(1) !important;
+  opacity: 1 !important;
+}
+
+/* Center icons */
+a .icon {
+  font-size: 30px;
+}
+
+@keyframes bot-to-top {
+  0% {
+    bottom: -60px;
+  }
+
+  50% {
+    bottom: 40px;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes scale-out {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes rotate-in {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotate-out {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+///////////////Responsiveness/////////////////////
+@media screen and (max-width: 700px) {
+  .float {
+    width: 40px;
+    height: 40px;
+    .icon {
+      font-size: 20px;
+    }
+  }
+
+  ul {
+    right: 56px;
+    padding-bottom: 5px;
+    bottom: 318px;
+    height: 210px;
+  }
+
+  ul li a {
+    width: 40px;
+    height: 40px;
+    font-size: 15px;
+  }
+}

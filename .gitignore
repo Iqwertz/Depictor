@@ -190,6 +190,8 @@ dist
 .pnp.*
 Depictor-Backend.zip
 Depictor-Frontend-Build.zip
+Dev-Depictor-Backend.zip
+Dev-Depictor-Frontend-Build.zip
 Backend/assets/image2gcode/windows/log.txt
 Backend/assets/image2gcode/windows/gcode/render.png
 Backend/assets/image2gcode/windows/data/input/image.jpg

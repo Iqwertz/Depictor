@@ -1,0 +1,26 @@
+{
+    "converters":[
+        
+        {
+            "name": "DrawbotV2",
+            "needInputFile": true,
+            "inputFiletype": "jpg",
+            "acceptedFiletypes": "image/png,image/jpeg",
+            "isBinary": true
+        },
+                {
+            "name": "SvgToGcode",
+            "needInputFile": true,
+            "inputFiletype": "svg",
+            "acceptedFiletypes": ".svg",
+            "isBinary": false
+        },
+        {
+            "name": "Sudoku",
+            "needInputFile": false,
+            "inputFiletype": "",
+            "acceptedFiletypes": "",
+            "isBinary": false
+        }
+    ]
+}

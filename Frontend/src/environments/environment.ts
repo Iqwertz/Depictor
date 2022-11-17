@@ -45,6 +45,18 @@ const settings: Settings = {
     supportedCommands: 'G1;G4;M3;M03;M5;M05;F;$',
   },
   port: '',
+  converter: {
+    availableConverter: [
+      {
+        name: 'DrawbotV2',
+        needInputFile: true,
+        inputFiletype: 'jpg',
+        acceptedFiletypes: 'image/',
+        isBinary: true,
+      },
+    ],
+    selectedConverter: 'DrawbotV2',
+  },
 };
 
 export const environment = {

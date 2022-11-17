@@ -18,6 +18,9 @@ import { SettingsTextinputComponent } from './components/settings-ui/settings-te
 import { SettingsTextareaComponent } from './components/settings-ui/settings-textarea/settings-textarea.component';
 import { SettingsUiButtonComponent } from './components/settings-ui/settings-ui-button/settings-ui-button.component';
 import { SettingsCheckboxComponent } from './components/settings-ui/settings-checkbox/settings-checkbox.component';
+import { LogDisplayComponent } from './components/log-display/log-display.component';
+import { JsonSettingsComponent } from './components/json-settings/json-settings.component';
+import { SimpleLoaderComponent } from './components/simple-loader/simple-loader.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +38,9 @@ import { SettingsCheckboxComponent } from './components/settings-ui/settings-che
     SettingsButtonComponent,
     SettingsUiButtonComponent,
     SettingsCheckboxComponent,
+    LogDisplayComponent,
+    JsonSettingsComponent,
+    SimpleLoaderComponent,
   ],
   imports: [
     CommonModule,

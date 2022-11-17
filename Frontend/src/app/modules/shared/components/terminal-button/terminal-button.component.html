@@ -1,4 +1,7 @@
-<div *ngIf="!showTerminal" (click)="showTerminal = true" class="terminal-button">
-    <fa-icon [icon]="faCog"></fa-icon>
+<div (click)="showTerminal = true" class="terminal-button">
+  <fa-icon [icon]="faCog"></fa-icon>
 </div>
-<app-terminal *ngIf="showTerminal" (close)="showTerminal = false"></app-terminal>
+<app-terminal
+  *ngIf="showTerminal"
+  (close)="showTerminal = false"
+></app-terminal>

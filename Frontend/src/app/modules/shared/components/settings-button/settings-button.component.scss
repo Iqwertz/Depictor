@@ -1,41 +1,41 @@
 .settings-button {
-    position: absolute;
-    width: 56px;
-    height: 56px;
-    border: 3px solid rgb(0, 0, 0);
-    border-radius: 100%;
-    top: 15px;
-    right: 15px;
-    font-size: 26px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 35!important;
-    cursor: pointer;
-    padding: 0;
-    transition: 0.7s ease-out;
-    background-color: #fff;
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  border: 3px solid rgb(0, 0, 0);
+  border-radius: 100%;
+  top: 15px;
+  right: 15px;
+  font-size: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50 !important;
+  cursor: pointer;
+  padding: 0;
+  transition: 0.7s ease-out;
+  background-color: #fff;
 }
 
 fa-icon {
-    width: 26px;
-    height: 26px;
+  width: 26px;
+  height: 26px;
 }
 
 .settings-button:hover {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 @media screen and (max-width: 700px) {
-    .settings-button {
-        width: 40px;
-        height: 40px;
-        top: 10px;
-        right: 11px;
-        font-size: 22px;
-    }
-    fa-icon {
-        width: 22px;
-        height: 22px;
-    }
+  .settings-button {
+    width: 40px;
+    height: 40px;
+    top: 10px;
+    right: 11px;
+    font-size: 22px;
+  }
+  fa-icon {
+    width: 22px;
+    height: 22px;
+  }
 }

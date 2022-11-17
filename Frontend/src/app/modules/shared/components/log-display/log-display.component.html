@@ -1,0 +1,34 @@
+<div class="pop-up-container">
+  <div class="header">
+    <div class="titel">Logs</div>
+    <div class="close-button" (click)="closeTerminal()">
+      <fa-icon [icon]="faTimes"></fa-icon>
+    </div>
+  </div>
+
+  <div class="terminal-container">
+    <app-simple-loader [show]="loading"></app-simple-loader>
+    <div class="line" *ngFor="let line of loggingData">
+      <span [ngClass]="line.level"
+        >[{{ line.level }} - {{ line.timestamp }}]</span
+      >
+      {{ line.message }}
+    </div>
+    <div class="ui-elements">
+      <!--- debug level-->
+      <select
+        class="action-select"
+        [(ngModel)]="logLevel"
+        (ngModelChange)="reload()"
+      >
+        <option *ngFor="let level of logLevelOptions" [value]="level">
+          {{ level }}
+        </option>
+      </select>
+      <!--number of lines-->
+      <input class="loadedLines" type="number" [(ngModel)]="loadedLines" />
+      <!--reload-->
+      <fa-icon class="reload" [icon]="faReload" (click)="reload()"></fa-icon>
+    </div>
+  </div>
+</div>

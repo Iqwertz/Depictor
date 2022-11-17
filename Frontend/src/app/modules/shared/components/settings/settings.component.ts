@@ -25,6 +25,8 @@ import { LoadingService } from '../../services/loading.service';
 import { SiteStateService } from '../../../../services/site-state.service';
 import { StandartizerSettings } from '../../../gcode/services/gcode-viewer.service';
 import { PaperProfilePopupComponent } from '../paper-profile-popup/paper-profile-popup.component';
+import { JsonSetting } from '../json-settings/json-settings.component';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 export interface PaperProfile {
   name: string;
@@ -47,6 +49,20 @@ export interface Settings {
   standardizerSettings: StandartizerSettings;
   floatingPoints: number;
   port: string;
+  converter: ConverterSettings;
+}
+
+export interface ConverterSettings {
+  availableConverter: ConverterConfig[];
+  selectedConverter: string;
+}
+
+export interface ConverterConfig {
+  name: string;
+  needInputFile: boolean; //true if the converter needs an image as input
+  inputFiletype: string; //filetype of the input file
+  acceptedFiletypes: string; //filetypes that are allowed to upload (e.g. "image/*" for all image types)
+  isBinary: boolean; //is the file binary or text
 }
 
 export interface SerialPort {
@@ -76,12 +92,14 @@ export class SettingsComponent implements OnInit {
 
   faPowerOff = faPowerOff;
   faTimes = faTimes;
+  faInfo = faInfoCircle;
 
   bgRemoveApiKey = '';
 
   environment = environment;
 
-  faInfo = faInfoCircle;
+  currentJsonSettings: JsonSetting | null = null;
+  currentJsonSettingsName: string = '';
 
   @Select(AppState.settings) settings$: any;
   settings: Settings = JSON.parse(JSON.stringify(environment.defaultSettings));
@@ -100,13 +118,16 @@ export class SettingsComponent implements OnInit {
   updatesAvailable: boolean = false;
   availableUpdateVersion: string = '';
 
+  showLogs: boolean = false;
+
   constructor(
     private backendConnectService: BackendConnectService,
     private store: Store,
     private router: Router,
     private http: HttpClient,
     private loadingService: LoadingService,
-    public siteStateService: SiteStateService
+    public siteStateService: SiteStateService,
+    private snackBar: SnackbarService
   ) {}
 
   ngOnInit(): void {
@@ -260,5 +281,31 @@ export class SettingsComponent implements OnInit {
     this.settings = JSON.parse(
       JSON.stringify(this.environment.defaultSettings)
     );
+  }
+
+  openConverterSettings(converter: string) {
+    this.backendConnectService
+      .getConverterSettings(converter)
+      .subscribe((converterSettings) => {
+        if (converterSettings.err == 'no_settings_found') {
+          this.snackBar.error("Converter doesn't have settings");
+        } else if (!converterSettings) {
+          this.snackBar.error(
+            'Unexpected Error when trying to load settings of: ' + converter
+          );
+        } else {
+          this.currentJsonSettings = converterSettings;
+          this.currentJsonSettingsName = converter;
+        }
+      });
+  }
+
+  saveCurrentJsonSettings() {
+    if (!this.currentJsonSettings) return;
+    this.backendConnectService.setConverterSettings(
+      this.currentJsonSettingsName,
+      this.currentJsonSettings
+    );
+    this.currentJsonSettings = null;
   }
 }

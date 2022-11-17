@@ -2,13 +2,22 @@
     Take a Selfie!
 </div> -->
 
-<a *ngIf="!cameraService.showWebcam && !cameraService.base64Image" (click)="open()"><button class="bn9">
-    <span
-      ><b>{{buttonText}}</b
-      ><!-- <fa-icon [icon]="faCamera"></fa-icon
-    > --></span
-    >
-  </button></a
+<a
+  *ngIf="!cameraService.showWebcam && !cameraService.base64Image"
+  (click)="open()"
 >
+  <button class="bn9">
+    <span>
+      <b>{{ getButtonText(converterConfig?.needInputFile) }}</b>
+      <!-- <fa-icon [icon]="faCamera"></fa-icon> -->
+    </span>
+  </button>
+</a>
 
-<input hidden type="file" accept="image/png, image/jpeg, .gcode, .nc" #uploader (change)="uploadFile($event)" />
+<input
+  hidden
+  type="file"
+  [accept]="converterConfig?.acceptedFiletypes + ', .gcode, .nc'"
+  #uploader
+  (change)="uploadFile($event)"
+/>

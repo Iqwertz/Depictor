@@ -116,6 +116,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     let serverGcode: string = this.gcodeViewerService.gcodeFile;
     let gcodeArray: string[] = serverGcode.split('\n');
 
+    console.log(this.gcodeViewerService.scaleToDrawingArea);
     if (this.gcodeViewerService.gcodeType != 'custom') {
       gcodeArray = this.replacePenCommands(gcodeArray);
       if (this.gcodeViewerService.scaleToDrawingArea) {
@@ -149,7 +150,6 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
       strippedGcode = this.settings.startGcode + '\n' + strippedGcode + '\n';
       strippedGcode += this.settings.endGcode;
     }
-
     this.backendConnectService.postGcode(strippedGcode);
     this.loadingService.isLoading = false;
     this.router.navigate(['gcode', 'drawing']);
@@ -214,7 +214,11 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
 
     for (let i = 0; i < gcode.length; i++) {
       let command = gcode[i];
-      if (command.startsWith('G1')) {
+      if (
+        command.startsWith('G1') ||
+        command.startsWith('G01') ||
+        command.startsWith('G0')
+      ) {
         let parameter = this.getG1Parameter(command);
         parameter[0] = parameter[0] * gcodeScaling + centeringOffset[0];
         parameter[1] = parameter[1] * gcodeScaling + centeringOffset[1];

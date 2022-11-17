@@ -29,6 +29,7 @@ let zip = require("express-easy-zip");
 const { LinuxBinding, WindowsBinding } = require("@serialport/bindings-cpp");
 import { SerialPort } from "serialport";
 
+const readLastLines = require("read-last-lines");
 var cors = require("cors");
 const app = express();
 app.use(express.json({ limit: "50mb" }));
@@ -61,11 +62,53 @@ interface SerialPortEntry {
   manufacturer: string;
 }
 
+interface Config {
+  converters: ConverterConfig[];
+}
+
+interface PaperProfile {
+  name: string;
+  paperMax: number[]; //Maximum coordinates of the drawing area ("Drawing area end" in the settings UI)
+  drawingOffset: number[]; //Offset of the drawing area from the origin ("Drawing area start" in the settings UI)
+}
+
+interface Settings {
+  endGcode: string;
+  startGcode: string;
+  penDownCommand: string;
+  penUpCommand: string;
+  avgTimePerLine: number;
+  maxImageFileSize: number;
+  centerOnDrawingArea: boolean;
+  paperProfiles: PaperProfile[];
+  selectedPaperProfile: PaperProfile;
+  gcodeDisplayTransform: boolean[]; //boolean array consisting of three values: [0] when true switche x any y, [1] when true invert x, [2] when true invert y
+  standardizeGcode: boolean;
+  standardizerSettings: Object;
+  floatingPoints: number;
+  port: string;
+  converter: ConverterSettings;
+}
+
+interface ConverterSettings {
+  availableConverter: ConverterConfig[];
+  selectedConverter: string;
+}
+
+interface ConverterConfig {
+  name: string;
+  needInputFile: boolean; //true if the converter needs an image as input
+  inputFiletype: string; //filetype of the input file
+  acceptedFiletypes: string; //filetypes that are allowed to upload (e.g. "image/*" for all image types)
+  isBinary: boolean; //is the file binary or text
+}
+
 let appState: AppStates = "idle"; //var to track the current appstate
 let isDrawing: boolean = false; //var to track if the bot is currently drawing
 let drawingProgress: number = 0; //var to track the progress of the current drawing //when -1 drawing failed
 
 let currentDrawingProcessPID: number = 0; //used to stop the drawing process
+let lastGeneratedGcode: string = "";
 
 let httpServer: any;
 
@@ -87,8 +130,8 @@ description: when the post request is made with an valid request body the pictur
 expected request: 
   {
     removeBg: boolean //use removeBg to removeBackground
-    addBoarder: boolean //apply a smoothing boarder to the image
     img: string //an base64 encoded picture
+    config: ConverterConfig //the converter config to use
   }
   
 returns: 
@@ -107,17 +150,12 @@ app.post("/newPicture", (req: Request, res: Response) => {
     res.json({ err: "not_ready: " + appState }); //return error if not
   } else {
     appState = "removingBg"; //update appState
-    if (req.body.addBoarder) {
-      setBoarder(true);
-    } else {
-      setBoarder(false);
-    }
     if (useBGApi && req.body.removeBg) {
       //check if removeBG API should be used
       logger.info("starting removing bg process");
-      removeBg(req.body.img); //remove background with removebg //this function will call convertBase64ToGcode asynchronous
+      removeBg(req.body.img, req.body.config); //remove background with removebg //this function will call convertBase64ToGcode asynchronous
     } else {
-      skipRemoveBg(req.body.img);
+      skipRemoveBg(req.body.img, req.body.config);
     }
 
     fse.outputFile(
@@ -132,6 +170,38 @@ app.post("/newPicture", (req: Request, res: Response) => {
       }
     );
 
+    res.json({}); //return emmpty on success
+  }
+});
+
+/*
+post: /newFile
+
+description: when the post request is made with an valid request body the file will be uploaded and converted with the selected converter
+
+expected request: 
+  {
+    img: string //an base64 encoded picture
+    config: ConverterConfig //the converter config to use
+  }
+  
+returns: 
+  unsuccessful: 
+    {
+      err: string [errMessage]
+    }
+  successful:
+    {}
+*/
+app.post("/newFile", (req: Request, res: Response) => {
+  logger.http("post: newFile");
+  if (appState != "idle") {
+    //check if maschine is ready
+    logger.warn("req denied: not in idle");
+    res.json({ err: "not_ready: " + appState }); //return error if not
+  } else {
+    appState = "processingImage"; //update appState
+    convertBase64ToGcode(req.body.img, req.body.config); //convert the base64 to gcode
     res.json({}); //return emmpty on success
   }
 });
@@ -187,13 +257,10 @@ app.post("/getGeneratedGcode", (req: Request, res: Response) => {
   if (appState == "rawGcodeReady") {
     //check if gcode is ready
     /////get the correct path depending on os
-    let img2gcodePath: string = "./assets/image2gcode/windows/";
-    if (isLinux) {
-      img2gcodePath = "./assets/image2gcode/linux/";
-    }
+    let gcodePath: string = "./data/savedGcodes/" + lastGeneratedGcode;
 
     /////read gcode
-    let rawGcode = fs.readFileSync(img2gcodePath + "gcode/gcode_image.nc", "utf8");
+    let rawGcode = fs.readFileSync(gcodePath, "utf8");
 
     res.json({ state: appState, isDrawing: isDrawing, data: rawGcode }); //return gcode and appstate information
   } else {
@@ -401,10 +468,20 @@ app.post("/getGcodeGallery", (req: Request, res: Response) => {
 
   fs.readdirSync("data/savedGcodes/").forEach((file: any) => {
     //read all saved gcode files
-    if (file.includes("png")) {
-      let image: string = fs.readFileSync("data/savedGcodes/" + file, {
-        encoding: "base64",
-      }); //read preview image as base64 string
+    if (file.endsWith(".nc")) {
+      let imagePath: string = "data/savedGcodes/" + file.split(".")[0] + ".png";
+      //check if file exists
+      let image: string = "";
+      if (fs.existsSync(imagePath)) {
+        image = fs.readFileSync(imagePath, {
+          encoding: "base64",
+        }); //read preview image as base64 string
+      } else {
+        //use default image if no preview image exists
+        image = fs.readFileSync("assets/images/nopreview.png", {
+          encoding: "base64",
+        }); //read preview image as base64 string
+      }
       let entry: GcodeEntry = {
         //create entry
         image: image,
@@ -660,29 +737,93 @@ returns:
 */
 app.post("/changeSettings", (req: Request, res: Response) => {
   logger.http("post: changeSettings");
+  setSettings(req.body.settings);
+  res.json({ settings: readSettingsFile() });
+});
 
-  if (req.body.settings) {
-    logger.debug(JSON.stringify(req.body.settings));
-    fse.outputFileSync("data/settings.json", JSON.stringify(req.body.settings), "utf8", function (err: any, data: any) {
+function setSettings(settings: Object) {
+  if (settings) {
+    logger.debug(JSON.stringify(settings));
+    fse.outputFileSync("data/settings.json", JSON.stringify(settings), "utf8", function (err: any, data: any) {
       if (err) {
         logger.error(err);
-        res.json({});
         return;
       } else {
         logger.info("successfully saved settings");
       }
     });
   }
+}
 
+function readSettingsFile(): Settings | null {
   if (fs.existsSync("data/settings.json")) {
-    let settings = fs.readFileSync("data/settings.json", "utf8");
-    res.json({ settings: JSON.parse(settings) });
+    let settings = JSON.parse(fs.readFileSync("data/settings.json", "utf8"));
     logger.info("found settings");
+    let config = loadConfig();
+    if (config) {
+      settings.converter = settings.converter || {};
+      settings.converter.availableConverter = config.converters;
+    }
+    return settings;
   } else {
     logger.warn("no settings found");
-    res.json({});
+    return null;
   }
+}
+
+/*
+post: /changeConverterSettings
+
+description: returns content of the settings.json in the defined converter and sets new settings if provided
+
+expected request: 
+  {
+    converter: string
+    settings?: object
+  }
+  
+returns: 
+    unsuccessful 
+      {err: string}
+
+    successful
+    {settings: object}
+*/
+app.post("/changeConverterSettings", (req: Request, res: Response) => {
+  logger.http("post: changeConverterSettings");
+  setConverterSettings(req.body.converter, req.body.settings);
+  res.json(readConverterSettingsFile(req.body.converter));
 });
+
+function setConverterSettings(converter: string, settings: Object | null) {
+  if (settings) {
+    logger.debug(JSON.stringify(settings));
+    fse.outputFileSync(
+      "assets/imageConverter/" + converter + "/settings.json",
+      JSON.stringify(settings),
+      "utf8",
+      function (err: any, data: any) {
+        if (err) {
+          logger.error(err);
+          return;
+        } else {
+          logger.info("successfully saved" + converter + " settings");
+        }
+      }
+    );
+  }
+}
+
+function readConverterSettingsFile(converter: string): object | null {
+  if (fs.existsSync("assets/imageConverter/" + converter + "/settings.json")) {
+    let settings = JSON.parse(fs.readFileSync("assets/imageConverter/" + converter + "/settings.json", "utf8"));
+    logger.info("found " + converter + " settings");
+    return settings;
+  } else {
+    logger.warn("no settings found for " + converter);
+    return { err: "no_settings_found" };
+  }
+}
 
 /*
 post: /getAvailableSerialPorts
@@ -754,6 +895,35 @@ app.post("/setSerialPort", (req: Request, res: Response) => {
     logger.warn("setSerialPort: no path provided");
     res.json({ err: "no path provided" });
   }
+});
+
+/*
+post: /getLoggingData
+
+description: returns available serial ports
+
+expected request: 
+  {
+    lines: number,
+    level: "debug" | "error" | "http" | "info" | "warn"
+  }
+  
+returns: 
+    unsuccessful 
+      {err: string}
+
+    successful
+    {data: string[]}
+*/
+app.post("/getLoggingData", async (req: Request, res: Response) => {
+  logger.http("post: getLoggingData");
+  if (!req.body.lines || !["debug", "error", "http", "info", "warn"].includes(req.body.level)) {
+    res.json({ err: "faulty_input" });
+    return;
+  }
+  let lines: number = req.body.lines;
+  let lastLines: string = await readLastLines.read(`./data/logs/${req.body.level}.log`, lines);
+  res.json({ data: lastLines.split("\n") });
 });
 
 /*
@@ -834,12 +1004,122 @@ app.get("/zipData", async function (req: any, res: any) {
   });
 });
 
+/*
+get: /downloadSVG
+
+description: reads an svg file and response with it
+*/
+app.get("/downloadSVG", async function (req: any, res: any) {
+  logger.http("get: downloadSVG");
+  var dirPath = "./data/savedGcodes/" + req.query.name + ".svg";
+  if (fs.existsSync(dirPath)) {
+    res.download(dirPath);
+  } else {
+    logger.error("File: " + dirPath + " does not exist");
+    res.send("file not found");
+  }
+});
+
+/*
+get: /downloadGcode
+
+description: reads an nc file and response with it
+*/
+app.get("/downloadGcode", async function (req: any, res: any) {
+  logger.http("get: downloadGcode");
+  var dirPath = "./data/savedGcodes/" + req.query.name + ".nc";
+  if (fs.existsSync(dirPath)) {
+    res.download(dirPath);
+  } else {
+    logger.error("File: " + dirPath + " does not exist");
+    res.send("file not found");
+  }
+});
+
+/*
+post: /availableFiles
+checks which type of files are available in the given id
+
+expected request: 
+  {id: string}
+  
+returns: 
+    unsuccessful 
+      {err: string}
+
+    successful
+    {fileTypes: string[]}
+*/
+app.post("/availableFiles", (req: Request, res: Response) => {
+  logger.http("post: availableFiles");
+  let fileTypes: string[] = [];
+
+  if (fs.existsSync("./data/savedGcodes/" + req.body.id + ".svg")) {
+    fileTypes.push("svg");
+  }
+  if (fs.existsSync("./data/savedGcodes/" + req.body.id + ".nc")) {
+    fileTypes.push("nc");
+  }
+  if (fs.existsSync("./data/savedGcodes/" + req.body.id + ".png")) {
+    fileTypes.push("png");
+  }
+
+  res.json({ fileTypes: fileTypes });
+});
+
+/*
+get: /downloadSVG
+
+description: reads an png file and response with it
+*/
+app.get("/downloadPNG", async function (req: any, res: any) {
+  logger.http("get: downloadPNG");
+  var dirPath = "./data/savedGcodes/" + req.query.name + ".png";
+  if (fs.existsSync(dirPath)) {
+    res.download(dirPath);
+  } else {
+    logger.error("File: " + dirPath + " does not exist");
+    res.send("file not found");
+  }
+});
+
 httpServer!.listen(enviroment.port, () => {
   //start http server
   logger.info("started Server");
   logger.info("listening on *:" + enviroment.port);
   logger.info("Detected Linux: " + isLinux);
+  chmodConverters();
 });
+
+function loadConfig(): Config | undefined {
+  if (fs.existsSync("assets/config.json")) {
+    logger.info("found config");
+    let config = JSON.parse(fs.readFileSync("assets/config.json", "utf8"));
+    return config;
+  } else {
+    logger.error("coldnt find converter config");
+    return undefined;
+  }
+}
+function chmodConverters() {
+  logger.info("chmoding converters");
+  let config: Config | undefined = loadConfig();
+  if (config) {
+    for (let converter of config.converters) {
+      execFile(
+        "chmod",
+        ["+x", "./assets/imageConverter/" + converter.name + "/run.sh"],
+        function (err: any, data: any) {
+          if (err) {
+            logger.error(err);
+          }
+        }
+      );
+    }
+  } else {
+    logger.error("no config found - chmoding converters canceled");
+  }
+}
 
 /**
  *drawGcode()
@@ -937,13 +1217,13 @@ function drawGcode(gcode: string) {
  *
  * @param {string} base64img
  */
-function removeBg(base64img: string) {
+function removeBg(base64img: string, config: ConverterConfig) {
   const outputFile = outputDir + "bgremoved-current.jpg"; //define the output file
 
   checkBGremoveAPIkey();
   if (!isBGRemoveAPIKey) {
     logger.warn("cant remove bg - no apiKey");
-    skipRemoveBg(base64img);
+    skipRemoveBg(base64img, config);
     return;
   }
   const apiKey = fs.readFileSync("removeBGAPIKey.txt", "utf8");
@@ -976,11 +1256,11 @@ function removeBg(base64img: string) {
         }
       );
 
-      convertBase64ToGcode(removedBgBase64); //convert image to gcode
+      convertBase64ToGcode(removedBgBase64, config); //convert image to gcode
     })
     .catch((errors: Array<RemoveBgError>) => {
       logger.error(JSON.stringify(errors)); //log errors
-      skipRemoveBg(base64img);
+      skipRemoveBg(base64img, config);
     });
 }
 
@@ -990,7 +1270,7 @@ function removeBg(base64img: string) {
  *
  * @param {string} base64img
  */
-function skipRemoveBg(base64img: string) {
+function skipRemoveBg(base64img: string, config: ConverterConfig) {
   logger.info("removebg skipped");
   removedBgBase64 = base64img; //set the removedBgBase64 Image without bgremove
   fse.outputFile(
@@ -1005,7 +1285,7 @@ function skipRemoveBg(base64img: string) {
     }
   );
 
-  convertBase64ToGcode(removedBgBase64); //convert the image to gcode
+  convertBase64ToGcode(removedBgBase64, config); //convert the image to gcode
 }
 
 /**
@@ -1014,93 +1294,93 @@ function skipRemoveBg(base64img: string) {
  * converts an base64image to gcode with an java based image to gcode converter. It is based on this project: https://github.com/Scott-Cooper/Drawbot_image_to_gcode_v2.
  * @param {string} base64
  */
-function convertBase64ToGcode(base64: string) {
+function convertBase64ToGcode(base64: string, config: ConverterConfig) {
   logger.info("start converting image to gcode");
   appState = "processingImage"; //update appState
 
-  /////set basepath based on os
-  let img2gcodePath: string = "./assets/image2gcode/windows/";
-  if (isLinux) {
-    img2gcodePath = "assets/image2gcode/linux/";
-  }
+  let selectedImageConverter = config; //get selected image converter
+
+  let img2gcodePath: string = "./assets/imageConverter/" + selectedImageConverter.name;
+
+  let fileFormat: string = config.isBinary ? "base64" : "utf8";
 
   fse.outputFile(
     //save file to input folder of the convert
-    img2gcodePath + "data/input/image.jpg",
+
+    //select object from arry by name
+
+    img2gcodePath + "/input/image." + selectedImageConverter.inputFiletype,
     base64,
-    "base64",
+    fileFormat,
     function (err: any, data: any) {
       if (err) {
         logger.error(err);
       }
 
-      //fs.unlinkSync(img2gcodePath + "gcode/gcode_image.nc");  //needs try catch
-
-      //set launchcommand based on os
-      let launchcommand: string = "scripts\\launchimage2gcode.bat";
-      if (isLinux) {
-        launchcommand = "./scripts/launchimage2gcode.sh";
-      }
-
-      if (!skipGenerateGcode) {
-        //skip generate process (used during dev to skip long processing time)
-        logger.info("lauching i2g");
-        execFile(
-          launchcommand,
-
-          function (err: any, data: any) {
-            //launch converter
-            if (err) {
-              logger.error(err);
-            }
-            logger.debug(data.toString());
-
-            if (!err) {
-              //check for errors
-
-              let fName = Date.now(); //genarate a filename by using current time
-
-              fse.copy(
-                //save the generated gcode to the gcode folder
-                img2gcodePath + "gcode/gcode_image.nc",
-                "data/savedGcodes/" + fName + ".nc",
-                (err: any) => {
-                  if (err) {
-                    logger.error(err);
-                  }
-                }
-              );
-
-              fse.copy(
-                //save the generated preview image to the gcode folder
-                img2gcodePath + "gcode/render.png",
-                "data/savedGcodes/" + fName + ".png",
-                (err: any) => {
-                  if (err) {
-                    logger.error(err);
-                  }
-                }
-              );
-
-              fse.copy(
-                //save the generated svg file to the gcode folder
-                img2gcodePath + "gcode/gcode_image.svg",
-                "data/savedGcodes/" + fName + ".svg",
-                (err: any) => {
-                  if (err) {
-                    logger.error(err);
-                  }
-                }
-              );
-
-              appState = "rawGcodeReady"; //update appState
-            }
-          }
-        );
-      } else {
+      if (skipGenerateGcode) {
         logger.info("skipping gcode generation");
         appState = "rawGcodeReady"; //update appState
+        return;
       }
+
+      logger.info("converting image with: " + selectedImageConverter.name);
+
+      let launchFile: string = img2gcodePath + "/run.sh"; //define the launch file
+      execFile(launchFile, function (err: any, data: any) {
+        //launch converter
+        if (err) {
+          logger.error(err);
+        }
+        logger.debug(data.toString());
+
+        if (!err) {
+          //check for errors
+          let fName = Date.now(); //genarate a filename by using current time
+
+          //check if output files exist
+          if (fse.existsSync(img2gcodePath + "/output/gcode.nc")) {
+            //if the output file exists copy it to the output folder
+            fse.copy(img2gcodePath + "/output/gcode.nc", "data/savedGcodes/" + fName + ".nc", function (err: any) {
+              if (err) {
+                logger.error(err);
+              }
+              lastGeneratedGcode = fName + ".nc"; //set the last generated gcode
+            });
+          } else {
+            logger.error("cant find generated gcode");
+            return;
+          }
+
+          //check if a preview image exists -> else use the original image
+          if (fse.existsSync(img2gcodePath + "/output/preview.png")) {
+            fse.copy(img2gcodePath + "/output/preview.png", "data/savedGcodes/" + fName + ".png", function (err: any) {
+              if (err) {
+                logger.error(err);
+              }
+            });
+          } else {
+            logger.warn("cant find preview image - using original image");
+            fse.copy(img2gcodePath + "/input/image.jpg", "data/savedGcodes/" + fName + ".png", function (err: any) {
+              if (err) {
+                logger.warn(err);
+              }
+            });
+          }
+
+          //check if an svg image exists
+          if (fse.existsSync(img2gcodePath + "/output/image.svg")) {
+            fse.copy(img2gcodePath + "/output/image.svg", "data/savedGcodes/" + fName + ".svg", function (err: any) {
+              if (err) {
+                logger.error(err);
+              }
+            });
+          } else {
+            logger.info("couldnt find generated svg image");
+          }
+
+          appState = "rawGcodeReady"; //update appState
+        }
+      });
     }
   );
 }
@@ -1110,41 +1390,6 @@ function checkBGremoveAPIkey() {
     isBGRemoveAPIKey = false;
   } else {
     isBGRemoveAPIKey = true;
-  }
-}
-
-/**
- *enables or disables the boarder in the img to gcode converter by replacing the border image with an empty white image
- *
- * @param {boolean} useBoarder
- */
-function setBoarder(isBoarder: boolean) {
-  const boarderImageFolderPath: string = isLinux
-    ? "./assets/image2gcode/linux/data/boarder/"
-    : "./assets/image2gcode/windows/data/boarder/";
-  const emptyImagePath: string = "./assets/image2gcode/boarder/empty.png";
-  const boarderImagePaths: string[] = ["./assets/image2gcode/boarder/b11.png", "./assets/image2gcode/boarder/b1.png"];
-
-  for (let imgPath of boarderImagePaths) {
-    let fileName = imgPath.split(/[\\\/]/).pop();
-    /* fs.unlink(boarderImageFolderPath + fileName, (err: any) => {
-      if (err) {
-        log("Error " + err);
-      }
-    }); */
-    if (isBoarder) {
-      fse.copy(imgPath, boarderImageFolderPath + fileName, (err: any) => {
-        if (err) {
-          logger.error("Error " + err);
-        }
-      });
-    } else {
-      fse.copy(emptyImagePath, boarderImageFolderPath + fileName, (err: any) => {
-        if (err) {
-          logger.error("Error " + err);
-        }
-      });
-    }
   }
 }
 
