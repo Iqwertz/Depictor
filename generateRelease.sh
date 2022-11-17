@@ -19,27 +19,28 @@ cd Frontend
 npm install
 ng build
 cd ../
-powershell Compress-Archive ".\Frontend\dist\Depictor\*" "Depictor-Frontend-Build.zip"
+pushd Frontend/dist/Depictor
+zip -r  "Depictor-Frontend-Build.zip" "./"
+popd
+mv Frontend/dist/Depictor/Depictor-Frontend-Build.zip .
  
 echo "Frontend Build Successfull"
 echo "Building Backend"
 mkdir buildTemp/
 cp -r ./Backend/* ./buildTemp
 rm removeBGAPIKey.txt
-rm -r ./buildTemp/node_modules
-rm -r ./buildTemp/data
-rm -r ./buildTemp/assets/image2gcode/windows
+rm -rf ./buildTemp/node_modules
+rm -rf ./buildTemp/data
+rm -rf ./buildTemp/assets/image2gcode/windows
 
 cat > ./buildTemp/src/version.ts << ENDOFFILE
 export const version = { tag: "$vn", production: true };
 ENDOFFILE
 
-cd buildTemp/
-find . -name '*.sh' |xargs dos2unix
-dos2unix ./assets/image2gcode/linux/Drawbot_image_to_gcode_stripped
-cd ../
-
-powershell Compress-Archive ".\buildTemp\*" "Depictor-Backend.zip"
+pushd buildTemp
+zip -r "Depictor-Backend.zip" "./" 
+popd
+mv buildTemp/Depictor-Backend.zip .
 rm -r buildTemp
 
 echo "Backend Build Successfull"

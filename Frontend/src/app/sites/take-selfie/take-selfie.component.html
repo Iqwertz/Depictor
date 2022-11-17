@@ -12,7 +12,7 @@
     "
   ></app-open-camera-button>
 </div>
-<div class="converter-selector">
+<div class="converter-selector" *ngIf="!cameraService.base64Image">
   <app-select-chip
     [label]="'Converter'"
     [options]="

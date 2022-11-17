@@ -1092,9 +1092,9 @@ httpServer!.listen(enviroment.port, () => {
 });
 
 function loadConfig(): Config | undefined {
-  if (fs.existsSync("data/config.json")) {
+  if (fs.existsSync("assets/config.json")) {
     logger.info("found config");
-    let config = JSON.parse(fs.readFileSync("data/config.json", "utf8"));
+    let config = JSON.parse(fs.readFileSync("assets/config.json", "utf8"));
     return config;
   } else {
     logger.error("coldnt find converter config");

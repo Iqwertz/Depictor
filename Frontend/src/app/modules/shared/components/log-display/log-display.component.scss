@@ -1,112 +1,115 @@
 .pop-up-container {
-    position: fixed;
-    left: 50%;
-    top: 20px;
-    transform: translateX(-50%);
-    z-index: 40;
-    background-color: #232729;
+  position: fixed;
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
+  z-index: 55;
+  background-color: #232729;
+  border: 0px;
+  border-radius: 10px;
+  padding-bottom: 40px;
+  height: 90vh;
+  overflow: hidden;
+  .header {
+    height: 50px;
+    background-color: #404446;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.2em;
+      color: red;
+      cursor: pointer;
+      z-index: 5;
+    }
+  }
+  .terminal-container {
+    display: flex;
+    font-size: 1.3em;
+    align-items: flex-start;
+    flex-direction: column-reverse;
+    margin-top: 55px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    width: 80vw;
+    overflow-y: scroll;
+    height: calc(90vh - 10px);
+    color: #fff;
     border: 0px;
-    border-radius: 10px;
-    padding-bottom: 40px;
-    height: 90vh;
-    overflow: hidden;
-    .header {
-        height: 50px;
-        background-color: #404446;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
+
+    .ui-elements {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 250px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      .action-select {
+        font-size: 20px;
+        font-family: "Josefin Sans", sans-serif !important;
+        border: none;
+        border-radius: 5px;
+        background-color: #50505088;
         color: #fff;
-        display: flex;
+        height: 35px;
         align-items: center;
         justify-content: center;
-        font-size: 1.5em;
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 1.2em;
-            color: red;
-            cursor: pointer;
-        }
-    }
-    .terminal-container {
-        display: flex;
-        font-size: 1.3em;
-        align-items: flex-start;
-        flex-direction: column-reverse;
-        margin-top: 55px;
-        padding-bottom: 10px;
-        padding-left: 10px;
-        width: 80vw;
-        overflow-y: scroll;
-        height: calc(90vh - 10px);
+        padding: 4px 5px 3px;
+        margin-left: 10px;
+        width: 110px;
+        cursor: pointer;
+      }
+      .loadedLines {
+        margin: 0;
+        height: 33px;
+        border: none;
+        border-radius: 5px;
+        background-color: #50505088;
         color: #fff;
-        border: 0px;
-
-        .ui-elements {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 250px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            .action-select {
-                font-size: 20px;
-                font-family: "Josefin Sans", sans-serif !important;
-                border: none;
-                border-radius: 5px;
-                background-color: #50505088;
-                color: #fff;
-                height: 35px;
-                align-items: center;
-                justify-content: center;
-                padding: 4px 5px 3px;
-                margin-left: 10px;
-                width: 110px;
-                cursor: pointer;
-            }
-            .loadedLines {
-                margin: 0;
-                height: 33px;
-                border: none;
-                border-radius: 5px;
-                background-color: #50505088;
-                color: #fff;
-                width: 50px;
-                padding: 0 10px;
-            }
-            .reload {
-                cursor: pointer;
-            }
-        }
-        .line {
-            margin: 3px 0;
-            .error {
-                color: red;
-            }
-            .info {
-                color: #fff;
-            }
-            .warn {
-                color: orange;
-            }
-            .http {
-                color: grey;
-            }
-        }
+        width: 50px;
+        padding: 0 10px;
+      }
+      .reload {
+        cursor: pointer;
+      }
     }
+    .line {
+      margin: 3px 0;
+      .error {
+        color: red;
+      }
+      .info {
+        color: #fff;
+      }
+      .warn {
+        color: orange;
+      }
+      .http {
+        color: grey;
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 700px) {
-    .pop-up-container {
-        .header {
-            font-size: 1.2em;
-            .close-button {
-                font-size: 1.4em;
-            }
-        }
+  .pop-up-container {
+    top: 10px;
+    height: 85%;
+    .header {
+      font-size: 1.2em;
+      .close-button {
+        font-size: 1.4em;
+      }
     }
+  }
 }

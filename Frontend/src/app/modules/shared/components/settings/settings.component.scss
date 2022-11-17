@@ -1,171 +1,171 @@
 .pop-up-container {
-    position: fixed;
-    left: 50%;
-    top: 20px;
-    transform: translateX(-50%);
-    z-index: 40;
-    background-color: #fff;
-    border: 3px solid #000;
-    border-radius: 10px;
-    padding-bottom: 40px;
-    height: calc(95vh - 40px);
-    overflow: hidden;
-    .settings-container {
-        display: flex;
-        align-items: center;
-        flex-flow: column;
-        width: 700px;
-        overflow-y: scroll;
-        height: 95vh;
-        h1 {
-            font-size: 3em;
-        }
-        .close {
-            position: fixed;
-            top: 10px;
-            right: 15px;
-            font-size: 2em;
-            cursor: pointer;
-        }
-        .divider {
-            margin: 50px 0 20px 0;
-            height: 0px;
-            border: 1px dashed #000;
-            width: 90%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            .label {
-                padding: 0 15px;
-                font-size: 2em;
-                background-color: #fff;
-                width: fit-content;
-            }
-        }
-        .setting-line {
-            width: 90%;
-            height: 50px;
-            border-bottom: 2px solid #000;
-            margin-bottom: 6px;
-            padding-bottom: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 30px;
-            &.indent {
-                width: 85%;
-                margin-left: 5%;
-            }
-            .label {
-                width: 250px;
-                display: flex;
-                .tooltip {
-                    position: relative;
-                    fa-icon {
-                        margin-left: 4px;
-                        font-size: 0.6em;
-                    }
-                    .content {
-                        visibility: hidden;
-                        opacity: 0;
-                        position: absolute;
-                        font-size: 0.6em;
-                        width: 200px;
-                        background-color: #000;
-                        border-radius: 5px;
-                        color: #fff;
-                        padding: 8px;
-                        transform: translate(25px, -27px);
-                        box-shadow: 2px 2px 3px #000;
-                        transition: 0.4s;
-                        overflow-wrap: break-word;
-                        overflow-x: hidden;
-                        max-height: 200px;
-                    }
-                    fa-icon:hover~.content {
-                        visibility: visible;
-                        opacity: 1;
-                    }
-                }
-                &.small {
-                    font-size: 25px;
-                }
-                &.wide {
-                    width: 300px;
-                }
-            }
-        }
-        .version {
-            bottom: 2px;
-            left: 5px;
-            margin-bottom: 95px;
-        }
+  position: fixed;
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
+  z-index: 50;
+  background-color: #fff;
+  border: 3px solid #000;
+  border-radius: 10px;
+  padding-bottom: 40px;
+  height: calc(95vh - 40px);
+  overflow: hidden;
+  .settings-container {
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+    width: 700px;
+    overflow-y: scroll;
+    height: 95vh;
+    h1 {
+      font-size: 3em;
     }
-    .save-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-flow: column;
-        position: absolute;
-        width: 100%;
-        height: 80px;
-        border-top: 3px solid #000;
-        bottom: 0;
+    .close {
+      position: fixed;
+      top: 10px;
+      right: 15px;
+      font-size: 2em;
+      cursor: pointer;
+    }
+    .divider {
+      margin: 50px 0 20px 0;
+      height: 0px;
+      border: 1px dashed #000;
+      width: 90%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .label {
+        padding: 0 15px;
+        font-size: 2em;
         background-color: #fff;
-        border-radius: 0 0 10px 10px;
+        width: fit-content;
+      }
     }
+    .setting-line {
+      width: 90%;
+      height: 50px;
+      border-bottom: 2px solid #000;
+      margin-bottom: 6px;
+      padding-bottom: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 30px;
+      &.indent {
+        width: 85%;
+        margin-left: 5%;
+      }
+      .label {
+        width: 250px;
+        display: flex;
+        .tooltip {
+          position: relative;
+          fa-icon {
+            margin-left: 4px;
+            font-size: 0.6em;
+          }
+          .content {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            font-size: 0.6em;
+            width: 200px;
+            background-color: #000;
+            border-radius: 5px;
+            color: #fff;
+            padding: 8px;
+            transform: translate(25px, -27px);
+            box-shadow: 2px 2px 3px #000;
+            transition: 0.4s;
+            overflow-wrap: break-word;
+            overflow-x: hidden;
+            max-height: 200px;
+          }
+          fa-icon:hover ~ .content {
+            visibility: visible;
+            opacity: 1;
+          }
+        }
+        &.small {
+          font-size: 25px;
+        }
+        &.wide {
+          width: 300px;
+        }
+      }
+    }
+    .version {
+      bottom: 2px;
+      left: 5px;
+      margin-bottom: 95px;
+    }
+  }
+  .save-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: column;
+    position: absolute;
+    width: 100%;
+    height: 80px;
+    border-top: 3px solid #000;
+    bottom: 0;
+    background-color: #fff;
+    border-radius: 0 0 10px 10px;
+  }
 }
 
 .button-group {
-    display: flex;
-    flex-flow: row;
+  display: flex;
+  flex-flow: row;
 }
 
 a {
-    all: unset;
+  all: unset;
 }
 
 .action-select {
-    font-size: 20px;
-    font-family: "Josefin Sans", sans-serif !important;
-    border: 2px dotted #000;
-    height: 35px;
-    align-items: center;
-    justify-content: center;
-    padding: 4px 5px 3px;
-    margin-left: 10px;
-    width: 210px;
-    cursor: pointer;
+  font-size: 20px;
+  font-family: "Josefin Sans", sans-serif !important;
+  border: 2px dotted #000;
+  height: 35px;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 5px 3px;
+  margin-left: 10px;
+  width: 210px;
+  cursor: pointer;
 }
 
 @media screen and (max-width: 700px) {
-    .pop-up-container {
-        width: 95vw;
-        overflow-x: hidden;
-        .settings-container {
-            width: 95vw;
-            .setting-line {
-                padding: 5px 0;
-                .label {
-                    font-size: 25px;
-                    &.small {
-                        font-size: 18px;
-                    }
-                }
-                .action-textinput {
-                    max-width: 20vw;
-                    &.short {
-                        width: 30px;
-                    }
-                }
-            }
-            .version {
-                font-size: 12px;
-                margin-bottom: 105px;
-            }
+  .pop-up-container {
+    width: 95vw;
+    overflow-x: hidden;
+    .settings-container {
+      width: 95vw;
+      .setting-line {
+        padding: 5px 0;
+        .label {
+          font-size: 25px;
+          &.small {
+            font-size: 18px;
+          }
         }
+        .action-textinput {
+          max-width: 20vw;
+          &.short {
+            width: 30px;
+          }
+        }
+      }
+      .version {
+        font-size: 12px;
+        margin-bottom: 105px;
+      }
     }
-    .action-select {
-        width: 100%;
-    }
+  }
+  .action-select {
+    width: 100%;
+  }
 }
