@@ -22,8 +22,8 @@
     }
     .transform-button {
       position: relative;
-      top: 20px;
-      left: 50px;
+      top: calc(-100% + 30px);
+      left: 10px;
       width: 0;
       height: 0;
     }
@@ -57,6 +57,11 @@
         position: relative;
         top: 17px;
         left: -15px;
+      }
+
+      .transform-button {
+        top: calc(-100% + 40px);
+        left: 20px;
       }
     }
   }

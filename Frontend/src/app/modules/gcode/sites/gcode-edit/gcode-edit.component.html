@@ -6,15 +6,15 @@
   <!-- <app-gcode-renderer></app-gcode-renderer> -->
 
   <div class="canvas">
+    <div class="transform-button">
+      <app-transform-buttons></app-transform-buttons>
+    </div>
     <app-canvas-gcode-renderer></app-canvas-gcode-renderer>
 
     <div class="download-button">
       <app-download-button
         [fileId]="gcodeViewerService.gcodeId"
       ></app-download-button>
-    </div>
-    <div class="transform-button">
-      <app-transform-buttons></app-transform-buttons>
     </div>
   </div>
 

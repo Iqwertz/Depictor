@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {
   faArrowsAltH,
   faArrowsAltV,
-  faDownload,
-  faSync,
+  faRotateRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { GcodeFunctionsService } from '../../services/gcode-functions.service';
 import { GcodeViewerService } from '../../services/gcode-viewer.service';
@@ -14,8 +13,7 @@ import { GcodeViewerService } from '../../services/gcode-viewer.service';
   styleUrls: ['./transform-buttons.component.scss'],
 })
 export class TransformButtonsComponent implements OnInit {
-  faDownload = faDownload;
-  faSync = faSync;
+  faRotate = faRotateRight;
   faArrowsAltV = faArrowsAltV;
   faArrowsAltH = faArrowsAltH;
 
