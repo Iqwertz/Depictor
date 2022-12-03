@@ -1,0 +1,23 @@
+<!-- Html/Css from: https://codepen.io/octa022/pen/MPjjRd -->
+
+<a class="float">
+  <fa-icon class="icon" [icon]="faDownload"></fa-icon>
+</a>
+
+<ul>
+  <li>
+    <a (click)="rotate()">
+      <fa-icon class="icon" [icon]="faSync"></fa-icon>
+    </a>
+  </li>
+  <li>
+    <a (click)="mirrorX()">
+      <fa-icon class="icon" [icon]="faArrowsAltV"></fa-icon>
+    </a>
+  </li>
+  <li>
+    <a (click)="mirrorY()">
+      <fa-icon class="icon" [icon]="faArrowsAltH"></fa-icon>
+    </a>
+  </li>
+</ul>

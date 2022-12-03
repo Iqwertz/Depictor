@@ -159,6 +159,45 @@ export class GcodeFunctionsService {
     return [x, y];
   }
 
+  applyTransformation(
+    gcodeArray: string[],
+    transformMationMatrix: number[][],
+    centerPoint: number[]
+  ) {
+    let center = [centerPoint[0] / 2, centerPoint[1] / 2];
+
+    for (let i = 0; i < gcodeArray.length; i++) {
+      let command = gcodeArray[i];
+      if (command.startsWith('G1')) {
+        let parameter = this.getG1Parameter(command);
+
+        //Move gcode center to origin for rotation operations
+        parameter[0] -= center[0];
+        parameter[1] -= center[1];
+
+        //Apply transformation matrix
+        let x =
+          parameter[0] * transformMationMatrix[0][0] +
+          parameter[1] * transformMationMatrix[0][1];
+        let y =
+          parameter[0] * transformMationMatrix[1][0] +
+          parameter[1] * transformMationMatrix[1][1];
+
+        //Move gcode back to center
+        x += center[0];
+        y += center[1];
+
+        //round floating points
+        x = this.round(x, this.settings.floatingPoints);
+        y = this.round(y, this.settings.floatingPoints);
+
+        gcodeArray[i] = 'G1 X' + x + 'Y' + y;
+      }
+    }
+
+    return gcodeArray;
+  }
+
   // from: https://stackoverflow.com/questions/11832914/how-to-round-to-at-most-2-decimal-places-if-necessary
   round = (n: number, dp: number) => {
     const h = +'1'.padEnd(dp + 1, '0'); // 10 or 100 or 1000 or etc

@@ -63,6 +63,53 @@ export class GcodeViewerService {
     this.$renderGcode.next();
   }
 
+  rotate(clockwise: boolean) {
+    let transformationMatrix = [
+      [0, -1],
+      [1, 0],
+    ];
+    if (!clockwise) {
+      transformationMatrix = [
+        [0, 1],
+        [-1, 0],
+      ];
+    }
+    let transformedGcode = this.gcodeFunctionsService.applyTransformation(
+      this.gcodeFile.split(/\r?\n/),
+      transformationMatrix,
+      [this.gcodeArea[0] / 2, this.gcodeArea[1] / 2]
+    );
+
+    this.gcodeFile = transformedGcode.join('\r\n');
+    this.$renderGcode.next();
+  }
+
+  mirror(axis: 'x' | 'y') {
+    let transformationMatrix = [
+      [1, 0],
+      [0, 1],
+    ];
+    if (axis == 'x') {
+      transformationMatrix = [
+        [-1, 0],
+        [0, 1],
+      ];
+    } else if (axis == 'y') {
+      transformationMatrix = [
+        [1, 0],
+        [0, -1],
+      ];
+    }
+    let transformedGcode = this.gcodeFunctionsService.applyTransformation(
+      this.gcodeFile.split(/\r?\n/),
+      transformationMatrix,
+      [this.gcodeArea[0] / 2, this.gcodeArea[1] / 2]
+    );
+
+    this.gcodeFile = transformedGcode.join('\r\n');
+    this.$renderGcode.next();
+  }
+
   /**
    *This function standartizes the gcode to make the gcode upload feature more reliable
    *  Cleanups:
