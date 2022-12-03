@@ -4,6 +4,7 @@ import { Select } from '@ngxs/store';
 import { AppState } from '../../../store/app.state';
 import { Settings } from '../../shared/components/settings/settings.component';
 import { environment } from 'src/environments/environment';
+import { GcodeFunctionsService } from './gcode-functions.service';
 
 export interface StandartizerSettings {
   convertG0: boolean;
@@ -33,13 +34,14 @@ export class GcodeViewerService {
   gcodeId: string = '';
   standardized: boolean = true;
   scaleToDrawingArea: boolean = true;
+  gcodeArea: number[] = [0, 0];
 
   $renderGcode: Subject<void> = new Subject<void>();
 
   @Select(AppState.settings) settings$: any;
   settings: Settings = environment.defaultSettings;
 
-  constructor() {
+  constructor(private gcodeFunctionsService: GcodeFunctionsService) {
     this.settings$.subscribe((settings: Settings) => {
       this.settings = settings;
     });
@@ -127,7 +129,6 @@ export class GcodeViewerService {
         console.log(command);
         command = '';
       }
-      console.log(command);
 
       if (command.startsWith('G1')) {
         //rebuild G1 command to ensure X and Y values
@@ -162,7 +163,12 @@ export class GcodeViewerService {
 
       if (settings.removeUnsupportedCommands) {
         let supported: string[] = settings.supportedCommands.split(';');
-        if (!this.checkIfStringStartsWith(command, supported)) {
+        if (
+          !this.gcodeFunctionsService.checkIfStringStartsWith(
+            command,
+            supported
+          )
+        ) {
           command = '';
         }
       }
@@ -212,8 +218,14 @@ export class GcodeViewerService {
         params[1] = params[1] * gcodeScaling;
 
         //round floating points
-        params[0] = this.round(params[0], maxFloatingPoints);
-        params[1] = this.round(params[1], maxFloatingPoints);
+        params[0] = this.gcodeFunctionsService.round(
+          params[0],
+          maxFloatingPoints
+        );
+        params[1] = this.gcodeFunctionsService.round(
+          params[1],
+          maxFloatingPoints
+        );
 
         gcodeArray[i] = 'G1X' + params[0] + 'Y' + params[1];
       }
@@ -255,16 +267,5 @@ export class GcodeViewerService {
       y = lastCommandParams[1];
     }
     return [x, y];
-  }
-
-  // from: https://stackoverflow.com/questions/11832914/how-to-round-to-at-most-2-decimal-places-if-necessary
-  private round = (n: number, dp: number) => {
-    const h = +'1'.padEnd(dp + 1, '0'); // 10 or 100 or 1000 or etc
-    return Math.round(n * h) / h;
-  };
-
-  // from: https://stackoverflow.com/questions/67866641/check-if-a-string-starts-with-any-of-the-strings-in-an-array
-  private checkIfStringStartsWith(str: string, substrs: string[]) {
-    return substrs.some((substr) => str.startsWith(substr));
   }
 }

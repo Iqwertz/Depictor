@@ -178,6 +178,7 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
 
     //   scales the gcode to fit window and centers it
     let biggestValues = this.getBiggestValues(this.gcodeFile);
+    this.gcodeViewerService.gcodeArea = biggestValues[1];
     let bounds: number[] = biggestValues[1];
     /*     bounds[0] += Math.abs(biggestValues[0][0]);
     bounds[1] += Math.abs(biggestValues[0][1]); */
@@ -223,7 +224,7 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
   }
 
   getBiggestValues(gcode: string): number[][] {
-    //determins the farthest cordinates
+    //determins the farthest and closest coordinates
     let commands: string[] = gcode.split(/\r?\n/);
     let biggest: number[] = [0, 0];
     let smallest: number[] = [0, 0];
