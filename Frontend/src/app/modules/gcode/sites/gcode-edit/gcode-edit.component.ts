@@ -52,13 +52,19 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     screen.orientation.lock('portrait');
 
     this.gcodeViewerService.$renderGcode.subscribe(() => {
+      console.log('rendering gcode');
       this.renderer?.renderGcode(this.gcodeViewerService.gcodeFile, {
         notRenderdLines: 0,
       });
       this.estimatedSeconds =
         this.gcodeViewerService.maxLines * this.settings.avgTimePerLine;
+    });
 
-      console.log(this.estimatedSeconds);
+    this.gcodeViewerService.$renderGcodeUpdate.subscribe(() => {
+      console.log('render update');
+      this.renderer?.renderGcode(this.gcodeViewerService.gcodeFile, {
+        notRenderdLines: this.notRenderdLines,
+      });
     });
 
     this.settings$.subscribe((settings: Settings) => {
@@ -116,9 +122,14 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
       this.upload(false);
     }
     let serverGcode: string = this.gcodeViewerService.gcodeFile;
+
     let gcodeArray: string[] = serverGcode.split('\n');
 
-    console.log(this.gcodeViewerService.scaleToDrawingArea);
+    gcodeArray = this.gcodeFunctions.applyTransformation(
+      gcodeArray,
+      this.gcodeViewerService.editorTransformationMatrix
+    );
+
     if (this.gcodeViewerService.gcodeType != 'custom') {
       gcodeArray = this.gcodeFunctions.replacePenCommands(
         gcodeArray,

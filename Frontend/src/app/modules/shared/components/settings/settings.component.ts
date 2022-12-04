@@ -44,7 +44,7 @@ export interface Settings {
   centerOnDrawingArea: boolean;
   paperProfiles: PaperProfile[];
   selectedPaperProfile: PaperProfile;
-  gcodeDisplayTransform: boolean[]; //boolean array consisting of three values: [0] when true switche x any y, [1] when true invert x, [2] when true invert y
+  gcodeDisplayDefaultTransform: number[]; //boolean array consisting of three values: [0] amount of times rotated 90° clockwise, [1] when >0 mirror x, [2] when >0 mirror y
   standardizeGcode: boolean;
   standardizerSettings: StandartizerSettings;
   floatingPoints: number;

@@ -33,7 +33,7 @@ const settings: Settings = {
   },
 
   centerOnDrawingArea: true,
-  gcodeDisplayTransform: [true, false, true],
+  gcodeDisplayDefaultTransform: [3, 0, 0],
   standardizeGcode: true,
   floatingPoints: 3,
   standardizerSettings: {

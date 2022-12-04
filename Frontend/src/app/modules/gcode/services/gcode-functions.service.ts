@@ -162,9 +162,14 @@ export class GcodeFunctionsService {
   applyTransformation(
     gcodeArray: string[],
     transformMationMatrix: number[][],
-    centerPoint: number[]
+    centerPoint?: number[]
   ) {
-    let center = [centerPoint[0] / 2, centerPoint[1] / 2];
+    if (!centerPoint) {
+      let biggest = this.getBiggestValues(gcodeArray.join('\n'))[1];
+      centerPoint = [biggest[0] / 2, biggest[1] / 2];
+    }
+
+    let center = centerPoint;
 
     for (let i = 0; i < gcodeArray.length; i++) {
       let command = gcodeArray[i];
@@ -198,6 +203,78 @@ export class GcodeFunctionsService {
     return gcodeArray;
   }
 
+  //generates a transformation matrix from the given settings transform array
+  generateTransformationMatrix(transforms: number[]): number[][] {
+    let transformationMatrix = [
+      [1, 0],
+      [0, 1],
+    ];
+    if (transforms[0] > 0) {
+      for (let i = 0; i < transforms[0]; i++) {
+        //rotate as many times as given by the parameter
+        transformationMatrix = this.multiplyMatrix(
+          [
+            [0, 1],
+            [-1, 0],
+          ],
+          transformationMatrix
+        );
+      }
+    }
+    if (transforms[1]) {
+      transformationMatrix = this.multiplyMatrix(
+        [
+          [1, 0],
+          [0, -1],
+        ],
+        transformationMatrix
+      );
+    }
+    if (transforms[2]) {
+      transformationMatrix = this.multiplyMatrix(
+        [
+          [-1, 0],
+          [0, 1],
+        ],
+        transformationMatrix
+      );
+    }
+    return transformationMatrix;
+  }
+
+  getBiggestValues(gcode: string): number[][] {
+    //determins the farthest and closest coordinates
+    let commands: string[] = gcode.split(/\r?\n/);
+    let biggest: number[] = [0, 0];
+    let smallest: number[] = [NaN, NaN];
+    for (let cmd of commands) {
+      if (cmd.startsWith('G1')) {
+        let cords: number[] = this.getG1Parameter(cmd);
+        if (isNaN(smallest[0])) {
+          smallest[0] = cords[0];
+        }
+        if (isNaN(smallest[1])) {
+          smallest[1] = cords[1];
+        }
+
+        if (cords[0] > biggest[0]) {
+          biggest[0] = cords[0];
+        }
+        if (cords[1] > biggest[1]) {
+          biggest[1] = cords[1];
+        }
+
+        if (cords[0] < smallest[0] && !isNaN(cords[0])) {
+          smallest[0] = cords[0];
+        }
+        if (cords[1] < smallest[1] && !isNaN(cords[1])) {
+          smallest[1] = cords[1];
+        }
+      }
+    }
+    return [smallest, biggest];
+  }
+
   // from: https://stackoverflow.com/questions/11832914/how-to-round-to-at-most-2-decimal-places-if-necessary
   round = (n: number, dp: number) => {
     const h = +'1'.padEnd(dp + 1, '0'); // 10 or 100 or 1000 or etc
@@ -207,5 +284,25 @@ export class GcodeFunctionsService {
   // from: https://stackoverflow.com/questions/67866641/check-if-a-string-starts-with-any-of-the-strings-in-an-array
   checkIfStringStartsWith(str: string, substrs: string[]) {
     return substrs.some((substr) => str.startsWith(substr));
+  }
+
+  //Matrix multiplication
+  multiplyMatrix(
+    firstMatrix: number[][],
+    secondMatrix: number[][]
+  ): number[][] {
+    let result: number[][] = [];
+
+    for (let i = 0; i < firstMatrix.length; i++) {
+      result[i] = [];
+      for (let j = 0; j < secondMatrix[0].length; j++) {
+        result[i][j] = 0;
+        for (let k = 0; k < firstMatrix[0].length; k++) {
+          result[i][j] += firstMatrix[i][k] * secondMatrix[k][j];
+        }
+      }
+    }
+
+    return result;
   }
 }

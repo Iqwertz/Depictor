@@ -34,9 +34,18 @@ export class GcodeViewerService {
   gcodeId: string = '';
   standardized: boolean = true;
   scaleToDrawingArea: boolean = true;
+  settingsTransformationMatrix: number[][] = [
+    [1, 0],
+    [0, 1],
+  ]; //Holds all transformation of the display rotation settings
+  editorTransformationMatrix: number[][] = [
+    [1, 0],
+    [0, 1],
+  ]; //Holds all transformations made in the editor
   gcodeArea: number[] = [0, 0];
 
-  $renderGcode: Subject<void> = new Subject<void>();
+  $renderGcode: Subject<void> = new Subject<void>(); //emmited when new gcode is loaded
+  $renderGcodeUpdate: Subject<void> = new Subject<void>(); //emmited when the gcode gets updated
 
   @Select(AppState.settings) settings$: any;
   settings: Settings = environment.defaultSettings;
@@ -64,50 +73,48 @@ export class GcodeViewerService {
   }
 
   rotate(clockwise: boolean) {
-    let transformationMatrix = [
+    let rotationMatrix = [
       [0, -1],
       [1, 0],
     ];
     if (!clockwise) {
-      transformationMatrix = [
+      rotationMatrix = [
         [0, 1],
         [-1, 0],
       ];
     }
-    let transformedGcode = this.gcodeFunctionsService.applyTransformation(
-      this.gcodeFile.split(/\r?\n/),
-      transformationMatrix,
-      [this.gcodeArea[0] / 2, this.gcodeArea[1] / 2]
-    );
 
-    this.gcodeFile = transformedGcode.join('\r\n');
-    this.$renderGcode.next();
+    //Matrix multiplication
+    this.editorTransformationMatrix = this.gcodeFunctionsService.multiplyMatrix(
+      rotationMatrix,
+      this.editorTransformationMatrix
+    );
+    this.$renderGcodeUpdate.next();
   }
 
   mirror(axis: 'x' | 'y') {
-    let transformationMatrix = [
+    let mirrorMatrix = [
       [1, 0],
       [0, 1],
     ];
     if (axis == 'x') {
-      transformationMatrix = [
-        [-1, 0],
-        [0, 1],
-      ];
-    } else if (axis == 'y') {
-      transformationMatrix = [
+      mirrorMatrix = [
         [1, 0],
         [0, -1],
       ];
+    } else if (axis == 'y') {
+      mirrorMatrix = [
+        [-1, 0],
+        [0, 1],
+      ];
     }
-    let transformedGcode = this.gcodeFunctionsService.applyTransformation(
-      this.gcodeFile.split(/\r?\n/),
-      transformationMatrix,
-      [this.gcodeArea[0] / 2, this.gcodeArea[1] / 2]
-    );
 
-    this.gcodeFile = transformedGcode.join('\r\n');
-    this.$renderGcode.next();
+    //Matrix multiplication
+    this.editorTransformationMatrix = this.gcodeFunctionsService.multiplyMatrix(
+      mirrorMatrix,
+      this.editorTransformationMatrix
+    );
+    this.$renderGcodeUpdate.next();
   }
 
   /**

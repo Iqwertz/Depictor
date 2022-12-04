@@ -12,6 +12,7 @@ import { environment } from '../../../../../environments/environment';
 import { AppState } from 'src/app/store/app.state';
 import { Settings } from '../../../shared/components/settings/settings.component';
 import { Select } from '@ngxs/store';
+import { GcodeFunctionsService } from '../../services/gcode-functions.service';
 
 export interface GcodeRendererConfigInput {
   strokeColor?: string;
@@ -63,7 +64,10 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     strokeWidth: 0,
   };
 
-  constructor(private gcodeViewerService: GcodeViewerService) {}
+  constructor(
+    private gcodeViewerService: GcodeViewerService,
+    private gcodeFunctionService: GcodeFunctionsService
+  ) {}
 
   @ViewChild('canvas')
   canvas: ElementRef<HTMLCanvasElement> | null = null;
@@ -126,10 +130,17 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
   }
 
   renderGcode(file: string, config: GcodeRendererConfigInput) {
-    this.gcodeFile = this.transformGcode(
-      file,
-      this.settings.gcodeDisplayTransform
+    let transformationMatrix =
+      this.gcodeFunctionService.generateTransformationMatrix(
+        this.settings.gcodeDisplayDefaultTransform
+      );
+
+    transformationMatrix = this.gcodeFunctionService.multiplyMatrix(
+      this.gcodeViewerService.editorTransformationMatrix,
+      transformationMatrix
     );
+
+    this.gcodeFile = this.transformGcode(file, transformationMatrix);
 
     this.rendererConfig = {
       gcodeScale:
@@ -177,9 +188,24 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     }
 
     //   scales the gcode to fit window and centers it
-    let biggestValues = this.getBiggestValues(this.gcodeFile);
-    this.gcodeViewerService.gcodeArea = biggestValues[1];
-    let bounds: number[] = biggestValues[1];
+    let boundingValues = this.gcodeFunctionService.getBiggestValues(
+      this.gcodeFile
+    );
+    this.gcodeViewerService.gcodeArea = boundingValues[1];
+
+    let smallestValues = boundingValues[0];
+    this.gcodeFile = this.gcodeFunctionService
+      .applyOffset(this.gcodeFile.split(/\r?\n/), [
+        smallestValues[0] * -1,
+        smallestValues[1] * -1,
+      ])
+      .join('\n');
+
+    let biggestValues = boundingValues[1];
+    let bounds: number[] = [
+      biggestValues[0] - smallestValues[0],
+      biggestValues[1] - smallestValues[1],
+    ];
     /*     bounds[0] += Math.abs(biggestValues[0][0]);
     bounds[1] += Math.abs(biggestValues[0][1]); */
 
@@ -221,30 +247,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
       !this.gcodeViewerService.standardized,
       null
     );
-  }
-
-  getBiggestValues(gcode: string): number[][] {
-    //determins the farthest and closest coordinates
-    let commands: string[] = gcode.split(/\r?\n/);
-    let biggest: number[] = [0, 0];
-    let smallest: number[] = [0, 0];
-    for (let cmd of commands) {
-      let cords: number[] = this.getG1Parameter(cmd);
-      if (cords[0] > biggest[0]) {
-        biggest[0] = cords[0];
-      }
-      if (cords[1] > biggest[1]) {
-        biggest[1] = cords[1];
-      }
-
-      if (cords[0] < smallest[0]) {
-        smallest[0] = cords[0];
-      }
-      if (cords[1] < smallest[1]) {
-        smallest[1] = cords[1];
-      }
-    }
-    return [smallest, biggest];
   }
 
   drawGcode(
@@ -342,39 +344,18 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
-  transformGcode(gcode: string, transform: boolean[]): string {
-    let bounds: number[] = [];
-    if (transform[1] || transform[2]) {
-      //only calculate the biggest gcode value when needed
-      bounds = this.getBiggestValues(gcode)[1];
-    }
-
+  transformGcode(gcode: string, transformationMatrix: number[][]): string {
+    let bounds: number[] = this.gcodeFunctionService.getBiggestValues(gcode)[1];
     let gcodeArray: string[] = gcode.split('\n');
-    for (let i = 0; i < gcodeArray.length; i++) {
-      let command = gcodeArray[i];
-      if (command.startsWith('G1')) {
-        let parameter = this.getG1Parameter(command);
 
-        if (transform[1]) {
-          //invert x
-          parameter[0] = bounds[0] / 2 + (bounds[0] / 2 - parameter[0]);
-        }
+    console.log(transformationMatrix);
+    console.log(bounds);
 
-        if (transform[2]) {
-          //invert y
-          parameter[1] = bounds[1] / 2 + (bounds[1] / 2 - parameter[1]);
-        }
-
-        if (transform[0]) {
-          //switch x and y
-          let temp = parameter[0];
-          parameter[0] = parameter[1];
-          parameter[1] = temp;
-        }
-
-        gcodeArray[i] = 'G1 X' + parameter[0] + 'Y' + parameter[1];
-      }
-    }
+    gcodeArray = this.gcodeFunctionService.applyTransformation(
+      gcodeArray,
+      transformationMatrix,
+      [bounds[0] / 2, bounds[1] / 2]
+    );
 
     return gcodeArray.join('\n');
   }
