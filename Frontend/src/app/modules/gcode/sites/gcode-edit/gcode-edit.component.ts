@@ -125,10 +125,30 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
 
     let gcodeArray: string[] = serverGcode.split('\n');
 
+    let fullTransformation = this.gcodeFunctions.multiplyMatrix(
+      this.gcodeViewerService.editorTransformationMatrix,
+      this.gcodeFunctions.generateTransformationMatrix(
+        this.settings.gcodeDefaultTransform
+      )
+    );
+
+    console.log('Generated:');
+    console.log(
+      this.gcodeFunctions.generateTransformationMatrix(
+        this.settings.gcodeDefaultTransform
+      )
+    );
+    console.log('Editor:');
+    console.log(this.gcodeViewerService.editorTransformationMatrix);
+    console.log('Full:');
+    console.log(fullTransformation);
+
     gcodeArray = this.gcodeFunctions.applyTransformation(
       gcodeArray,
-      this.gcodeViewerService.editorTransformationMatrix
+      fullTransformation
     );
+
+    serverGcode = gcodeArray.join('\n');
 
     if (this.gcodeViewerService.gcodeType != 'custom') {
       gcodeArray = this.gcodeFunctions.replacePenCommands(

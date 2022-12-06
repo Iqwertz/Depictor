@@ -31,9 +31,9 @@ const settings: Settings = {
     paperMax: [297, 210],
     drawingOffset: [0, 0],
   },
-
   centerOnDrawingArea: true,
-  gcodeDisplayDefaultTransform: [3, 0, 0],
+  displayDefaultTransform: [1, 0, 0],
+  gcodeDefaultTransform: [0, 0, 0],
   standardizeGcode: true,
   floatingPoints: 3,
   standardizerSettings: {

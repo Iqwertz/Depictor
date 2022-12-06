@@ -69,6 +69,10 @@ export class GcodeViewerService {
     this.gcodeType = gcodeType;
     this.gcodeFile = file;
     this.maxLines = this.gcodeFile.split(/\r?\n/).length;
+    this.editorTransformationMatrix = [
+      [1, 0],
+      [0, 1],
+    ];
     this.$renderGcode.next();
   }
 
@@ -99,13 +103,13 @@ export class GcodeViewerService {
     ];
     if (axis == 'x') {
       mirrorMatrix = [
-        [1, 0],
-        [0, -1],
+        [-1, 0],
+        [0, 1],
       ];
     } else if (axis == 'y') {
       mirrorMatrix = [
-        [-1, 0],
-        [0, 1],
+        [1, 0],
+        [0, -1],
       ];
     }
 

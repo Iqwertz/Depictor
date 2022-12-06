@@ -130,15 +130,34 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
   }
 
   renderGcode(file: string, config: GcodeRendererConfigInput) {
-    let transformationMatrix =
+    let gcodeDefaultTransformationMatrix =
       this.gcodeFunctionService.generateTransformationMatrix(
-        this.settings.gcodeDisplayDefaultTransform
+        this.settings.gcodeDefaultTransform
       );
+
+    let displayDefaultTransformationMatrix =
+      this.gcodeFunctionService.generateTransformationMatrix(
+        this.settings.displayDefaultTransform
+      );
+
+    let transformationMatrix = this.gcodeFunctionService.multiplyMatrix(
+      gcodeDefaultTransformationMatrix,
+      displayDefaultTransformationMatrix
+    );
 
     transformationMatrix = this.gcodeFunctionService.multiplyMatrix(
       this.gcodeViewerService.editorTransformationMatrix,
       transformationMatrix
     );
+
+    transformationMatrix = this.fixMirrorTransform(transformationMatrix);
+
+    /*     console.log('generated (render)');
+    console.log(gcodeDefaultTransformationMatrix);
+    console.log('editor (render)');
+    console.log(this.gcodeViewerService.editorTransformationMatrix);
+    console.log('full (render)');
+    console.log(transformationMatrix); */
 
     this.gcodeFile = this.transformGcode(file, transformationMatrix);
 
@@ -348,9 +367,6 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     let bounds: number[] = this.gcodeFunctionService.getBiggestValues(gcode)[1];
     let gcodeArray: string[] = gcode.split('\n');
 
-    console.log(transformationMatrix);
-    console.log(bounds);
-
     gcodeArray = this.gcodeFunctionService.applyTransformation(
       gcodeArray,
       transformationMatrix,
@@ -370,6 +386,35 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     );
     y = parseFloat(command.substring(Yindex + 1, command.length).trim());
     return [x, y];
+  }
+
+  /*
+  THis is a really sketchy fix but the code structure doesnt allow me to do this with a pure lin alg transfromation_
+  The Problem is that when the display is rotated the mirror function is also rotated and therefore doesnt accurately display what the buttons suggest.
+  THis cant be fixed earlier since it only is a display error and not a gcode transform error.
+  The only solution other than this would be to keep an array of all transformations that were done and then invert the mirror transforms. But this would require a complete redesign of the transformation code
+  (And maybe there is some fancy math that can be done to fix this but I was at the beginning of university when I wrote this :))
+  */
+  fixMirrorTransform(matrix: number[][]): number[][] {
+    let resultMatrix = matrix;
+    if (this.settings.displayDefaultTransform[0] % 2 == 1) {
+      //calculate the determinant of the matrix
+      let determinant =
+        matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+
+      if (determinant < 0) {
+        //determinat is negative -> matrix was mirrored
+        resultMatrix = this.gcodeFunctionService.multiplyMatrix(
+          //invert mirror
+          [
+            [-1, 0],
+            [0, -1],
+          ],
+          matrix
+        );
+      }
+    }
+    return resultMatrix;
   }
 
   captureScreenshot(): string | undefined {

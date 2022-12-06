@@ -212,16 +212,13 @@ export class GcodeFunctionsService {
     if (transforms[0] > 0) {
       for (let i = 0; i < transforms[0]; i++) {
         //rotate as many times as given by the parameter
-        transformationMatrix = this.multiplyMatrix(
-          [
-            [0, 1],
-            [-1, 0],
-          ],
-          transformationMatrix
-        );
+        transformationMatrix = this.multiplyMatrix(transformationMatrix, [
+          [0, -1],
+          [1, 0],
+        ]);
       }
     }
-    if (transforms[1]) {
+    if (transforms[1] > 0) {
       transformationMatrix = this.multiplyMatrix(
         [
           [1, 0],
@@ -230,7 +227,7 @@ export class GcodeFunctionsService {
         transformationMatrix
       );
     }
-    if (transforms[2]) {
+    if (transforms[2] > 0) {
       transformationMatrix = this.multiplyMatrix(
         [
           [-1, 0],
