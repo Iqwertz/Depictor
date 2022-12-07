@@ -32,8 +32,16 @@ const settings: Settings = {
     drawingOffset: [0, 0],
   },
   centerOnDrawingArea: true,
-  displayDefaultTransform: [1, 0, 0],
-  gcodeDefaultTransform: [0, 0, 0],
+  displayDefaultTransform: {
+    rotate: 1,
+    mirrorX: false,
+    mirrorY: false,
+  },
+  gcodeDefaultTransform: {
+    rotate: 0,
+    mirrorX: false,
+    mirrorY: false,
+  },
   standardizeGcode: true,
   floatingPoints: 3,
   standardizerSettings: {

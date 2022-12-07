@@ -104,6 +104,37 @@
       ></app-settings-textinput>
     </div>
 
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">
+        Display transform
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            Adjust this transformation if the image orientation doesn't match
+            the drawings orientation. The implementation is still a bit buggy,
+            so if you have a plotter configuration, that doesnt work please
+            create an issue on github.
+          </div>
+        </div>
+      </div>
+      <fa-icon [icon]="faRotate"></fa-icon>
+      <app-settings-textinput
+        [type]="'number'"
+        [short]="true"
+        [(ngModel)]="settings.displayDefaultTransform.rotate"
+      ></app-settings-textinput>
+      <fa-icon [icon]="faMirrorX"></fa-icon>
+      <app-settings-checkbox
+        [(ngModel)]="settings.displayDefaultTransform.mirrorX"
+      >
+      </app-settings-checkbox>
+      <fa-icon [icon]="faMirrorY"></fa-icon>
+      <app-settings-checkbox
+        [(ngModel)]="settings.displayDefaultTransform.mirrorY"
+      >
+      </app-settings-checkbox>
+    </div>
+
     <div class="divider" *ngIf="siteStateService.serverOnline">
       <div class="label">Gcode upload</div>
     </div>
@@ -342,6 +373,34 @@
       <app-settings-textarea
         [(ngModel)]="settings.endGcode"
       ></app-settings-textarea>
+    </div>
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">
+        Default Gcode Transform
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            Adjust this transformation to apply a default transformation to the
+            gcode before it gets drawn.
+          </div>
+        </div>
+      </div>
+      <fa-icon [icon]="faRotate"></fa-icon>
+      <app-settings-textinput
+        [type]="'number'"
+        [short]="true"
+        [(ngModel)]="settings.gcodeDefaultTransform.rotate"
+      ></app-settings-textinput>
+      <fa-icon [icon]="faMirrorX"></fa-icon>
+      <app-settings-checkbox
+        [(ngModel)]="settings.gcodeDefaultTransform.mirrorX"
+      >
+      </app-settings-checkbox>
+      <fa-icon [icon]="faMirrorY"></fa-icon>
+      <app-settings-checkbox
+        [(ngModel)]="settings.gcodeDefaultTransform.mirrorY"
+      >
+      </app-settings-checkbox>
     </div>
 
     <div class="divider" *ngIf="siteStateService.serverOnline">

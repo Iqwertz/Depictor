@@ -40,6 +40,10 @@ export class FileUploadService {
     this.loadingService.isLoading = true;
     this.loadingService.loadingText = 'processing File';
     let fileType = file.name.split('.').pop();
+    if (!fileType) {
+      this.snackbarService.error('File has no file ending. Cant process file.');
+      return;
+    }
     if (fileType == 'nc' || fileType == 'gcode') {
       this.parseGcodeUpload(file, config);
     } else if (this.isFileImage(file)) {
@@ -108,6 +112,7 @@ export class FileUploadService {
   }
 
   private parseFileUpload(file: File, config: ConverterConfig) {
+    console.log(file.name);
     if (config.isBinary) {
       this.blobToBase64(file).then((result: string | ArrayBuffer | null) => {
         if (typeof result === 'string') {

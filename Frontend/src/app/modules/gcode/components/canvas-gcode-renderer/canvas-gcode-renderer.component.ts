@@ -130,24 +130,14 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
   }
 
   renderGcode(file: string, config: GcodeRendererConfigInput) {
-    let gcodeDefaultTransformationMatrix =
-      this.gcodeFunctionService.generateTransformationMatrix(
-        this.settings.gcodeDefaultTransform
-      );
-
     let displayDefaultTransformationMatrix =
       this.gcodeFunctionService.generateTransformationMatrix(
         this.settings.displayDefaultTransform
       );
 
     let transformationMatrix = this.gcodeFunctionService.multiplyMatrix(
-      gcodeDefaultTransformationMatrix,
-      displayDefaultTransformationMatrix
-    );
-
-    transformationMatrix = this.gcodeFunctionService.multiplyMatrix(
       this.gcodeViewerService.editorTransformationMatrix,
-      transformationMatrix
+      displayDefaultTransformationMatrix
     );
 
     transformationMatrix = this.fixMirrorTransform(transformationMatrix);
@@ -394,25 +384,23 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
   THis cant be fixed earlier since it only is a display error and not a gcode transform error.
   The only solution other than this would be to keep an array of all transformations that were done and then invert the mirror transforms. But this would require a complete redesign of the transformation code
   (And maybe there is some fancy math that can be done to fix this but I was at the beginning of university when I wrote this :))
+  
+  Okay so now it works and I dont know why but dont touch it
   */
   fixMirrorTransform(matrix: number[][]): number[][] {
     let resultMatrix = matrix;
-    if (this.settings.displayDefaultTransform[0] % 2 == 1) {
-      //calculate the determinant of the matrix
-      let determinant =
-        matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
-
-      if (determinant < 0) {
-        //determinat is negative -> matrix was mirrored
-        resultMatrix = this.gcodeFunctionService.multiplyMatrix(
-          //invert mirror
-          [
-            [-1, 0],
-            [0, -1],
-          ],
-          matrix
-        );
-      }
+    //calculate the determinant of the matrix
+    let determinant = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+    if (determinant < 0) {
+      //determinat is negative -> matrix was mirrored
+      resultMatrix = this.gcodeFunctionService.multiplyMatrix(
+        //invert mirror
+        [
+          [-1, 0],
+          [0, -1],
+        ],
+        matrix
+      );
     }
     return resultMatrix;
   }

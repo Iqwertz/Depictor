@@ -7,8 +7,11 @@ import {
   EventEmitter,
 } from '@angular/core';
 import {
+  faArrowsAltH,
+  faArrowsAltV,
   faInfoCircle,
   faPowerOff,
+  faRotateRight,
   faTimes,
 } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -34,6 +37,12 @@ export interface PaperProfile {
   drawingOffset: number[]; //Offset of the drawing area from the origin ("Drawing area start" in the settings UI)
 }
 
+export interface Transformation {
+  rotate: number; //Amount of times rotated 90° clockwise
+  mirrorX: boolean;
+  mirrorY: boolean;
+}
+
 export interface Settings {
   endGcode: string;
   startGcode: string;
@@ -44,8 +53,8 @@ export interface Settings {
   centerOnDrawingArea: boolean;
   paperProfiles: PaperProfile[];
   selectedPaperProfile: PaperProfile;
-  gcodeDefaultTransform: number[]; //Default Transform applied to all gcodes   //boolean array consisting of three values: [0] amount of times rotated 90° clockwise, [1] when >0 mirror x, [2] when >0 mirror y
-  displayDefaultTransform: number[]; //Default Transdorm applied to The gcode Renderer  //boolean array consisting of three values: [0] amount of times rotated 90° clockwise, [1] when >0 mirror x, [2] when >0 mirror y
+  gcodeDefaultTransform: Transformation; //Default Transform applied to all gcodes
+  displayDefaultTransform: Transformation; //Default Transdorm applied to The gcode Renderer
   standardizeGcode: boolean;
   standardizerSettings: StandartizerSettings;
   floatingPoints: number;
@@ -94,6 +103,9 @@ export class SettingsComponent implements OnInit {
   faPowerOff = faPowerOff;
   faTimes = faTimes;
   faInfo = faInfoCircle;
+  faRotate = faRotateRight;
+  faMirrorX = faArrowsAltV;
+  faMirrorY = faArrowsAltH;
 
   bgRemoveApiKey = '';
 

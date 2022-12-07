@@ -132,6 +132,8 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
       )
     );
 
+    fullTransformation = this.fixMirrorTransform(fullTransformation);
+
     console.log('Generated:');
     console.log(
       this.gcodeFunctions.generateTransformationMatrix(
@@ -192,5 +194,23 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     this.backendConnectService.postGcode(strippedGcode);
     this.loadingService.isLoading = false;
     this.router.navigate(['gcode', 'drawing']);
+  }
+
+  fixMirrorTransform(matrix: number[][]): number[][] {
+    let resultMatrix = matrix;
+    //calculate the determinant of the matrix
+    let determinant = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+    if (determinant < 0) {
+      //determinat is negative -> matrix was mirrored
+      resultMatrix = this.gcodeFunctions.multiplyMatrix(
+        //invert mirror
+        [
+          [-1, 0],
+          [0, -1],
+        ],
+        matrix
+      );
+    }
+    return resultMatrix;
   }
 }

@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { AppState } from 'src/app/store/app.state';
 import { environment } from 'src/environments/environment.prod';
-import { Settings } from '../../shared/components/settings/settings.component';
+import {
+  Settings,
+  Transformation,
+} from '../../shared/components/settings/settings.component';
 
 @Injectable({
   providedIn: 'root',
@@ -204,13 +207,13 @@ export class GcodeFunctionsService {
   }
 
   //generates a transformation matrix from the given settings transform array
-  generateTransformationMatrix(transforms: number[]): number[][] {
+  generateTransformationMatrix(transforms: Transformation): number[][] {
     let transformationMatrix = [
       [1, 0],
       [0, 1],
     ];
-    if (transforms[0] > 0) {
-      for (let i = 0; i < transforms[0]; i++) {
+    if (transforms.rotate > 0) {
+      for (let i = 0; i < transforms.rotate; i++) {
         //rotate as many times as given by the parameter
         transformationMatrix = this.multiplyMatrix(transformationMatrix, [
           [0, -1],
@@ -218,7 +221,7 @@ export class GcodeFunctionsService {
         ]);
       }
     }
-    if (transforms[1] > 0) {
+    if (transforms.mirrorX) {
       transformationMatrix = this.multiplyMatrix(
         [
           [1, 0],
@@ -227,7 +230,7 @@ export class GcodeFunctionsService {
         transformationMatrix
       );
     }
-    if (transforms[2] > 0) {
+    if (transforms.mirrorY) {
       transformationMatrix = this.multiplyMatrix(
         [
           [-1, 0],
