@@ -28,7 +28,6 @@ const settings: Settings = {
     paperMax: [297, 210],
     drawingOffset: [0, 0],
   },
-
   centerOnDrawingArea: true,
   displayDefaultTransform: {
     rotate: 1,
@@ -52,9 +51,18 @@ const settings: Settings = {
   },
   port: '',
   converter: {
-    availableConverter: [],
-    selectedConverter: '',
+    availableConverter: [
+      {
+        name: 'DrawbotV2',
+        needInputFile: true,
+        inputFiletype: 'jpg',
+        acceptedFiletypes: 'image/',
+        isBinary: true,
+      },
+    ],
+    selectedConverter: 'DrawbotV2',
   },
+  autoSelectConverter: true,
 };
 
 export const environment = {

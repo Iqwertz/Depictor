@@ -60,6 +60,7 @@ export interface Settings {
   floatingPoints: number;
   port: string;
   converter: ConverterSettings;
+  autoSelectConverter: boolean;
 }
 
 export interface ConverterSettings {

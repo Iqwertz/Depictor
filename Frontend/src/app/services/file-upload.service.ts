@@ -46,12 +46,34 @@ export class FileUploadService {
     }
     if (fileType == 'nc' || fileType == 'gcode') {
       this.parseGcodeUpload(file, config);
-    } else if (this.isFileImage(file)) {
-      console.log('image');
-      this.parseImageUpload(file, config);
+    } else if (config.acceptedFiletypes.includes(fileType)) {
+      if (this.isFileImage(file)) {
+        console.log('image');
+        this.parseImageUpload(file, config);
+      } else {
+        console.log('file');
+        this.parseFileUpload(file, config);
+      }
     } else {
-      console.log('file');
-      this.parseFileUpload(file, config);
+      if (this.settings.autoSelectConverter) {
+        for (let converter of this.settings.converter.availableConverter) {
+          if (converter.acceptedFiletypes.includes(fileType)) {
+            config = converter;
+            this.snackbarService.notification(
+              'Auto selected ' + config.name + ' converter!'
+            );
+            this.parseFile(file, config);
+            return;
+          }
+        }
+        this.snackbarService.error(
+          'File type is not supported by any converter module!'
+        );
+      } else {
+        this.snackbarService.error(
+          'The selected converter module doesnt support this file type!'
+        );
+      }
     }
   }
 

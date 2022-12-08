@@ -65,6 +65,7 @@ const settings: Settings = {
     ],
     selectedConverter: 'DrawbotV2',
   },
+  autoSelectConverter: true,
 };
 
 export const environment = {
