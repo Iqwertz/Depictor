@@ -28,9 +28,17 @@ const settings: Settings = {
     paperMax: [297, 210],
     drawingOffset: [0, 0],
   },
-
   centerOnDrawingArea: true,
-  gcodeDisplayTransform: [true, false, true],
+  displayDefaultTransform: {
+    rotate: 1,
+    mirrorX: false,
+    mirrorY: false,
+  },
+  gcodeDefaultTransform: {
+    rotate: 0,
+    mirrorX: false,
+    mirrorY: false,
+  },
   standardizeGcode: true,
   floatingPoints: 3,
   standardizerSettings: {
@@ -43,9 +51,18 @@ const settings: Settings = {
   },
   port: '',
   converter: {
-    availableConverter: [],
-    selectedConverter: '',
+    availableConverter: [
+      {
+        name: 'DrawbotV2',
+        needInputFile: true,
+        inputFiletype: 'jpg',
+        acceptedFiletypes: 'image/',
+        isBinary: true,
+      },
+    ],
+    selectedConverter: 'DrawbotV2',
   },
+  autoSelectConverter: true,
 };
 
 export const environment = {

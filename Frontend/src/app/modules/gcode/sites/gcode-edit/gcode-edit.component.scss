@@ -20,6 +20,13 @@
       width: 0;
       height: 0;
     }
+    .transform-button {
+      position: relative;
+      top: calc(-100% + 30px);
+      left: 10px;
+      width: 0;
+      height: 0;
+    }
   }
 
   .controls {
@@ -50,6 +57,11 @@
         position: relative;
         top: 17px;
         left: -15px;
+      }
+
+      .transform-button {
+        top: calc(-100% + 40px);
+        left: 20px;
       }
     }
   }

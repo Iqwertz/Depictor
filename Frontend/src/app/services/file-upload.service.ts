@@ -40,14 +40,40 @@ export class FileUploadService {
     this.loadingService.isLoading = true;
     this.loadingService.loadingText = 'processing File';
     let fileType = file.name.split('.').pop();
+    if (!fileType) {
+      this.snackbarService.error('File has no file ending. Cant process file.');
+      return;
+    }
     if (fileType == 'nc' || fileType == 'gcode') {
       this.parseGcodeUpload(file, config);
-    } else if (this.isFileImage(file)) {
-      console.log('image');
-      this.parseImageUpload(file, config);
+    } else if (config.acceptedFiletypes.includes(fileType)) {
+      if (this.isFileImage(file)) {
+        console.log('image');
+        this.parseImageUpload(file, config);
+      } else {
+        console.log('file');
+        this.parseFileUpload(file, config);
+      }
     } else {
-      console.log('file');
-      this.parseFileUpload(file, config);
+      if (this.settings.autoSelectConverter) {
+        for (let converter of this.settings.converter.availableConverter) {
+          if (converter.acceptedFiletypes.includes(fileType)) {
+            config = converter;
+            this.snackbarService.notification(
+              'Auto selected ' + config.name + ' converter!'
+            );
+            this.parseFile(file, config);
+            return;
+          }
+        }
+        this.snackbarService.error(
+          'File type is not supported by any converter module!'
+        );
+      } else {
+        this.snackbarService.error(
+          'The selected converter module doesnt support this file type!'
+        );
+      }
     }
   }
 
@@ -108,6 +134,7 @@ export class FileUploadService {
   }
 
   private parseFileUpload(file: File, config: ConverterConfig) {
+    console.log(file.name);
     if (config.isBinary) {
       this.blobToBase64(file).then((result: string | ArrayBuffer | null) => {
         if (typeof result === 'string') {

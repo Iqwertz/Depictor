@@ -7,8 +7,11 @@ import {
   EventEmitter,
 } from '@angular/core';
 import {
+  faArrowsAltH,
+  faArrowsAltV,
   faInfoCircle,
   faPowerOff,
+  faRotateRight,
   faTimes,
 } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -34,6 +37,12 @@ export interface PaperProfile {
   drawingOffset: number[]; //Offset of the drawing area from the origin ("Drawing area start" in the settings UI)
 }
 
+export interface Transformation {
+  rotate: number; //Amount of times rotated 90° clockwise
+  mirrorX: boolean;
+  mirrorY: boolean;
+}
+
 export interface Settings {
   endGcode: string;
   startGcode: string;
@@ -44,12 +53,14 @@ export interface Settings {
   centerOnDrawingArea: boolean;
   paperProfiles: PaperProfile[];
   selectedPaperProfile: PaperProfile;
-  gcodeDisplayTransform: boolean[]; //boolean array consisting of three values: [0] when true switche x any y, [1] when true invert x, [2] when true invert y
+  gcodeDefaultTransform: Transformation; //Default Transform applied to all gcodes
+  displayDefaultTransform: Transformation; //Default Transdorm applied to The gcode Renderer
   standardizeGcode: boolean;
   standardizerSettings: StandartizerSettings;
   floatingPoints: number;
   port: string;
   converter: ConverterSettings;
+  autoSelectConverter: boolean;
 }
 
 export interface ConverterSettings {
@@ -93,6 +104,9 @@ export class SettingsComponent implements OnInit {
   faPowerOff = faPowerOff;
   faTimes = faTimes;
   faInfo = faInfoCircle;
+  faRotate = faRotateRight;
+  faMirrorX = faArrowsAltV;
+  faMirrorY = faArrowsAltH;
 
   bgRemoveApiKey = '';
 
@@ -274,6 +288,7 @@ export class SettingsComponent implements OnInit {
 
   update() {
     this.backendConnectService.update();
+    this.router.navigate(['']);
     this.close.emit();
   }
 
