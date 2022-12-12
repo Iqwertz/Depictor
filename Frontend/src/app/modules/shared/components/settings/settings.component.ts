@@ -288,6 +288,7 @@ export class SettingsComponent implements OnInit {
 
   update() {
     this.backendConnectService.update();
+    this.router.navigate(['']);
     this.close.emit();
   }
 
