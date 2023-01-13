@@ -44,6 +44,8 @@ export class FileUploadService {
       this.snackbarService.error('File has no file ending. Cant process file.');
       return;
     }
+    console.log(fileType);
+    console.log(config.acceptedFiletypes);
     if (fileType == 'nc' || fileType == 'gcode') {
       this.parseGcodeUpload(file, config);
     } else if (config.acceptedFiletypes.includes(fileType)) {

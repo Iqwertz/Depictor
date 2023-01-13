@@ -1,14 +1,14 @@
 {
-    "converters":[
-        
+    "converters": [
+
         {
             "name": "DrawbotV2",
             "needInputFile": true,
             "inputFiletype": "jpg",
-            "acceptedFiletypes": "image/png,image/jpeg",
+            "acceptedFiletypes": "image/png,image/jpeg,image/jpg,image/tiff,image/tif",
             "isBinary": true
         },
-                {
+        {
             "name": "SvgToGcode",
             "needInputFile": true,
             "inputFiletype": "svg",
