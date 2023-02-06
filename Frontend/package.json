@@ -49,7 +49,7 @@
         "@angular/compiler-cli": "~13.3.5",
         "@ngxs/devtools-plugin": "^3.7.5",
         "@types/jasmine": "~4.0.3",
-        "@types/node": "^12.11.1",
+        "@types/node": "^18.11.19",
         "jasmine-core": "~4.1.0",
         "karma": "~6.3.16",
         "karma-chrome-launcher": "~3.1.0",
