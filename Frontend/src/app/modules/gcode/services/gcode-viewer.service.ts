@@ -73,6 +73,7 @@ export class GcodeViewerService {
       [1, 0],
       [0, 1],
     ];
+    console.log('set gcode file');
     this.$renderGcode.next();
   }
 
