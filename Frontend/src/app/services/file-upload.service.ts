@@ -48,7 +48,7 @@ export class FileUploadService {
     console.log(config.acceptedFiletypes);
     if (fileType == 'nc' || fileType == 'gcode') {
       this.parseGcodeUpload(file, config);
-    } else if (config.acceptedFiletypes.includes(fileType)) {
+    } else if (config.acceptedFiletypes.includes(fileType.toLowerCase())) {
       if (this.isFileImage(file)) {
         console.log('image');
         this.parseImageUpload(file, config);
@@ -110,10 +110,11 @@ export class FileUploadService {
       return;
     }
 
+    this.loadingService.isLoading = true;
+    this.loadingService.loadingText = 'compressing image';
+
     this.blobToBase64(file).then((result: string | ArrayBuffer | null) => {
       if (typeof result === 'string') {
-        this.loadingService.isLoading = true;
-        this.loadingService.loadingText = 'compressing image';
         imageCompression
           .getFilefromDataUrl(result, 'upload.jpg')
           .then((file: File) => {
@@ -121,8 +122,6 @@ export class FileUploadService {
               maxSizeMB: this.settings.maxImageFileSize,
             }).then((file: File) => {
               imageCompression.getDataUrlFromFile(file).then((b64: string) => {
-                this.loadingService.isLoading = false;
-                this.loadingService.loadingText = '';
                 this.setUploadedImage(b64, config);
               });
             });
@@ -177,6 +176,8 @@ export class FileUploadService {
     this.cameraService.setFlash();
     this.cameraService.toggleCameraWindow();
     this.cameraService.converterConfig = config;
+    this.loadingService.isLoading = false;
+    this.loadingService.loadingText = '';
     setTimeout(() => {
       this.cameraService.minimizeSnapshot();
     }, 1500);
