@@ -150,17 +150,18 @@ app.post("/newPicture", (req: Request, res: Response) => {
     res.json({ err: "not_ready: " + appState }); //return error if not
   } else {
     appState = "removingBg"; //update appState
+    const timestamp = Date.now();
     if (useBGApi && req.body.removeBg) {
       //check if removeBG API should be used
       logger.info("starting removing bg process");
-      removeBg(req.body.img, req.body.config); //remove background with removebg //this function will call convertBase64ToGcode asynchronous
+      removeBg(req.body.img, req.body.config, timestamp); //remove background with removebg //this function will call convertBase64ToGcode asynchronous
     } else {
-      skipRemoveBg(req.body.img, req.body.config);
+      skipRemoveBg(req.body.img, req.body.config, timestamp);
     }
 
     fse.outputFile(
       //Log file to rawImages folder
-      "data/rawimages/" + Date.now() + "-image.jpeg",
+      "data/rawimages/" + timestamp + "-image.jpeg",
       req.body.img,
       "base64",
       function (err: any, data: any) {
@@ -201,7 +202,7 @@ app.post("/newFile", (req: Request, res: Response) => {
     res.json({ err: "not_ready: " + appState }); //return error if not
   } else {
     appState = "processingImage"; //update appState
-    convertBase64ToGcode(req.body.img, req.body.config); //convert the base64 to gcode
+    convertBase64ToGcode(req.body.img, req.body.config, Date.now()); //convert the base64 to gcode
     res.json({}); //return emmpty on success
   }
 });
@@ -1037,6 +1038,38 @@ app.get("/downloadGcode", async function (req: any, res: any) {
 });
 
 /*
+get: /downloadPNG
+
+description: reads an png file and response with it
+*/
+app.get("/downloadPNG", async function (req: any, res: any) {
+  logger.http("get: downloadPNG");
+  var dirPath = "./data/savedGcodes/" + req.query.name + ".png";
+  if (fs.existsSync(dirPath)) {
+    res.download(dirPath);
+  } else {
+    logger.error("File: " + dirPath + " does not exist");
+    res.send("file not found");
+  }
+});
+
+/*
+get: /downloadJPG
+
+description: reads an jpg file from the rawimages folder and response with it
+*/
+app.get("/downloadJPG", async function (req: any, res: any) {
+  logger.http("get: downloadJPG");
+  var dirPath = "./data/rawimages/" + req.query.name + "-image.jpeg";
+  if (fs.existsSync(dirPath)) {
+    res.download(dirPath);
+  } else {
+    logger.error("File: " + dirPath + " does not exist");
+    res.send("file not found");
+  }
+});
+
+/*
 post: /availableFiles
 checks which type of files are available in the given id
 
@@ -1063,24 +1096,10 @@ app.post("/availableFiles", (req: Request, res: Response) => {
   if (fs.existsSync("./data/savedGcodes/" + req.body.id + ".png")) {
     fileTypes.push("png");
   }
-
-  res.json({ fileTypes: fileTypes });
-});
-
-/*
-get: /downloadSVG
-
-description: reads an png file and response with it
-*/
-app.get("/downloadPNG", async function (req: any, res: any) {
-  logger.http("get: downloadPNG");
-  var dirPath = "./data/savedGcodes/" + req.query.name + ".png";
-  if (fs.existsSync(dirPath)) {
-    res.download(dirPath);
-  } else {
-    logger.error("File: " + dirPath + " does not exist");
-    res.send("file not found");
+  if (fs.existsSync("./data/rawimages/" + req.body.id + "-image.jpeg")) {
+    fileTypes.push("jpg");
   }
+  res.json({ fileTypes: fileTypes });
 });
 
 httpServer!.listen(enviroment.port, () => {
@@ -1217,13 +1236,13 @@ function drawGcode(gcode: string) {
  *
  * @param {string} base64img
  */
-function removeBg(base64img: string, config: ConverterConfig) {
+function removeBg(base64img: string, config: ConverterConfig, ts: number) {
   const outputFile = outputDir + "bgremoved-current.jpg"; //define the output file
 
   checkBGremoveAPIkey();
   if (!isBGRemoveAPIKey) {
     logger.warn("cant remove bg - no apiKey");
-    skipRemoveBg(base64img, config);
+    skipRemoveBg(base64img, config, ts);
     return;
   }
   const apiKey = fs.readFileSync("removeBGAPIKey.txt", "utf8");
@@ -1246,7 +1265,7 @@ function removeBg(base64img: string, config: ConverterConfig) {
       removedBgBase64 = rmbgbase64img;
       fse.outputFile(
         //save image
-        outputDir + Date.now() + "-bgremoved.jpg",
+        outputDir + ts + "-bgremoved.jpg",
         rmbgbase64img,
         "base64",
         function (err: any, data: any) {
@@ -1256,11 +1275,11 @@ function removeBg(base64img: string, config: ConverterConfig) {
         }
       );
 
-      convertBase64ToGcode(removedBgBase64, config); //convert image to gcode
+      convertBase64ToGcode(removedBgBase64, config, ts); //convert image to gcode
     })
     .catch((errors: Array<RemoveBgError>) => {
       logger.error(JSON.stringify(errors)); //log errors
-      skipRemoveBg(base64img, config);
+      skipRemoveBg(base64img, config, ts);
     });
 }
 
@@ -1269,8 +1288,10 @@ function removeBg(base64img: string, config: ConverterConfig) {
  *skips the remove Bg process and starts converting the picture
  *
  * @param {string} base64img
+ * @param {ConverterConfig} config the config of the used converter
+ * @param {number} ts timestamp
  */
-function skipRemoveBg(base64img: string, config: ConverterConfig) {
+function skipRemoveBg(base64img: string, config: ConverterConfig, ts: number) {
   logger.info("removebg skipped");
   removedBgBase64 = base64img; //set the removedBgBase64 Image without bgremove
   fse.outputFile(
@@ -1285,7 +1306,7 @@ function skipRemoveBg(base64img: string, config: ConverterConfig) {
     }
   );
 
-  convertBase64ToGcode(removedBgBase64, config); //convert the image to gcode
+  convertBase64ToGcode(removedBgBase64, config, ts); //convert the image to gcode
 }
 
 /**
@@ -1293,8 +1314,10 @@ function skipRemoveBg(base64img: string, config: ConverterConfig) {
  *
  * converts an base64image to gcode with an java based image to gcode converter. It is based on this project: https://github.com/Scott-Cooper/Drawbot_image_to_gcode_v2.
  * @param {string} base64
+ * @param {ConverterConfig} config - the selected image converter config
+ * @param {number} ts - timestamp of the current drawing (has to be global to have the same unique timestamp for all genereated files related to this drawing)
  */
-function convertBase64ToGcode(base64: string, config: ConverterConfig) {
+function convertBase64ToGcode(base64: string, config: ConverterConfig, ts: number) {
   logger.info("start converting image to gcode");
   appState = "processingImage"; //update appState
 
@@ -1335,7 +1358,7 @@ function convertBase64ToGcode(base64: string, config: ConverterConfig) {
 
         if (!err) {
           //check for errors
-          let fName = Date.now(); //genarate a filename by using current time
+          let fName = ts; //set the filename
 
           //check if output files exist
           if (fse.existsSync(img2gcodePath + "/output/gcode.nc")) {

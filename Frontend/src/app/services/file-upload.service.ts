@@ -59,7 +59,7 @@ export class FileUploadService {
     } else {
       if (this.settings.autoSelectConverter) {
         for (let converter of this.settings.converter.availableConverter) {
-          if (converter.acceptedFiletypes.includes(fileType)) {
+          if (converter.acceptedFiletypes.includes(fileType.toLowerCase())) {
             config = converter;
             this.snackbarService.notification(
               'Auto selected ' + config.name + ' converter!'
