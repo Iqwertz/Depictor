@@ -289,10 +289,7 @@
       ></app-settings-ui-button>
     </div>
 
-    <div
-      class="setting-line"
-      *ngIf="siteStateService.serverOnline && settings.standardizeGcode"
-    >
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
       <div class="label small">
         Center gcode
         <div class="tooltip">
@@ -302,6 +299,22 @@
       </div>
       <app-settings-checkbox
         [(ngModel)]="settings.centerOnDrawingArea"
+      ></app-settings-checkbox>
+    </div>
+
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">
+        Traverse bounds
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            If true the plotter will move along the bounding box of the selected
+            drawing area to ensure the paper is placed correctly
+          </div>
+        </div>
+      </div>
+      <app-settings-checkbox
+        [(ngModel)]="settings.traverseBoundingBox"
       ></app-settings-checkbox>
     </div>
 

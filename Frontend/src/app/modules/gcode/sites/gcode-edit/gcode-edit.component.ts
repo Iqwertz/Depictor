@@ -188,8 +188,29 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     let strippedGcode: string = gcodeArray.slice(0, nr).join('\n');
 
     if (this.gcodeViewerService.gcodeType != 'custom') {
-      strippedGcode = this.settings.startGcode + '\n' + strippedGcode + '\n';
-      strippedGcode += this.settings.endGcode;
+      let boundingBoxGcode = '';
+      if (this.settings.traverseBoundingBox) {
+        let offset = this.settings.selectedPaperProfile.drawingOffset;
+        let max = this.settings.selectedPaperProfile.paperMax;
+        let boundingBoxPoints: number[][] = [
+          [offset[0], offset[1]],
+          [offset[0], max[1]],
+          [max[0], max[1]],
+          [max[0], offset[1]],
+          [offset[0], offset[1]],
+        ];
+        boundingBoxPoints.forEach((point) => {
+          boundingBoxGcode += `G1 X${point[0]} Y${point[1]} \n`;
+        });
+      }
+
+      strippedGcode =
+        this.settings.startGcode +
+        '\n' +
+        boundingBoxGcode +
+        strippedGcode +
+        '\n' +
+        this.settings.endGcode;
     }
     this.backendConnectService.postGcode(strippedGcode);
     this.loadingService.isLoading = false;
