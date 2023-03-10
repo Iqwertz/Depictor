@@ -909,7 +909,7 @@ expected request:
   {
     minLines: number
     maxLines: number
-    level: "debug" | "error" | "http" | "info" | "warn"
+    level: "debug" | "error" | "http" | "info" | "warn" | "grbl"
   }
   
 returns: 
@@ -924,30 +924,30 @@ app.post("/getLoggingData", async (req: Request, res: Response) => {
   if (
     req.body.minLines == null ||
     req.body.maxLines == null ||
-    !["debug", "error", "http", "info", "warn"].includes(req.body.level)
+    !["debug", "error", "http", "info", "warn", "grbl"].includes(req.body.level)
   ) {
     res.json({ err: "faulty_input" });
     return;
   }
-  console.time("read");
-  let lines: number[] = [req.body.minLines, req.body.maxLines];
-  let lastLines: string = await readLastLines.read(`./data/logs/${req.body.level}.log`, lines[1]); //not really performant for high page numbers but enough for now
-  let lineArray: string[] = lastLines.split("\n").slice(lines[0], lines[1]);
-  console.timeEnd("read");
 
-  console.time("count");
+  let logFile = `./data/logs/${req.body.level}.log`;
+
+  let lines: number[] = [req.body.minLines, req.body.maxLines];
+  let lastLines: string = await readLastLines.read(logFile, lines[1]); //not really performant for high page numbers but enough for now
+  let lineArray: string[] = lastLines.split("\n").slice(lines[0], lines[1]);
+
   //get size of file in bytes
-  let stats = fs.statSync(`./data/logs/${req.body.level}.log`);
+  let stats = fs.statSync(logFile);
   let fileSizeInBytes = stats.size;
   let fileSizeInMegabytes = fileSizeInBytes / 1000000.0;
 
   let nlines: number = 0;
   if (fileSizeInMegabytes < 10) {
-    nlines = await linesCount(`./data/logs/${req.body.level}.log`);
+    nlines = await linesCount(logFile);
   } else {
     nlines = -1;
   }
-  console.timeEnd("count");
+
   res.json({ data: lineArray, lines: nlines });
 });
 
@@ -1194,9 +1194,9 @@ function drawGcode(gcode: string) {
         appState = "idle";
         isDrawing = true; //update maschine drawing state
 
-        fse.outputFileSync("data/logs/gcodeCliOutput.txt", " ", "utf8");
+        fse.outputFileSync("data/logs/grbl.log", " ", "utf8");
 
-        let tail = new Tail("data/logs/gcodeCliOutput.txt", "\n", {}, true); //setup tail to listen to gcode sender output
+        let tail = new Tail("data/logs/grbl.log", "\n", {}, true); //setup tail to listen to gcode sender output
 
         tail.on("line", function (data: any) {
           //update progress when a new line is drawen

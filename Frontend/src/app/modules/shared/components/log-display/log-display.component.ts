@@ -7,7 +7,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { BackendConnectService } from '../../../../services/backend-connect.service';
 
-export type LogLevel = 'info' | 'http' | 'warn' | 'error' | 'debug';
+export type LogLevel = 'info' | 'http' | 'warn' | 'error' | 'debug' | 'grbl';
 
 export interface LogLine {
   level: LogLevel;
@@ -31,7 +31,14 @@ export class LogDisplayComponent implements OnInit {
   loggingData: LogLine[] = [];
 
   logLevel: LogLevel = 'warn';
-  logLevelOptions: LogLevel[] = ['http', 'debug', 'info', 'warn', 'error'];
+  logLevelOptions: LogLevel[] = [
+    'http',
+    'debug',
+    'info',
+    'warn',
+    'error',
+    'grbl',
+  ];
   loadedLines: number = 100;
 
   maxPages: number = -1;
@@ -85,10 +92,19 @@ export class LogDisplayComponent implements OnInit {
         console.log(rawdata);
         rawdata.data = rawdata.data.reverse();
         for (let line of rawdata.data) {
-          try {
-            this.loggingData.push(JSON.parse(line));
-          } catch (e) {
-            console.log('could not parse line: ' + line);
+          if (this.logLevel == 'grbl') {
+            this.loggingData.push({
+              level: 'grbl',
+              message: line,
+              service: 'grbl',
+              timestamp: 'N/A',
+            });
+          } else {
+            try {
+              this.loggingData.push(JSON.parse(line));
+            } catch (e) {
+              console.log('could not parse line: ' + line);
+            }
           }
         }
         this.maxPages = Math.ceil(rawdata.lines / this.loadedLines);
