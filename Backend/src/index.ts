@@ -1303,6 +1303,7 @@ function removeBg(base64img: string, config: ConverterConfig, ts: number) {
     })
     .catch((errors: Array<RemoveBgError>) => {
       logger.error(JSON.stringify(errors)); //log errors
+      logger.warn("cant remove bg - skipping");
       skipRemoveBg(base64img, config, ts);
     });
 }
