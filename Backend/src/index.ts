@@ -30,6 +30,8 @@ const { LinuxBinding, WindowsBinding } = require("@serialport/bindings-cpp");
 import { SerialPort } from "serialport";
 
 const readLastLines = require("read-last-lines");
+const linesCount = require("file-lines-count");
+
 var cors = require("cors");
 const app = express();
 app.use(express.json({ limit: "50mb" }));
@@ -901,11 +903,12 @@ app.post("/setSerialPort", (req: Request, res: Response) => {
 /*
 post: /getLoggingData
 
-description: returns available serial ports
+description: returns logging data and the number of log lines
 
 expected request: 
   {
-    lines: number,
+    minLines: number
+    maxLines: number
     level: "debug" | "error" | "http" | "info" | "warn"
   }
   
@@ -914,17 +917,38 @@ returns:
       {err: string}
 
     successful
-    {data: string[]}
+    {data: string[], lines: number}
 */
 app.post("/getLoggingData", async (req: Request, res: Response) => {
   logger.http("post: getLoggingData");
-  if (!req.body.lines || !["debug", "error", "http", "info", "warn"].includes(req.body.level)) {
+  if (
+    req.body.minLines == null ||
+    req.body.maxLines == null ||
+    !["debug", "error", "http", "info", "warn"].includes(req.body.level)
+  ) {
     res.json({ err: "faulty_input" });
     return;
   }
-  let lines: number = req.body.lines;
-  let lastLines: string = await readLastLines.read(`./data/logs/${req.body.level}.log`, lines);
-  res.json({ data: lastLines.split("\n") });
+  console.time("read");
+  let lines: number[] = [req.body.minLines, req.body.maxLines];
+  let lastLines: string = await readLastLines.read(`./data/logs/${req.body.level}.log`, lines[1]); //not really performant for high page numbers but enough for now
+  let lineArray: string[] = lastLines.split("\n").slice(lines[0], lines[1]);
+  console.timeEnd("read");
+
+  console.time("count");
+  //get size of file in bytes
+  let stats = fs.statSync(`./data/logs/${req.body.level}.log`);
+  let fileSizeInBytes = stats.size;
+  let fileSizeInMegabytes = fileSizeInBytes / 1000000.0;
+
+  let nlines: number = 0;
+  if (fileSizeInMegabytes < 10) {
+    nlines = await linesCount(`./data/logs/${req.body.level}.log`);
+  } else {
+    nlines = -1;
+  }
+  console.timeEnd("count");
+  res.json({ data: lineArray, lines: nlines });
 });
 
 /*
