@@ -15,7 +15,7 @@ const fse = require("fs-extra");
 const winston = require("winston");
 import { RemoveBgResult, RemoveBgError, removeBackgroundFromImageBase64 } from "remove.bg";
 import { Request, Response } from "express";
-import { enviroment } from "./enviroment";
+import { enviroment } from "./config/enviroment";
 import { version } from "./version";
 import { Socket } from "socket.io";
 
@@ -870,7 +870,7 @@ async function listPorts() {
 /*
 post: /setSerialPort
 
-description: returns available serial ports
+description: sets the serial port to the provided path
 
 expected request: 
   {path: string}
