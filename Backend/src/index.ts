@@ -12,7 +12,6 @@
 const express = require("express");
 const fs = require("fs");
 const fse = require("fs-extra");
-const winston = require("winston");
 import { RemoveBgResult, RemoveBgError, removeBackgroundFromImageBase64 } from "remove.bg";
 import { Request, Response } from "express";
 import { enviroment } from "./config/enviroment";
@@ -28,6 +27,9 @@ const axios = require("axios");
 let zip = require("express-easy-zip");
 const { LinuxBinding, WindowsBinding } = require("@serialport/bindings-cpp");
 import { SerialPort } from "serialport";
+
+//custom imports
+import { logger } from "./utils/logger.util";
 
 const readLastLines = require("read-last-lines");
 const linesCount = require("file-lines-count");
@@ -1574,42 +1576,4 @@ function disconnectTerminal() {
     serialport.close();
     serialport = null;
   }
-}
-
-////////////////////logger/////////////////////////
-const logger = winston.createLogger({
-  level: "info",
-  format: winston.format.combine(
-    winston.format.timestamp({
-      format: "YYYY-MM-DD HH:mm:ss",
-    }),
-    winston.format.errors({ stack: true }),
-    winston.format.splat(),
-    winston.format.json()
-  ),
-  defaultMeta: { service: "user-service" },
-  exitOnError: false,
-  transports: [
-    //
-    // - Write all logs with importance level of `error` or less to `error.log`
-    // - Write all logs with importance level of `info` or less to `combined.log`
-    //
-    new winston.transports.File({ filename: "data/logs/error.log", level: "error" }),
-    new winston.transports.File({ filename: "data/logs/warn.log", level: "warn" }),
-    new winston.transports.File({ filename: "data/logs/info.log", level: "info" }),
-    new winston.transports.File({ filename: "data/logs/http.log", level: "http" }),
-    new winston.transports.File({ filename: "data/logs/debug.log", level: "debug" }),
-  ],
-});
-
-//
-// If we're not in production then log to the `console` with the format:
-// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
-//
-if (!version.production) {
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.simple(),
-    })
-  );
 }
