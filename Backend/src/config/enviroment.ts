@@ -3,6 +3,7 @@ export const enviroment = {
   skipGenerateGcode: false,
   removeBGSettings: {
     enableApi: true,
+    outputDir: "./data/bgremoved/",
     type: "person",
     scale: "original",
   },

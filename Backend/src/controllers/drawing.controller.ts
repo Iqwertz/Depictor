@@ -1,0 +1,147 @@
+//imports
+import { logger } from "../utils/logger.util";
+import { Request, Response } from "express";
+import { disconnectTerminal } from "../middleware/terminal.middleware";
+import { executeCustomGcode } from "../middleware/draw.middleware";
+const fs = require("fs");
+const kill = require("tree-kill");
+let exec = require("child_process").exec;
+
+/*
+post: /getDrawingProgress
+
+description: returns the progress of the current drawing as the amount of gcode lines that where executed
+
+expected request: 
+  {}
+  
+returns: 
+  unsuccessful: 
+    {
+      err: string [errMessage]
+    }
+   successful:
+    {
+      data: number [amount of gcode lines]
+    }
+*/
+async function getDrawingProgress(req: Request, res: Response) {
+  logger.http("post: getDrawingProgress");
+  if (globalThis.isDrawing) {
+    //check if drawing
+    res.json({ data: globalThis.drawingProgress }); //return progress
+  } else {
+    res.json({ err: "not_drawing", data: globalThis.drawingProgress }); //return notdrawing error
+  }
+}
+
+/*
+post: /getDrawenGcode
+
+description: returns the currently drawen gcode when available
+
+expected request: 
+  {}
+  
+returns: 
+  unsuccessful: 
+    {
+      state: AppStates, 
+      err: string [errMessage]
+    }
+   successful:
+    {
+      state: AppStates, 
+      isDrawing: boolean, 
+      data: string [requested Gcode]
+    }
+*/
+async function getDrawenGcode(req: Request, res: Response) {
+  logger.http("post: getDrawenGcode");
+  if (globalThis.isDrawing) {
+    //check if maschine is drawing
+    let rawGcode = fs.readFileSync("assets/gcodes/gcode.nc", "utf8"); //read gcode
+    res.json({ state: globalThis.appState, isDrawing: globalThis.isDrawing, data: rawGcode }); //return gcode and appstate information
+  } else {
+    res.json({ state: globalThis.appState, err: "not_drawing" }); //return not drawing error
+  }
+}
+
+/*
+post: /cancle //I now know its written cancel but too lazy to change all code vars....
+
+description: cancles the generated gcode by updateing appState
+
+expected request: 
+  {}
+returns: 
+  {}
+*/
+async function cancle(req: Request, res: Response) {
+  logger.http("post: cancle");
+  globalThis.appState = "idle";
+  globalThis.drawingProgress = 0;
+}
+
+/*
+post: /stop
+
+description: stops the current drawing process and homes maschine 
+
+expected request: 
+  {}
+  
+returns: 
+  {}
+*/
+async function stop(req: Request, res: Response) {
+  logger.http("post: stop");
+  globalThis.drawingProgress = 0; //reset drawing progress
+  kill(globalThis.currentDrawingProcessPID); //kill the drawing process
+  setTimeout(() => {
+    //Home after some timeout because kill() needs some time
+    globalThis.appState = "idle"; //reset appState
+    disconnectTerminal();
+    exec("./scripts/home.sh", function (err: any, data: any) {
+      if (err) {
+        logger.error(err);
+      }
+    });
+  }, 2000);
+}
+
+/*
+post: /executeGcode
+
+description: executes gcode on the maschine (when not currently drawing)
+
+expected request: 
+  {gcode: string}
+  
+returns: 
+    unsuccessful 
+      {err: string}
+
+    successful
+    {}
+*/
+async function executeGcode(req: Request, res: Response) {
+  logger.http("post: executeGcode");
+
+  if (globalThis.isDrawing) {
+    logger.warn("cant execute Gcode! Machine is drawing");
+    res.json({ err: "drawing" });
+    return;
+  }
+  disconnectTerminal();
+  executeCustomGcode(req.body.gcode);
+  res.json({});
+}
+
+module.exports = {
+  getDrawingProgress,
+  getDrawenGcode,
+  cancle,
+  stop,
+  executeGcode,
+};
