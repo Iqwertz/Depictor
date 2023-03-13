@@ -1,4 +1,9 @@
-////////////////////logger/////////////////////////
+////////////////////logger.util/////////////////////////
+// this file contains all the logging functions //
+// exports:
+//  logger: (winston logger object with all the transports)
+///////////////////////////////////////////////////
+
 const winston = require("winston");
 import { version } from "../version";
 

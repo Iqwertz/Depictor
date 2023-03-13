@@ -35,7 +35,7 @@ const readLastLines = require("read-last-lines");
 const linesCount = require("file-lines-count");
 
 var cors = require("cors");
-const app = express();
+export const app = express();
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(zip());
@@ -119,6 +119,9 @@ let httpServer: any;
 app.use(cors()); //enable cors
 
 httpServer = require("http").createServer(app); //create new http server
+
+const routes = require("./routes");
+app.use(routes);
 
 const io = require("socket.io")(httpServer, {
   cors: {
@@ -1010,122 +1013,6 @@ app.post("/executeGcode", (req: Request, res: Response) => {
   disconnectTerminal();
   executeGcode(req.body.gcode);
   res.json({});
-});
-
-/*
-get: /zipData
-
-description: zips the data folder and response with it
-*/
-app.get("/zipData", async function (req: any, res: any) {
-  logger.http("get: zipData");
-  var dirPath = "./data";
-  await res.zip({
-    files: [
-      {
-        path: dirPath,
-        name: "DepictorData",
-      },
-    ],
-    filename: "DepictorData " + new Date().toDateString() + ".zip",
-  });
-});
-
-/*
-get: /downloadSVG
-
-description: reads an svg file and response with it
-*/
-app.get("/downloadSVG", async function (req: any, res: any) {
-  logger.http("get: downloadSVG");
-  var dirPath = "./data/savedGcodes/" + req.query.name + ".svg";
-  if (fs.existsSync(dirPath)) {
-    res.download(dirPath);
-  } else {
-    logger.error("File: " + dirPath + " does not exist");
-    res.send("file not found");
-  }
-});
-
-/*
-get: /downloadGcode
-
-description: reads an nc file and response with it
-*/
-app.get("/downloadGcode", async function (req: any, res: any) {
-  logger.http("get: downloadGcode");
-  var dirPath = "./data/savedGcodes/" + req.query.name + ".nc";
-  if (fs.existsSync(dirPath)) {
-    res.download(dirPath);
-  } else {
-    logger.error("File: " + dirPath + " does not exist");
-    res.send("file not found");
-  }
-});
-
-/*
-get: /downloadPNG
-
-description: reads an png file and response with it
-*/
-app.get("/downloadPNG", async function (req: any, res: any) {
-  logger.http("get: downloadPNG");
-  var dirPath = "./data/savedGcodes/" + req.query.name + ".png";
-  if (fs.existsSync(dirPath)) {
-    res.download(dirPath);
-  } else {
-    logger.error("File: " + dirPath + " does not exist");
-    res.send("file not found");
-  }
-});
-
-/*
-get: /downloadJPG
-
-description: reads an jpg file from the rawimages folder and response with it
-*/
-app.get("/downloadJPG", async function (req: any, res: any) {
-  logger.http("get: downloadJPG");
-  var dirPath = "./data/rawimages/" + req.query.name + "-image.jpeg";
-  if (fs.existsSync(dirPath)) {
-    res.download(dirPath);
-  } else {
-    logger.error("File: " + dirPath + " does not exist");
-    res.send("file not found");
-  }
-});
-
-/*
-post: /availableFiles
-checks which type of files are available in the given id
-
-expected request: 
-  {id: string}
-  
-returns: 
-    unsuccessful 
-      {err: string}
-
-    successful
-    {fileTypes: string[]}
-*/
-app.post("/availableFiles", (req: Request, res: Response) => {
-  logger.http("post: availableFiles");
-  let fileTypes: string[] = [];
-
-  if (fs.existsSync("./data/savedGcodes/" + req.body.id + ".svg")) {
-    fileTypes.push("svg");
-  }
-  if (fs.existsSync("./data/savedGcodes/" + req.body.id + ".nc")) {
-    fileTypes.push("nc");
-  }
-  if (fs.existsSync("./data/savedGcodes/" + req.body.id + ".png")) {
-    fileTypes.push("png");
-  }
-  if (fs.existsSync("./data/rawimages/" + req.body.id + "-image.jpeg")) {
-    fileTypes.push("jpg");
-  }
-  res.json({ fileTypes: fileTypes });
 });
 
 httpServer!.listen(enviroment.port, () => {
