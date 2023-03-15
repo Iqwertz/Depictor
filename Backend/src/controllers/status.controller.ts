@@ -4,9 +4,6 @@ import { Request, Response } from "express";
 import { enviroment } from "../config/enviroment";
 import { checkBGremoveAPIkey } from "../middleware/removeBG.middleware";
 const fs = require("fs");
-
-type AppStates = "idle" | "removingBg" | "processingImage" | "rawGcodeReady" | "updating" | "error"; //possible states of the server
-
 //interfaces
 interface StateResponse {
   state: AppStates;

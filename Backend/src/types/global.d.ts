@@ -1,8 +1,7 @@
-type AppStates = "idle" | "removingBg" | "processingImage" | "rawGcodeReady" | "updating" | "error"; //possible states of the server
-
 export {};
 
 declare global {
+  type AppStates = "idle" | "removingBg" | "processingImage" | "rawGcodeReady" | "updating" | "error"; //possible states of the server
   var appState: AppState;
   var isDrawing: boolean;
   var drawingProgress: number;
