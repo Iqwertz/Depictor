@@ -53,27 +53,32 @@ async function newPicture(req: Request, res: Response) {
     logger.warn("req denied: not in idle");
     res.json({ err: "not_ready: " + globalThis.appState }); //return error if not
   } else {
-    globalThis.appState = "removingBg"; //update globalThis.appState
     const timestamp = Date.now();
-    if (useBGApi && req.body.removeBg) {
-      //check if removeBG API should be used
-      logger.info("starting removing bg process");
-      removeBg(req.body.img, req.body.config, timestamp); //remove background with removebg //this function will call convertBase64ToGcode asynchronous
+    if (req.body.config.needInputFile == false) {
+      //check if img is empty -> if so skip bg checks and rawimage creation are skipped
+      convertBase64ToGcode("", req.body.config, timestamp); //start gcode generation
     } else {
-      skipRemoveBg(req.body.img, req.body.config, timestamp);
-    }
-
-    fse.outputFile(
-      //Log file to rawImages folder
-      "data/rawimages/" + timestamp + "-image.jpeg",
-      req.body.img,
-      "base64",
-      function (err: any, data: any) {
-        if (err) {
-          logger.error("Error: " + err);
-        }
+      globalThis.appState = "removingBg"; //update globalThis.appState
+      if (useBGApi && req.body.removeBg) {
+        //check if removeBG API should be used
+        logger.info("starting removing bg process");
+        removeBg(req.body.img, req.body.config, timestamp); //remove background with removebg //this function will call convertBase64ToGcode asynchronous
+      } else {
+        skipRemoveBg(req.body.img, req.body.config, timestamp);
       }
-    );
+
+      fse.outputFile(
+        //Log file to rawImages folder
+        "data/rawimages/" + timestamp + "-image.jpeg",
+        req.body.img,
+        "base64",
+        function (err: any, data: any) {
+          if (err) {
+            logger.error("Error: " + err);
+          }
+        }
+      );
+    }
 
     res.json({}); //return emmpty on success
   }
