@@ -23,31 +23,20 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(zip());
 app.use(cors()); //enable cors
 
-type AppStates = "idle" | "removingBg" | "processingImage" | "rawGcodeReady" | "updating" | "error"; //possible states of the server
+//initialize global vars (not best practice, might be improved in the future)
+globalThis.appState = "idle"; //var to track the current appstate;
+globalThis.isDrawing = false; //var to track if the bot is currently drawing
+globalThis.drawingProgress = 0; //var to track the progress of the current drawing //when -1 drawing failed
+globalThis.currentDrawingProcessPID = 0; //used to stop the drawing process
+globalThis.lastGeneratedGcode = ""; //used to store the last generated gcode
+globalThis.isLinux = process.platform === "linux";
+globalThis.httpServer = require("http").createServer(app); //create new http server
 
-var appState: AppStates = "idle"; //var to track the current appstate
-var isDrawing: boolean = false; //var to track if the bot is currently drawing
-var drawingProgress: number = 0; //var to track the progress of the current drawing //when -1 drawing failed
-
-var currentDrawingProcessPID: number = 0; //used to stop the drawing process
-var lastGeneratedGcode: string = "";
-
-var isLinux: boolean = process.platform === "linux";
-
-var httpServer = require("http").createServer(app); //create new http server
-
-/* //make variables global (not best practice, might be improved in the future)
-globalThis.appState = appState;
-globalThis.isDrawing = isDrawing;
-globalThis.drawingProgress = drawingProgress;
-globalThis.currentDrawingProcessPID = currentDrawingProcessPID;
-globalThis.lastGeneratedGcode = lastGeneratedGcode;
-globalThis.isLinux = isLinux;
-globalThis.httpServer; */
-
+//define routes
 app.use(routes);
-httpServer!.listen(enviroment.port, () => {
-  //start http server
+
+//start server
+globalThis.httpServer!.listen(enviroment.port, () => {
   logger.info("started Server");
   logger.info("listening on *:" + enviroment.port);
   logger.info("Detected Linux: " + isLinux);

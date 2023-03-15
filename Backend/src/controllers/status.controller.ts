@@ -31,12 +31,12 @@ returns:
 async function checkProgress(req: Request, res: Response) {
   logger.http("post: checkProgress");
 
-  checkBGremoveAPIkey();
+  let bgRemoveAvailable = checkBGremoveAPIkey();
 
   let response: StateResponse = {
     state: globalThis.appState,
     isDrawing: globalThis.isDrawing,
-    removeBG: globalThis.isBGRemoveAPIKey && useBGApi,
+    removeBG: bgRemoveAvailable && useBGApi,
   };
 
   res.json(response);

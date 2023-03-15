@@ -20,6 +20,7 @@ export function checkBGremoveAPIkey() {
   } else {
     isBGRemoveAPIKey = true;
   }
+  return isBGRemoveAPIKey;
 }
 
 /**
