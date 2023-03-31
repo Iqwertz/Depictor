@@ -1,4 +1,10 @@
 //////////////////////////routes//////////////////////////
+// In this file all routes are defined
+// exports:
+//   router: express.Router
+//////////////////////////////////////////////////////////
+
+//imports
 const express = require("express");
 const router = express.Router();
 

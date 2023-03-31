@@ -1,3 +1,18 @@
+////////////////////settings.controller////////////////////
+// this file contains all endpoints that handle requests from the settings page
+// exports:
+//  setBGRemoveAPIKey: (writes the bg remove key to a text file)
+//  shutdown: (shuts down the pi)
+//  update: (updates the pi by executing the scripts/update.sh script) (will be updated in the future by fetching the update script from github and executing it)
+//  getVersion: (returns the current version of Depictor)
+//  changeSettings: (changes the settings by overwriting the settings.json (if request is not empty) file and returns the current settings.json)
+//  changeConverterSettings: (changes the converter settings by overwriting the settings.json of the specified converter (if request is not empty) and returns the current converterSettings.json)
+//  getAvailableSerialPorts: (returns all available serial ports)
+//  setSerialPort: (sets the serial port by executing the scripts/changeSerialPort.sh script)
+//  getLoggingData: (returns the content of the specified log file)
+//  home: (moves the pen to the home position)
+///////////////////////////////////////////////////////////
+
 //imports
 import { logger } from "../utils/logger.util";
 import { Request, Response } from "express";

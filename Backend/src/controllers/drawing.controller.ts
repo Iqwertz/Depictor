@@ -1,3 +1,13 @@
+////////////////////drawing.controller////////////////////
+// this file contains all endpoints that handle drawing related requests
+// exports:
+//   getDrawingProgress: (returns the amout of gcode lines that where executed)
+//   getDrawenGcode: (returns the currently drawen gcode when available)
+//   cancle: (cancles the current generated gcode by updating the appState)
+//   stop: (stops the current drawing process by killing the child process)
+//   executeGcode: (executes the given gcode)
+///////////////////////////////////////////////////////////
+
 //imports
 import { logger } from "../utils/logger.util";
 import { Request, Response } from "express";

@@ -2,10 +2,9 @@
 //
 //Depictor Backend
 //
-//description: ...
+//description: This is the entry point of the backend server
 //
 //author: Julius Hussl
-//
 ///////////////////////////////////////////////////
 
 //imports
@@ -18,11 +17,6 @@ const cors = require("cors");
 const app = express();
 const routes = require("./routes");
 
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb", extended: true }));
-app.use(zip());
-app.use(cors()); //enable cors
-
 //initialize global vars (not best practice, might be improved in the future)
 globalThis.appState = "idle"; //var to track the current appstate;
 globalThis.isDrawing = false; //var to track if the bot is currently drawing
@@ -32,7 +26,11 @@ globalThis.lastGeneratedGcode = ""; //used to store the last generated gcode
 globalThis.isLinux = process.platform === "linux";
 globalThis.httpServer = require("http").createServer(app); //create new http server
 
-//define routes
+//configure express
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use(zip());
+app.use(cors());
 app.use(routes);
 
 //start server

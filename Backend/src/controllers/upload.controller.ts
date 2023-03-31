@@ -1,7 +1,10 @@
 ////////////////////upload.util/////////////////////////
 // this file contains all functions that handle uploading files
 // exports:
-
+//  newPicture: (converts a picture to gcode depending on the selected converter and saves it to the library)
+//  newFile: (converts a file to gcode depending on the selected converter and saves it to the library)
+//  postGcode: (initiates the drawing process with the given gcode)
+//  uploadGalleryData: (uploads a custom gcode to the gallery)
 ////////////////////////////////////////////////////////
 
 // imports

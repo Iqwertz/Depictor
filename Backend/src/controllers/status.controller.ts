@@ -1,9 +1,17 @@
+////////////////////status.controller////////////////////
+// this file contains all endpoints that handle the state of the server
+// exports:
+//  checkProgress: (returns the current state of the application)
+//  getGeneratedGcode: (returns the last generated gcode when available)
+///////////////////////////////////////////////////////////
+
 //imports
 import { logger } from "../utils/logger.util";
 import { Request, Response } from "express";
 import { enviroment } from "../config/enviroment";
 import { checkBGremoveAPIkey } from "../middleware/removeBG.middleware";
 const fs = require("fs");
+
 //interfaces
 interface StateResponse {
   state: AppStates;

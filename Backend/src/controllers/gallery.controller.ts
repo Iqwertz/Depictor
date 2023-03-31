@@ -1,3 +1,11 @@
+////////////////////gallery.controller////////////////////
+// this file contains all endpoints that handle gallery related requests
+// exports:
+//  deleteEntry: (deletes an gallery entry by Id)
+//  getGcodeGallery: (returns previews of all saved gcode files)
+//  getGcodeById: (returns a gcode file by Id)
+///////////////////////////////////////////////////////////
+
 //imports
 import { logger } from "../utils/logger.util";
 import { Request, Response } from "express";
