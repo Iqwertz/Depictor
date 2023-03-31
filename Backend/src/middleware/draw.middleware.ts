@@ -1,3 +1,10 @@
+////////////////////draw.middleware/////////////////////////
+// this file contains all functions that handle drawing related tasks
+// exports:
+//  drawGcode: (starts a process to draw the given gcode and track the progress)
+//  executeCustomGcode: (executes the given gcode)
+////////////////////////////////////////////////////////
+
 //imports
 import { logger } from "../utils/logger.util";
 import * as fs from "fs";

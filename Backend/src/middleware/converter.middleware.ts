@@ -1,6 +1,11 @@
+////////////////////converter.middleware/////////////////////////
+// this file contains all functions that handle converting files
+// exports:
+//  convertBase64ToGcode: (converts a base64 image to gcode using the selected converter)
+////////////////////////////////////////////////////////
+
 //imports
 import { logger } from "../utils/logger.util";
-import * as fs from "fs";
 import { enviroment } from "../config/enviroment";
 const fse = require("fs-extra");
 let execFile = require("child_process").execFile;

@@ -1,12 +1,42 @@
+////////////////////terminal.middleware/////////////////////////
+// this file contains all functions that handle terminal functionality.
+// The terminal uses the serialport library to communicate with the arduino and socket.io to communicate with the client
+// exports:
+//  openSerialPort: (opens the serial port and sets up the event listeners)
+//  disconnectTerminal: (disconnects from the arduino and closes the websocket connection)
+////////////////////////////////////////////////////////
+
 //imports
 import { logger } from "../utils/logger.util";
 import { SerialPort } from "serialport";
 import { Socket } from "socket.io";
 const fs = require("fs");
 
-////////////////////////////serialport//////////////////////////////////////////////
-let serialport: SerialPort | null = null;
+//interfaces
+interface TerminalHistoryEntry {
+  command: string;
+  type: "command" | "response";
+}
 
+//variables
+let terminalHistory: TerminalHistoryEntry[] = [];
+let serialport: SerialPort | null = null;
+let globalTerminalSocket: Socket | null = null;
+
+const io = require("socket.io")(globalThis.httpServer, {
+  cors: {
+    origins: ["*"],
+  },
+});
+
+////////////////////////////serialport//////////////////////////////////////////////
+
+/**
+ * openSerialPort
+ * opens the serial port and sets up the event listeners
+ *
+ * @returns
+ */
 export function openSerialPort() {
   let error = "";
   let port: string = "";
@@ -42,23 +72,9 @@ export function openSerialPort() {
   });
 }
 
-interface TerminalHistoryEntry {
-  command: string;
-  type: "command" | "response";
-}
-
-let terminalHistory: TerminalHistoryEntry[] = [];
-
 ///////////////////////////socket.io//////////////////////////////////////////////
 
-const io = require("socket.io")(globalThis.httpServer, {
-  cors: {
-    origins: ["*"],
-  },
-});
-
-let globalTerminalSocket: Socket | null = null;
-
+//Handle socket.io connections
 io.on("connection", (socket: Socket) => {
   logger.info("a user connected");
 
@@ -102,6 +118,11 @@ io.on("connection", (socket: Socket) => {
   globalTerminalSocket = socket;
 });
 
+/**
+ * disconnectTerminal
+ * disconnects all terminals and closes the serialport
+ * @returns
+ */
 export function disconnectTerminal() {
   logger.info("disconnecting all terminals");
   if (io.engine.clientsCount > 0) {

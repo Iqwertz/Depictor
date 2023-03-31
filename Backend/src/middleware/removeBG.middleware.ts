@@ -1,3 +1,11 @@
+////////////////////removeBG.middleware/////////////////////////
+// this file contains all functions that handle communication with the removeBg api (https://www.remove.bg/de/tools-api)
+// exports:
+//  checkBGremoveAPIkey: (checks if a removeBg api key exists)
+//  removeBg: tries to remove the background of a picture with the removeBG api and starts the conversion process when successful (if not successfull then original image will be converted)
+//  skipRemoveBg: skips the removeBg process and starts the conversion process with the original image
+////////////////////////////////////////////////////////
+
 //imports
 import { logger } from "../utils/logger.util";
 import * as fs from "fs";
@@ -10,9 +18,7 @@ import { convertBase64ToGcode } from "../middleware/converter.middleware";
 const outputDir = enviroment.removeBGSettings.outputDir;
 let removedBgBase64: string = "";
 
-export let isBGRemoveAPIKey: boolean = false;
-
-let useBGApi: boolean = enviroment.removeBGSettings.enableApi; //used during dev. to limit api calls
+let isBGRemoveAPIKey: boolean = false;
 
 export function checkBGremoveAPIkey() {
   if (!fs.existsSync("removeBGAPIKey.txt")) {
