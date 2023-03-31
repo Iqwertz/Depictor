@@ -55,6 +55,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit, OnDestroy {
   notRenderdLines: number = 0;
   estimatedSeconds: number = 0;
   renderGcodeSubscription: Subscription | null = null;
+  loading: boolean = false;
 
   ngOnInit(): void {
     screen.orientation.lock('portrait');

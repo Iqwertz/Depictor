@@ -44,6 +44,8 @@ export class GcodeViewerService {
   ]; //Holds all transformations made in the editor
   gcodeArea: number[] = [0, 0];
 
+  loading: boolean = false;
+
   $renderGcode: Subject<void> = new Subject<void>(); //emmited when new gcode is loaded
   $renderGcodeUpdate: Subject<void> = new Subject<void>(); //emmited when the gcode gets updated
 
@@ -77,7 +79,8 @@ export class GcodeViewerService {
     this.$renderGcode.next();
   }
 
-  rotate(clockwise: boolean) {
+  async rotate(clockwise: boolean) {
+    this.loading = true;
     let rotationMatrix = [
       [0, -1],
       [1, 0],
@@ -95,9 +98,11 @@ export class GcodeViewerService {
       this.editorTransformationMatrix
     );
     this.$renderGcodeUpdate.next();
+    this.loading = false;
   }
 
   mirror(axis: 'x' | 'y') {
+    this.loading = true;
     let mirrorMatrix = [
       [1, 0],
       [0, 1],
@@ -120,6 +125,7 @@ export class GcodeViewerService {
       this.editorTransformationMatrix
     );
     this.$renderGcodeUpdate.next();
+    this.loading = false;
   }
 
   /**
@@ -140,6 +146,7 @@ export class GcodeViewerService {
    * @memberof CanvasGcodeRendererComponent
    */
   standartizeGcode(gcode: string): string {
+    this.loading = true;
     let gcodeArray: string[] = gcode.split(/\r?\n/);
 
     let lastCommandParams: number[] = [0, 0];
@@ -300,6 +307,7 @@ export class GcodeViewerService {
       return el != '';
     });
     console.log(gcodeArray);
+    this.loading = false;
     return gcodeArray.join('\n');
   }
 

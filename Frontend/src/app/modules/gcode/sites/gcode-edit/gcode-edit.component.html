@@ -9,6 +9,7 @@
     <div class="transform-button">
       <app-transform-buttons></app-transform-buttons>
     </div>
+    <app-simple-loader [show]="gcodeViewerService.loading"></app-simple-loader>
     <app-canvas-gcode-renderer></app-canvas-gcode-renderer>
 
     <div class="download-button">
