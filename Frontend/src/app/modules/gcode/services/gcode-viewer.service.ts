@@ -79,53 +79,61 @@ export class GcodeViewerService {
     this.$renderGcode.next();
   }
 
-  async rotate(clockwise: boolean) {
+  rotate(clockwise: boolean) {
     this.loading = true;
-    let rotationMatrix = [
-      [0, -1],
-      [1, 0],
-    ];
-    if (!clockwise) {
-      rotationMatrix = [
-        [0, 1],
-        [-1, 0],
+    setTimeout(() => {
+      //This timeout is needed to prevent the UI from freezing
+      let rotationMatrix = [
+        [0, -1],
+        [1, 0],
       ];
-    }
+      if (!clockwise) {
+        rotationMatrix = [
+          [0, 1],
+          [-1, 0],
+        ];
+      }
 
-    //Matrix multiplication
-    this.editorTransformationMatrix = this.gcodeFunctionsService.multiplyMatrix(
-      rotationMatrix,
-      this.editorTransformationMatrix
-    );
-    this.$renderGcodeUpdate.next();
-    this.loading = false;
+      //Matrix multiplication
+      this.editorTransformationMatrix =
+        this.gcodeFunctionsService.multiplyMatrix(
+          rotationMatrix,
+          this.editorTransformationMatrix
+        );
+      this.$renderGcodeUpdate.next();
+      this.loading = false;
+    }, 10);
   }
 
   mirror(axis: 'x' | 'y') {
     this.loading = true;
-    let mirrorMatrix = [
-      [1, 0],
-      [0, 1],
-    ];
-    if (axis == 'x') {
-      mirrorMatrix = [
-        [-1, 0],
+    setTimeout(() => {
+      //This timeout is needed to prevent the UI from freezing
+      let mirrorMatrix = [
+        [1, 0],
         [0, 1],
       ];
-    } else if (axis == 'y') {
-      mirrorMatrix = [
-        [1, 0],
-        [0, -1],
-      ];
-    }
+      if (axis == 'x') {
+        mirrorMatrix = [
+          [-1, 0],
+          [0, 1],
+        ];
+      } else if (axis == 'y') {
+        mirrorMatrix = [
+          [1, 0],
+          [0, -1],
+        ];
+      }
 
-    //Matrix multiplication
-    this.editorTransformationMatrix = this.gcodeFunctionsService.multiplyMatrix(
-      mirrorMatrix,
-      this.editorTransformationMatrix
-    );
-    this.$renderGcodeUpdate.next();
-    this.loading = false;
+      //Matrix multiplication
+      this.editorTransformationMatrix =
+        this.gcodeFunctionsService.multiplyMatrix(
+          mirrorMatrix,
+          this.editorTransformationMatrix
+        );
+      this.$renderGcodeUpdate.next();
+      this.loading = false;
+    }, 10);
   }
 
   /**
