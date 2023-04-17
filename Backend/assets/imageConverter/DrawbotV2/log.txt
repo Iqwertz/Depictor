@@ -82,5 +82,17 @@ state3
 draw
 state3
 draw
+state3
+draw
+state3
+draw
+state3
+draw
+state3
+draw
+state3
+draw
+state3
+draw
 state4
 draw
