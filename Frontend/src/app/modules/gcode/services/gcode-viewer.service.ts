@@ -44,6 +44,8 @@ export class GcodeViewerService {
   ]; //Holds all transformations made in the editor
   gcodeArea: number[] = [0, 0];
 
+  loading: boolean = false;
+
   $renderGcode: Subject<void> = new Subject<void>(); //emmited when new gcode is loaded
   $renderGcodeUpdate: Subject<void> = new Subject<void>(); //emmited when the gcode gets updated
 
@@ -73,52 +75,65 @@ export class GcodeViewerService {
       [1, 0],
       [0, 1],
     ];
+    console.log('set gcode file');
     this.$renderGcode.next();
   }
 
   rotate(clockwise: boolean) {
-    let rotationMatrix = [
-      [0, -1],
-      [1, 0],
-    ];
-    if (!clockwise) {
-      rotationMatrix = [
-        [0, 1],
-        [-1, 0],
+    this.loading = true;
+    setTimeout(() => {
+      //This timeout is needed to prevent the UI from freezing
+      let rotationMatrix = [
+        [0, -1],
+        [1, 0],
       ];
-    }
+      if (!clockwise) {
+        rotationMatrix = [
+          [0, 1],
+          [-1, 0],
+        ];
+      }
 
-    //Matrix multiplication
-    this.editorTransformationMatrix = this.gcodeFunctionsService.multiplyMatrix(
-      rotationMatrix,
-      this.editorTransformationMatrix
-    );
-    this.$renderGcodeUpdate.next();
+      //Matrix multiplication
+      this.editorTransformationMatrix =
+        this.gcodeFunctionsService.multiplyMatrix(
+          rotationMatrix,
+          this.editorTransformationMatrix
+        );
+      this.$renderGcodeUpdate.next();
+      this.loading = false;
+    }, 10);
   }
 
   mirror(axis: 'x' | 'y') {
-    let mirrorMatrix = [
-      [1, 0],
-      [0, 1],
-    ];
-    if (axis == 'x') {
-      mirrorMatrix = [
-        [-1, 0],
+    this.loading = true;
+    setTimeout(() => {
+      //This timeout is needed to prevent the UI from freezing
+      let mirrorMatrix = [
+        [1, 0],
         [0, 1],
       ];
-    } else if (axis == 'y') {
-      mirrorMatrix = [
-        [1, 0],
-        [0, -1],
-      ];
-    }
+      if (axis == 'x') {
+        mirrorMatrix = [
+          [-1, 0],
+          [0, 1],
+        ];
+      } else if (axis == 'y') {
+        mirrorMatrix = [
+          [1, 0],
+          [0, -1],
+        ];
+      }
 
-    //Matrix multiplication
-    this.editorTransformationMatrix = this.gcodeFunctionsService.multiplyMatrix(
-      mirrorMatrix,
-      this.editorTransformationMatrix
-    );
-    this.$renderGcodeUpdate.next();
+      //Matrix multiplication
+      this.editorTransformationMatrix =
+        this.gcodeFunctionsService.multiplyMatrix(
+          mirrorMatrix,
+          this.editorTransformationMatrix
+        );
+      this.$renderGcodeUpdate.next();
+      this.loading = false;
+    }, 10);
   }
 
   /**
@@ -139,6 +154,7 @@ export class GcodeViewerService {
    * @memberof CanvasGcodeRendererComponent
    */
   standartizeGcode(gcode: string): string {
+    this.loading = true;
     let gcodeArray: string[] = gcode.split(/\r?\n/);
 
     let lastCommandParams: number[] = [0, 0];
@@ -299,6 +315,7 @@ export class GcodeViewerService {
       return el != '';
     });
     console.log(gcodeArray);
+    this.loading = false;
     return gcodeArray.join('\n');
   }
 

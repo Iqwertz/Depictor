@@ -289,15 +289,20 @@ export class BackendConnectService {
   /**
    *sends a post request to get the last n lines of the log file
    *
-   * @param {number} n the amout of lines that should be returned
+   * @param {number} min the start of the log file (in lines)
+   * @param {number} max the end of the log file (in lines)
    * @param {LogLevel} level the amout of lines that should be returned
    * @return {*}  {Observable<LoggingData Json>}
    * @memberof BackendConnectService
    */
-  getLoggingData(n: number, level: LogLevel): Observable<BackendVersion> {
+  getLoggingData(
+    min: number,
+    max: number,
+    level: LogLevel
+  ): Observable<BackendVersion> {
     return this.http.post<BackendVersion>(
       'http://' + this.ip + '/getLoggingData',
-      { lines: n, level: level }
+      { minLines: min, maxLines: max, level: level }
     );
   }
 
