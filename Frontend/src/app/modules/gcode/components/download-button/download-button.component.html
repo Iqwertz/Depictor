@@ -5,6 +5,15 @@
 </a>
 
 <ul *ngIf="downloadableFileTypes.length > 0">
+  <li *ngIf="downloadableFileTypes.includes('jpg')">
+    <a
+      href="/downloadJPG"
+      [href]="'http://' + ip + '/downloadJPG?name=' + fileId"
+      download
+    >
+      .jpg
+    </a>
+  </li>
   <li *ngIf="downloadableFileTypes.includes('png')">
     <a
       href="/downloadPNG"

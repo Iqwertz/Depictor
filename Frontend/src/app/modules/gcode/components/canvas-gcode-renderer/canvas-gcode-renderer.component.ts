@@ -196,6 +196,8 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
       return;
     }
 
+    console.log('render');
+
     //   scales the gcode to fit window and centers it
     let boundingValues = this.gcodeFunctionService.getBiggestValues(
       this.gcodeFile
@@ -384,7 +386,7 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
   THis cant be fixed earlier since it only is a display error and not a gcode transform error.
   The only solution other than this would be to keep an array of all transformations that were done and then invert the mirror transforms. But this would require a complete redesign of the transformation code
   (And maybe there is some fancy math that can be done to fix this but I was at the beginning of university when I wrote this :))
-  
+
   Okay so now it works and I dont know why but dont touch it
   */
   fixMirrorTransform(matrix: number[][]): number[][] {

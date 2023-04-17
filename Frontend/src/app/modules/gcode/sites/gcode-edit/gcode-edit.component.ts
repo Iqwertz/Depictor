@@ -1,5 +1,11 @@
 import { AppComponent } from './../../../../app.component';
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  AfterViewInit,
+  OnDestroy,
+} from '@angular/core';
 import { GcodeViewerService } from '../../services/gcode-viewer.service';
 import { SiteStateService } from '../../../../services/site-state.service';
 import { BackendConnectService } from '../../../../services/backend-connect.service';
@@ -13,6 +19,7 @@ import { Settings } from '../../../shared/components/settings/settings.component
 import { SnackbarService } from '../../../../services/snackbar.service';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { GcodeFunctionsService } from '../../services/gcode-functions.service';
+import { Subscription } from 'rxjs';
 
 export interface GalleryEntryUpload {
   name?: string;
@@ -26,7 +33,7 @@ export interface GalleryEntryUpload {
   templateUrl: './gcode-edit.component.html',
   styleUrls: ['./gcode-edit.component.scss'],
 })
-export class GcodeEditComponent implements OnInit, AfterViewInit {
+export class GcodeEditComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     public gcodeViewerService: GcodeViewerService,
     private backendConnectService: BackendConnectService,
@@ -47,18 +54,20 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
 
   notRenderdLines: number = 0;
   estimatedSeconds: number = 0;
+  renderGcodeSubscription: Subscription | null = null;
+  loading: boolean = false;
 
   ngOnInit(): void {
     screen.orientation.lock('portrait');
-
-    this.gcodeViewerService.$renderGcode.subscribe(() => {
-      console.log('rendering gcode');
-      this.renderer?.renderGcode(this.gcodeViewerService.gcodeFile, {
-        notRenderdLines: 0,
+    this.renderGcodeSubscription =
+      this.gcodeViewerService.$renderGcode.subscribe(() => {
+        console.log('rendering gcode');
+        this.renderer?.renderGcode(this.gcodeViewerService.gcodeFile, {
+          notRenderdLines: 0,
+        });
+        this.estimatedSeconds =
+          this.gcodeViewerService.maxLines * this.settings.avgTimePerLine;
       });
-      this.estimatedSeconds =
-        this.gcodeViewerService.maxLines * this.settings.avgTimePerLine;
-    });
 
     this.gcodeViewerService.$renderGcodeUpdate.subscribe(() => {
       console.log('render update');
@@ -78,6 +87,10 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
     });
     this.estimatedSeconds =
       this.gcodeViewerService.maxLines * this.settings.avgTimePerLine;
+  }
+
+  ngOnDestroy() {
+    this.renderGcodeSubscription?.unsubscribe();
   }
 
   sliderUpdated(nRL: number) {
@@ -178,18 +191,32 @@ export class GcodeEditComponent implements OnInit, AfterViewInit {
       gcodeArray.push('');
     }
 
-    ///////////////////remove the first 6 lines of the gcode and replace them with the start gcode after join -> not clean at all but currently to lazy to recompile java
-    /*     if (
-      this.gcodeViewerService.gcodeType != 'stanCustom' &&
-      this.gcodeViewerService.gcodeType != 'custom'
-    ) {
-      gcodeArray.splice(0, 6);
-    } */
     let strippedGcode: string = gcodeArray.slice(0, nr).join('\n');
 
     if (this.gcodeViewerService.gcodeType != 'custom') {
-      strippedGcode = this.settings.startGcode + '\n' + strippedGcode + '\n';
-      strippedGcode += this.settings.endGcode;
+      let boundingBoxGcode = '';
+      if (this.settings.traverseBoundingBox) {
+        let offset = this.settings.selectedPaperProfile.drawingOffset;
+        let max = this.settings.selectedPaperProfile.paperMax;
+        let boundingBoxPoints: number[][] = [
+          [offset[0], offset[1]],
+          [offset[0], max[1]],
+          [max[0], max[1]],
+          [max[0], offset[1]],
+          [offset[0], offset[1]],
+        ];
+        boundingBoxPoints.forEach((point) => {
+          boundingBoxGcode += `G1 X${point[0]} Y${point[1]} \n`;
+        });
+      }
+
+      strippedGcode =
+        this.settings.startGcode +
+        '\n' +
+        boundingBoxGcode +
+        strippedGcode +
+        '\n' +
+        this.settings.endGcode;
     }
     this.backendConnectService.postGcode(strippedGcode);
     this.loadingService.isLoading = false;

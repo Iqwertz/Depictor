@@ -58,6 +58,7 @@ import { SimpleLoaderComponent } from './components/simple-loader/simple-loader.
     ConfirmDialogComponent,
     TerminalButtonComponent,
     DragndropComponent,
+    SimpleLoaderComponent,
   ],
 })
 export class SharedModule {}

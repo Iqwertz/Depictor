@@ -19,16 +19,30 @@
       <select
         class="action-select"
         [(ngModel)]="logLevel"
-        (ngModelChange)="reload()"
+        (ngModelChange)="page = 0; reload()"
       >
         <option *ngFor="let level of logLevelOptions" [value]="level">
           {{ level }}
         </option>
       </select>
       <!--number of lines-->
-      <input class="loadedLines" type="number" [(ngModel)]="loadedLines" />
+      <!-- <input class="loadedLines" type="number" [(ngModel)]="loadedLines" /> -->
+      <!--page select-->
+      <fa-icon
+        class="reload"
+        [icon]="faChevronLeft"
+        (click)="decreasePage()"
+      ></fa-icon>
+      <div class="page-display">
+        {{ page + 1 }} / {{ displayMaxPages(maxPages) }}
+      </div>
+      <fa-icon
+        class="reload"
+        [icon]="faChevronRight"
+        (click)="increasePage()"
+      ></fa-icon>
       <!--reload-->
-      <fa-icon class="reload" [icon]="faReload" (click)="reload()"></fa-icon>
+      <!-- <fa-icon class="reload" [icon]="faReload" (click)="reload()"></fa-icon> -->
     </div>
   </div>
 </div>
