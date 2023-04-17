@@ -125,6 +125,11 @@ io.on("connection", (socket: Socket) => {
  */
 export function disconnectTerminal() {
   logger.info("disconnecting all terminals");
+  if (!io.engine) {
+    logger.warn("cant disconnet terminals, no io engine");
+    console.log("cant disconnet terminals, no io engine");
+    return;
+  }
   if (io.engine.clientsCount > 0) {
     console.log("disconnecting all terminals");
     io.emit("disconnectSelf");
