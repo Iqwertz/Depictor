@@ -23,7 +23,7 @@ let terminalHistory: TerminalHistoryEntry[] = [];
 let serialport: SerialPort | null = null;
 let globalTerminalSocket: Socket | null = null;
 
-const io = require("socket.io")(globalThis.httpServer, {
+let io = require("socket.io")(globalThis.httpServer, {
   cors: {
     origins: ["*"],
   },
@@ -73,6 +73,19 @@ export function openSerialPort() {
 }
 
 ///////////////////////////socket.io//////////////////////////////////////////////
+
+//Starts the io server (called after http server is started)
+export function startIoServer() {
+  if (!globalThis.httpServer) {
+    logger.error("cant start io server, no http server found");
+    return;
+  }
+  io = require("socket.io")(globalThis.httpServer, {
+    cors: {
+      origins: ["*"],
+    },
+  });
+}
 
 //Handle socket.io connections
 io.on("connection", (socket: Socket) => {
@@ -126,8 +139,7 @@ io.on("connection", (socket: Socket) => {
 export function disconnectTerminal() {
   logger.info("disconnecting all terminals");
   if (!io.engine) {
-    logger.warn("cant disconnet terminals, no io engine");
-    console.log("cant disconnet terminals, no io engine");
+    logger.warn("cant disconnect terminals, no io engine");
     return;
   }
   if (io.engine.clientsCount > 0) {
