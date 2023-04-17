@@ -74,62 +74,57 @@ export function openSerialPort() {
 
 ///////////////////////////socket.io//////////////////////////////////////////////
 
-//Starts the io server (called after http server is started)
-export function startIoServer() {
-  if (!globalThis.httpServer) {
-    logger.error("cant start io server, no http server found");
-    return;
-  }
+export function iniTerminalSocket() {
   io = require("socket.io")(globalThis.httpServer, {
     cors: {
       origins: ["*"],
     },
   });
+
+  //Handle socket.io connections
+  io.on("connection", (socket: Socket) => {
+    logger.info("a user connected");
+
+    if (globalThis.isDrawing) {
+      socket.emit("serialError", "cannot connect to serial port while drawing");
+      return;
+    }
+
+    if (!serialport?.isOpen) {
+      openSerialPort();
+    }
+
+    for (let command of terminalHistory) {
+      if (command.type === "command") {
+        socket.emit("commandData", command.command);
+      } else {
+        socket.emit("serialData", command.command);
+      }
+    }
+
+    socket.on("disconnect", () => {
+      logger.info("user disconnected");
+      if (io.engine.clientsCount == 0) {
+        terminalHistory = [];
+        serialport?.close();
+        serialport = null;
+      }
+    });
+
+    socket.on("command", (msg: string) => {
+      logger.info("Terminal Command: " + msg);
+      if (serialport) {
+        terminalHistory.push({ command: msg, type: "command" });
+        io.emit("commandData", msg);
+        serialport.write(msg + "\n");
+      } else {
+        logger.error("serialport not open");
+      }
+    });
+
+    globalTerminalSocket = socket;
+  });
 }
-
-//Handle socket.io connections
-io.on("connection", (socket: Socket) => {
-  logger.info("a user connected");
-
-  if (globalThis.isDrawing) {
-    socket.emit("serialError", "cannot connect to serial port while drawing");
-    return;
-  }
-
-  if (!serialport?.isOpen) {
-    openSerialPort();
-  }
-
-  for (let command of terminalHistory) {
-    if (command.type === "command") {
-      socket.emit("commandData", command.command);
-    } else {
-      socket.emit("serialData", command.command);
-    }
-  }
-
-  socket.on("disconnect", () => {
-    logger.info("user disconnected");
-    if (io.engine.clientsCount == 0) {
-      terminalHistory = [];
-      serialport?.close();
-      serialport = null;
-    }
-  });
-
-  socket.on("command", (msg: string) => {
-    logger.info("Terminal Command: " + msg);
-    if (serialport) {
-      terminalHistory.push({ command: msg, type: "command" });
-      io.emit("commandData", msg);
-      serialport.write(msg + "\n");
-    } else {
-      logger.error("serialport not open");
-    }
-  });
-
-  globalTerminalSocket = socket;
-});
 
 /**
  * disconnectTerminal

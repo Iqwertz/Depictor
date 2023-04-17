@@ -9,7 +9,6 @@
 
 //imports
 import { enviroment } from "./config/enviroment";
-import { startIoServer } from "./middleware/terminal.middleware";
 import { chmodConverters } from "./utils/helper.util";
 import { logger } from "./utils/logger.util";
 const zip = require("express-easy-zip");
@@ -26,7 +25,6 @@ globalThis.currentDrawingProcessPID = 0; //used to stop the drawing process
 globalThis.lastGeneratedGcode = ""; //used to store the last generated gcode
 globalThis.isLinux = process.platform === "linux";
 globalThis.httpServer = require("http").createServer(app); //create new http server
-startIoServer(); //start socket.io server
 
 //configure express
 app.use(express.json({ limit: "50mb" }));
