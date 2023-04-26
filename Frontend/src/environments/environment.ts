@@ -8,6 +8,7 @@ const settings: Settings = {
   penDownCommand: 'M03S500;\nG4P0.5',
   penUpCommand: 'M05;\nG4P0.5;',
   traverseBoundingBox: false,
+  traverseBoundingBoxSpeed: 1000,
   avgTimePerLine: 0.096755719, //in s
   maxImageFileSize: 0.05, //in MB
   paperProfiles: [

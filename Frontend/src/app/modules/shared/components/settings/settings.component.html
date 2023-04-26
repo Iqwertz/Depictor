@@ -318,6 +318,14 @@
       ></app-settings-checkbox>
     </div>
 
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">Traverse bounds speed</div>
+      <app-settings-textinput
+        [type]="'number'"
+        [(ngModel)]="settings.traverseBoundingBoxSpeed"
+      ></app-settings-textinput>
+    </div>
+
     <div class="divider" *ngIf="siteStateService.serverOnline">
       <div class="label">Plotter controls</div>
     </div>

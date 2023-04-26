@@ -52,6 +52,7 @@ export interface Settings {
   maxImageFileSize: number;
   centerOnDrawingArea: boolean;
   traverseBoundingBox: boolean;
+  traverseBoundingBoxSpeed: number;
   paperProfiles: PaperProfile[];
   selectedPaperProfile: PaperProfile;
   gcodeDefaultTransform: Transformation; //Default Transform applied to all gcodes

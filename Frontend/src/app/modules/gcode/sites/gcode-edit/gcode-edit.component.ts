@@ -196,6 +196,9 @@ export class GcodeEditComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.gcodeViewerService.gcodeType != 'custom') {
       let boundingBoxGcode = '';
       if (this.settings.traverseBoundingBox) {
+        let standardFeedrate: number = this.getFeedrate(
+          this.settings.startGcode
+        );
         let offset = this.settings.selectedPaperProfile.drawingOffset;
         let max = this.settings.selectedPaperProfile.paperMax;
         let boundingBoxPoints: number[][] = [
@@ -205,9 +208,13 @@ export class GcodeEditComponent implements OnInit, AfterViewInit, OnDestroy {
           [max[0], offset[1]],
           [offset[0], offset[1]],
         ];
+        boundingBoxGcode += `F${this.settings.traverseBoundingBoxSpeed} \n`;
         boundingBoxPoints.forEach((point) => {
           boundingBoxGcode += `G1 X${point[0]} Y${point[1]} \n`;
         });
+        if (standardFeedrate > 0) {
+          boundingBoxGcode += `F${standardFeedrate} \n`;
+        }
       }
 
       strippedGcode =
@@ -221,6 +228,20 @@ export class GcodeEditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.backendConnectService.postGcode(strippedGcode);
     this.loadingService.isLoading = false;
     this.router.navigate(['gcode', 'drawing']);
+  }
+
+  //returns the feedrate of the last line that contains a global feedrate command
+  getFeedrate(gcode: string): number {
+    let feedrate: number = -1;
+    let gcodeArray: string[] = gcode.split('\n');
+    gcodeArray.forEach((line) => {
+      line = line.trim();
+      if (line.startsWith('F')) {
+        let feedrateString: string = line.replace(/[^\d.-]/g, ''); //remove all non numeric characters
+        feedrate = parseInt(feedrateString);
+      }
+    });
+    return feedrate;
   }
 
   fixMirrorTransform(matrix: number[][]): number[][] {
