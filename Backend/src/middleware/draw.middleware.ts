@@ -87,8 +87,12 @@ export function drawGcode(gcode: string) {
               globalThis.appState = "idle";
               globalThis.drawingProgress = 0;
             } else {
-              globalThis.drawingProgress = -1;
-              logger.error(err);
+              if (globalThis.drawingProgress != -2) {
+                //inform of error during drawing if not cancled by user
+                globalThis.drawingProgress = -1;
+                logger.error(err);
+              }
+
               //appState = "error";
             }
           }

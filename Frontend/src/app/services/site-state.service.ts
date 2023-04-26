@@ -94,6 +94,9 @@ export class SiteStateService {
   }
 
   checkServerState() {
+    if (!this.serverOnline) {
+      console.log('Server offline - checking availability');
+    }
     this.backendConnectService.checkProgress().subscribe(
       (res: StateResponse) => {
         this.appState = res;

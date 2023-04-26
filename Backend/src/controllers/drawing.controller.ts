@@ -80,7 +80,7 @@ async function getDrawenGcode(req: Request, res: Response) {
 /*
 post: /cancle //I now know its written cancel but too lazy to change all code vars....
 
-description: cancles the generated gcode by updateing appState
+description: cancles the generated gcode by updateing appState, drawing progress is set to -2 to indicate that the gcode was cancled
 
 expected request: 
   {}
@@ -90,7 +90,7 @@ returns:
 async function cancle(req: Request, res: Response) {
   logger.http("post: cancle");
   globalThis.appState = "idle";
-  globalThis.drawingProgress = 0;
+  globalThis.drawingProgress = -2;
 }
 
 /*

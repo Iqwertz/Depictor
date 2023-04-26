@@ -59,9 +59,6 @@ export class FileUploadService {
     } else {
       if (this.settings.autoSelectConverter) {
         for (let converter of this.settings.converter.availableConverter) {
-          console.log(converter);
-          console.log(converter.acceptedFiletypes);
-          console.log(fileType);
           if (converter.acceptedFiletypes.includes(fileType.toLowerCase())) {
             config = converter;
             this.snackbarService.notification(
