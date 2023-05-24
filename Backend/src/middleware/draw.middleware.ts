@@ -13,6 +13,23 @@ let exec = require("child_process").exec;
 let fse = require("fs-extra");
 let Tail = require("tail").Tail;
 
+interface MultiToolGcode {
+  gcodeName: string;
+  message: string;
+  color: string;
+}
+
+export interface MultiToolState {
+  active: boolean;
+  state: string;
+  currentMessage: string;
+  currentColor: string;
+  currentGcode: number;
+  multiToolGcodes: MultiToolGcode[];
+}
+
+let multiToolGcodeData: MultiToolGcode[] = [];
+
 /**
  *drawGcode()
  * starts a process to draw the given gcode.
@@ -20,9 +37,20 @@ let Tail = require("tail").Tail;
  * the drawing programm is defined in "launchGcodeCli.sh"
  *
  * @param {string} gcode the gcode th draw
+ * @param {boolean} multiTool if the gcode is part of a multiTool drawing (M226), this will affect how the end of drawing is handled (default: false)
  */
-export function drawGcode(gcode: string) {
+export function drawGcode(gcode: string, multiTool?: boolean) {
+  multiTool = multiTool || false;
   logger.info("start drawing");
+
+  if (!multiTool) {
+    if (gcode.indexOf("M226") > -1) {
+      logger.info("M226 found");
+      startMultiToolGcode(gcode);
+      return;
+    }
+  }
+
   fse.outputFile(
     //save the gcode file //this file will be used by the gcodesender
     "assets/gcodes/gcode.nc",
@@ -68,9 +96,11 @@ export function drawGcode(gcode: string) {
             //after process exits
             logger.debug(data.toString());
 
-            globalThis.isDrawing = false; //update drawing state
+            if (!multiTool) {
+              globalThis.isDrawing = false; //update drawing state
+            }
             if (!err) {
-              //when exited with out errors log the printing time and amount of lines to drawingTimesLog.txt. This file is used to determin an time/line estimation for the fronted
+              //when exited with out errors log the printing time and amount of lines to drawingTimesLog.txt. This file is used to determin an time/line estimation for the frontend
               let timeDiff: number = new Date().getTime() - startTime;
               let lines: number = gcode.length - gcode.replace(/\n/g, "").length + 1;
 
@@ -84,8 +114,11 @@ export function drawGcode(gcode: string) {
               );
 
               //reset appstate and drawing progress
-              globalThis.appState = "idle";
-              globalThis.drawingProgress = 0;
+              if (multiTool) {
+              } else {
+                globalThis.appState = "idle";
+                globalThis.drawingProgress = 0;
+              }
             } else {
               if (globalThis.drawingProgress != -2) {
                 //inform of error during drawing if not cancled by user
@@ -104,6 +137,53 @@ export function drawGcode(gcode: string) {
       }
     }
   );
+}
+
+function startMultiToolGcode(gcode: string) {
+  let gcodes: string[] = gcode.split("M226");
+
+  for (let i = 1; i < gcodes.length; i++) {
+    let firstLine = gcodes[i].split("\n")[0].trim();
+    gcodes[i] = gcodes[i].replace(firstLine, "");
+    let gcodeName: string = "tool" + i;
+    let color: string = firstLine.split(" ")[0];
+    let messageWords = firstLine.split(" ");
+    messageWords.shift();
+    let message: string = messageWords.join(" ");
+
+    multiToolGcodeData.push({
+      gcodeName: gcodeName,
+      message: message,
+      color: color,
+    });
+  }
+
+  console.log(multiToolGcodeData);
+
+  //save all gcode files
+  for (let i = 0; i < gcodes.length; i++) {
+    fse.outputFileSync(
+      "assets/gcodes/multiTool/" + "tool" + i + ".nc",
+      gcodes[i],
+      "utf8",
+      function (err: any, data: any) {
+        if (err) {
+          //guard clause for errors
+          logger.error("Error " + err);
+          return;
+        }
+      }
+    );
+  }
+
+  //save original gcode
+  fse.outputFileSync("assets/gcodes/multiTool/original.nc", gcode, "utf8", function (err: any, data: any) {
+    if (err) {
+      //guard clause for errors
+      logger.error("Error " + err);
+      return;
+    }
+  });
 }
 
 /**
