@@ -212,6 +212,18 @@ export class BackendConnectService {
   }
 
   /**
+   * continues the multi tool drawing process
+   * @memberof BackendConnectService
+   */
+  continueMultiTool() {
+    this.http
+      .post('http://' + this.ip + '/continueMultiTool', {})
+      .subscribe((res: any) => {
+        console.log(res);
+      });
+  }
+
+  /**
    *cancles the last generated gcode preview. (Used to enable user to generate a new picture)
    *
    * @memberof BackendConnectService

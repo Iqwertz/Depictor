@@ -43,7 +43,7 @@ export function drawGcode(gcode: string, multiTool?: boolean) {
 
   if (!multiTool) {
     if (gcode.indexOf("M226") > -1) {
-      logger.info("M226 found");
+      logger.info("M226 found, starting multiTool Mode");
       startMultiToolGcode(gcode);
       return;
     }

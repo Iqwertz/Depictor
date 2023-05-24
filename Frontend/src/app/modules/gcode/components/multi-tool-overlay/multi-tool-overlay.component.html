@@ -1,0 +1,10 @@
+<div class="container" *ngIf="multiToolState?.state == 'waiting'">
+  Paused for tool change:
+  <p class="message">
+    {{ toolMessage }}
+  </p>
+  <app-settings-ui-button
+    [name]="'Continue'"
+    (clicked)="continueDrawing()"
+  ></app-settings-ui-button>
+</div>

@@ -20,6 +20,7 @@ import { CanvasGcodeRendererComponent } from './components/canvas-gcode-renderer
 import { UploadComponent } from './components/upload/upload.component';
 import { DownloadButtonComponent } from './components/download-button/download-button.component';
 import { TransformButtonsComponent } from './components/transform-buttons/transform-buttons.component';
+import { MultiToolOverlayComponent } from './components/multi-tool-overlay/multi-tool-overlay.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { TransformButtonsComponent } from './components/transform-buttons/transf
     UploadComponent,
     DownloadButtonComponent,
     TransformButtonsComponent,
+    MultiToolOverlayComponent,
   ],
   imports: [
     CommonModule,

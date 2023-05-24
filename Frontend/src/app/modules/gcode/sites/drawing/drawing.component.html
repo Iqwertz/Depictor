@@ -1,17 +1,25 @@
 <app-dragndrop></app-dragndrop>
 <div class="navbar">
-    <app-navbar></app-navbar>
+  <app-navbar></app-navbar>
 </div>
 <div class="drawing-container">
-    <!-- <app-gcode-renderer></app-gcode-renderer> -->
-    <app-canvas-gcode-renderer></app-canvas-gcode-renderer>
-    <app-drawing-progress-bar [progress]="drawingProgress"></app-drawing-progress-bar>
-    <app-stop-drawing-button *ngIf="isDrawing"></app-stop-drawing-button>
-    <div class="not-drawing txt-overlay" *ngIf="!isDrawing">ready to draw!</div>
-    <div class="error-drawing txt-overlay" *ngIf="drawingProgress == -1">
-        <h1>Error!</h1>
-        There was an error during the drawing process! <br /> Check the logs for more information.
-    </div>
+  <!-- <app-gcode-renderer></app-gcode-renderer> -->
+  <app-canvas-gcode-renderer></app-canvas-gcode-renderer>
+  <app-drawing-progress-bar
+    [progress]="drawingProgress"
+  ></app-drawing-progress-bar>
+  <app-stop-drawing-button *ngIf="isDrawing"></app-stop-drawing-button>
+  <div class="not-drawing txt-overlay" *ngIf="!isDrawing">ready to draw!</div>
+  <div class="multi-tool" *ngIf="multiToolState">
+    <app-multi-tool-overlay
+      [multiToolState]="multiToolState"
+    ></app-multi-tool-overlay>
+  </div>
+  <div class="error-drawing txt-overlay" *ngIf="drawingProgress == -1">
+    <h1>Error!</h1>
+    There was an error during the drawing process! <br />
+    Check the logs for more information.
+  </div>
 </div>
 <app-terminal-button></app-terminal-button>
 <app-settings-button></app-settings-button>

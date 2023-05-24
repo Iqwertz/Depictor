@@ -46,7 +46,7 @@ async function checkProgress(req: Request, res: Response) {
     removeBG: bgRemoveAvailable && useBGApi,
   };
 
-  if (globalThis.multiToolState.active) {
+  if (globalThis.multiToolState?.active) {
     response.multiTool = globalThis.multiToolState;
   }
 

@@ -22,6 +22,22 @@ export interface StateResponse {
   isDrawing: boolean;
   removeBG: boolean;
   data?: string;
+  multiTool?: MultiToolState;
+}
+
+export interface MultiToolState {
+  active: boolean;
+  state: 'drawing' | 'waiting' | 'finished' | 'failed';
+  currentMessage: string;
+  currentColor: string;
+  currentGcodeId: number;
+  multiToolGcodes: MultiToolGcode[];
+}
+
+interface MultiToolGcode {
+  gcodeName: string;
+  message: string;
+  color: string;
 }
 
 @Injectable({
