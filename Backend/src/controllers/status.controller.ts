@@ -10,6 +10,7 @@ import { logger } from "../utils/logger.util";
 import { Request, Response } from "express";
 import { enviroment } from "../config/enviroment";
 import { checkBGremoveAPIkey } from "../middleware/removeBG.middleware";
+import { MultiToolState } from "../middleware/draw.middleware";
 const fs = require("fs");
 
 //interfaces
@@ -17,6 +18,7 @@ interface StateResponse {
   state: AppStates;
   isDrawing: boolean;
   removeBG: boolean;
+  multiTool?: MultiToolState;
 }
 
 //variables
@@ -43,6 +45,10 @@ async function checkProgress(req: Request, res: Response) {
     isDrawing: globalThis.isDrawing,
     removeBG: bgRemoveAvailable && useBGApi,
   };
+
+  if (globalThis.multiToolState.active) {
+    response.multiTool = globalThis.multiToolState;
+  }
 
   res.json(response);
 }

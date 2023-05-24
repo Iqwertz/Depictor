@@ -12,7 +12,7 @@
 import { logger } from "../utils/logger.util";
 import { Request, Response } from "express";
 import { disconnectTerminal } from "../middleware/terminal.middleware";
-import { executeCustomGcode } from "../middleware/draw.middleware";
+import { drawNextMultiToolGcode, executeCustomGcode } from "../middleware/draw.middleware";
 const fs = require("fs");
 const kill = require("tree-kill");
 let exec = require("child_process").exec;
@@ -148,10 +148,17 @@ async function executeGcode(req: Request, res: Response) {
   res.json({});
 }
 
+async function continueMultiTool(req: Request, res: Response) {
+  logger.http("post: continueMultiTool");
+  drawNextMultiToolGcode();
+  res.json({});
+}
+
 module.exports = {
   getDrawingProgress,
   getDrawenGcode,
   cancle,
   stop,
   executeGcode,
+  continueMultiTool,
 };

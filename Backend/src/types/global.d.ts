@@ -1,8 +1,11 @@
+import { MultiToolState } from "../middleware/draw.middleware";
+
 export {};
 
 declare global {
   type AppStates = "idle" | "removingBg" | "processingImage" | "rawGcodeReady" | "updating" | "error"; //possible states of the server
   var appState: AppState;
+  var multiToolState: MultiToolState;
   var isDrawing: boolean;
   var drawingProgress: number;
   var currentDrawingProcessPID: number;

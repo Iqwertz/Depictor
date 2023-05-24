@@ -21,14 +21,12 @@ interface MultiToolGcode {
 
 export interface MultiToolState {
   active: boolean;
-  state: string;
+  state: "drawing" | "waiting" | "finished" | "failed";
   currentMessage: string;
   currentColor: string;
-  currentGcode: number;
+  currentGcodeId: number;
   multiToolGcodes: MultiToolGcode[];
 }
-
-let multiToolGcodeData: MultiToolGcode[] = [];
 
 /**
  *drawGcode()
@@ -114,10 +112,21 @@ export function drawGcode(gcode: string, multiTool?: boolean) {
               );
 
               //reset appstate and drawing progress
+              globalThis.drawingProgress = 0;
               if (multiTool) {
+                globalThis.multiToolState.currentGcodeId++;
+                if (globalThis.multiToolState.currentGcodeId > globalThis.multiToolState.multiToolGcodes.length) {
+                  globalThis.multiToolState.state = "finished";
+                  globalThis.multiToolState.active = false;
+                  globalThis.appState = "idle";
+                } else {
+                  globalThis.multiToolState.state = "waiting";
+                  let gcode = globalThis.multiToolState.multiToolGcodes[globalThis.multiToolState.currentGcodeId - 1]; //-1 because the first gcode is not in the array
+                  globalThis.multiToolState.currentMessage = gcode.message;
+                  globalThis.multiToolState.currentColor = gcode.color;
+                }
               } else {
                 globalThis.appState = "idle";
-                globalThis.drawingProgress = 0;
               }
             } else {
               if (globalThis.drawingProgress != -2) {
@@ -140,6 +149,15 @@ export function drawGcode(gcode: string, multiTool?: boolean) {
 }
 
 function startMultiToolGcode(gcode: string) {
+  globalThis.multiToolState = {
+    active: true,
+    state: "drawing",
+    currentMessage: "",
+    currentColor: "",
+    currentGcodeId: 0,
+    multiToolGcodes: [],
+  };
+
   let gcodes: string[] = gcode.split("M226");
 
   for (let i = 1; i < gcodes.length; i++) {
@@ -151,17 +169,18 @@ function startMultiToolGcode(gcode: string) {
     messageWords.shift();
     let message: string = messageWords.join(" ");
 
-    multiToolGcodeData.push({
+    globalThis.multiToolState.multiToolGcodes.push({
       gcodeName: gcodeName,
       message: message,
       color: color,
     });
   }
 
-  console.log(multiToolGcodeData);
+  console.log(globalThis.multiToolState.multiToolGcodes);
 
   //save all gcode files
   for (let i = 0; i < gcodes.length; i++) {
+    gcodes[i] = "$X\n" + gcodes[i]; //add $X to the beginning of each gcode to unlock grbl
     fse.outputFileSync(
       "assets/gcodes/multiTool/" + "tool" + i + ".nc",
       gcodes[i],
@@ -184,6 +203,20 @@ function startMultiToolGcode(gcode: string) {
       return;
     }
   });
+
+  //start drawing
+  drawGcode(gcodes[0], true);
+}
+
+export function drawNextMultiToolGcode() {
+  if (globalThis.multiToolState.currentGcodeId == 0) {
+    console.error("Cant draw initial gcode with drawNextMultiToolGcode()");
+    return;
+  }
+
+  let gcodeFileName = globalThis.multiToolState.multiToolGcodes[globalThis.multiToolState.currentGcodeId - 1].gcodeName;
+  let gcode = fse.readFileSync("assets/gcodes/multiTool/" + gcodeFileName + ".nc", "utf8");
+  drawGcode(gcode, true);
 }
 
 /**
