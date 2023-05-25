@@ -297,6 +297,9 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
     this.ctx.beginPath();
     for (let i = 0; i < renderedLines; i++) {
       let command: string = commands[i];
+      if (command.startsWith(';')) {
+        continue;
+      }
       if (
         command.startsWith('G1') ||
         command.startsWith('G0') ||
@@ -327,6 +330,14 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
         command == this.settings.penDownCommand
       ) {
         isPenDown = true;
+      } else if (command.startsWith('M226')) {
+        this.ctx.stroke();
+        let color = command.split(' ')[1];
+        console.log(color);
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = color;
+      } else {
+        //console.log(command);
       }
     }
     this.ctx.stroke();
