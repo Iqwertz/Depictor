@@ -29,7 +29,7 @@ export interface MultiToolState {
 }
 
 let multiToolDrawingProgressModifier: number = 0; //this is used to modify the drawing progress when drawing multiTool gcodes, since the drawingProgress indicator is reseted for every tool change
-
+let currentToolDrawingProgress: number = 0; //this is used to save the drawing progress of the current tool
 /**
  *drawGcode()
  * starts a process to draw the given gcode.
@@ -78,9 +78,9 @@ export function drawGcode(gcode: string, multiTool?: boolean) {
         tail.on("line", function (data: any) {
           //update progress when a new line is drawen
           data = data.trim();
-          let progress = parseInt(data.replace(/[^\d].*/, "")) + multiToolDrawingProgressModifier;
-          if (!isNaN(progress)) {
-            globalThis.drawingProgress = progress;
+          currentToolDrawingProgress = parseInt(data.replace(/[^\d].*/, ""));
+          if (!isNaN(currentToolDrawingProgress + multiToolDrawingProgressModifier)) {
+            globalThis.drawingProgress = currentToolDrawingProgress + multiToolDrawingProgressModifier;
           }
           console.log(globalThis.drawingProgress);
         });
@@ -131,7 +131,7 @@ export function drawGcode(gcode: string, multiTool?: boolean) {
                   let gcode = globalThis.multiToolState.multiToolGcodes[globalThis.multiToolState.currentGcodeId - 1]; //-1 because the first gcode is not in the array
                   globalThis.multiToolState.currentMessage = gcode.message;
                   globalThis.multiToolState.currentColor = gcode.color;
-                  multiToolDrawingProgressModifier += globalThis.drawingProgress;
+                  multiToolDrawingProgressModifier += currentToolDrawingProgress;
                   globalThis.drawingProgress = 0;
                 }
               } else {
