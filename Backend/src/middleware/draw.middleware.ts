@@ -28,6 +28,8 @@ export interface MultiToolState {
   multiToolGcodes: MultiToolGcode[];
 }
 
+let multiToolDrawingProgressModifier: number = 0; //this is used to modify the drawing progress when drawing multiTool gcodes, since the drawingProgress indicator is reseted for every tool change
+
 /**
  *drawGcode()
  * starts a process to draw the given gcode.
@@ -76,7 +78,7 @@ export function drawGcode(gcode: string, multiTool?: boolean) {
         tail.on("line", function (data: any) {
           //update progress when a new line is drawen
           data = data.trim();
-          globalThis.drawingProgress = parseInt(data.replace(/[^\d].*/, ""));
+          globalThis.drawingProgress = parseInt(data.replace(/[^\d].*/, "")) + multiToolDrawingProgressModifier;
           console.log(globalThis.drawingProgress);
         });
 
@@ -112,7 +114,6 @@ export function drawGcode(gcode: string, multiTool?: boolean) {
               );
 
               //reset appstate and drawing progress
-              globalThis.drawingProgress = 0;
               if (multiTool) {
                 globalThis.multiToolState.currentGcodeId++;
                 if (globalThis.multiToolState.currentGcodeId >= globalThis.multiToolState.multiToolGcodes.length) {
@@ -120,13 +121,18 @@ export function drawGcode(gcode: string, multiTool?: boolean) {
                   globalThis.multiToolState.active = false;
                   globalThis.appState = "idle";
                   globalThis.isDrawing = false;
+                  globalThis.drawingProgress = 0;
+                  multiToolDrawingProgressModifier = 0;
                 } else {
                   globalThis.multiToolState.state = "waiting";
                   let gcode = globalThis.multiToolState.multiToolGcodes[globalThis.multiToolState.currentGcodeId - 1]; //-1 because the first gcode is not in the array
                   globalThis.multiToolState.currentMessage = gcode.message;
                   globalThis.multiToolState.currentColor = gcode.color;
+                  multiToolDrawingProgressModifier += globalThis.drawingProgress;
+                  globalThis.drawingProgress = 0;
                 }
               } else {
+                globalThis.drawingProgress = 0;
                 globalThis.appState = "idle";
               }
             } else {
@@ -158,6 +164,7 @@ function startMultiToolGcode(gcode: string) {
     currentGcodeId: 0,
     multiToolGcodes: [],
   };
+  multiToolDrawingProgressModifier = 0;
 
   let gcodes: string[] = gcode.split("M226");
 

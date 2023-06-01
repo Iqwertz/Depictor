@@ -10,7 +10,7 @@
 
 //imports
 import { logger } from "../utils/logger.util";
-import { Request, Response } from "express";
+import { Request, Response, raw } from "express";
 import { disconnectTerminal } from "../middleware/terminal.middleware";
 import { drawNextMultiToolGcode, executeCustomGcode } from "../middleware/draw.middleware";
 const fs = require("fs");
@@ -75,7 +75,12 @@ async function getDrawenGcode(req: Request, res: Response) {
   logger.http("post: getDrawenGcode");
   if (globalThis.isDrawing) {
     //check if maschine is drawing
-    let rawGcode = fs.readFileSync("assets/gcodes/gcode.nc", "utf8"); //read gcode
+    let rawGcode = "";
+    if (multiToolState.active) {
+      rawGcode = fs.readFileSync("assets/gcodes/multiTool/original.nc", "utf8"); //read gcode
+    } else {
+      rawGcode = fs.readFileSync("assets/gcodes/gcode.nc", "utf8"); //read gcode
+    }
     res.json({ state: globalThis.appState, isDrawing: globalThis.isDrawing, data: rawGcode }); //return gcode and appstate information
   } else {
     res.json({ state: globalThis.appState, err: "not_drawing" }); //return not drawing error
