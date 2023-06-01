@@ -119,6 +119,7 @@ export function drawGcode(gcode: string, multiTool?: boolean) {
                   globalThis.multiToolState.state = "finished";
                   globalThis.multiToolState.active = false;
                   globalThis.appState = "idle";
+                  globalThis.isDrawing = false;
                 } else {
                   globalThis.multiToolState.state = "waiting";
                   let gcode = globalThis.multiToolState.multiToolGcodes[globalThis.multiToolState.currentGcodeId - 1]; //-1 because the first gcode is not in the array

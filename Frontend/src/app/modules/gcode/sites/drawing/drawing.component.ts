@@ -71,6 +71,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     this.backendConnectService
       .checkProgress()
       .subscribe((res: StateResponse) => {
+        console.log(res);
         this.isDrawing = res.isDrawing;
         if (!this.isDrawing) {
           this.drawingProgress = 0;
