@@ -176,8 +176,6 @@ function startMultiToolGcode(gcode: string) {
     });
   }
 
-  console.log(globalThis.multiToolState.multiToolGcodes);
-
   //save all gcode files
   for (let i = 0; i < gcodes.length; i++) {
     gcodes[i] = "$X\n" + gcodes[i]; //add $X to the beginning of each gcode to unlock grbl

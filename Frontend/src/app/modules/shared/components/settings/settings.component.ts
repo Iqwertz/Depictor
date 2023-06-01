@@ -59,10 +59,18 @@ export interface Settings {
   displayDefaultTransform: Transformation; //Default Transdorm applied to The gcode Renderer
   standardizeGcode: boolean;
   standardizerSettings: StandartizerSettings;
+  enablePenChange: boolean;
+  penChangeSettings: PenChangeSettings;
   floatingPoints: number;
   port: string;
   converter: ConverterSettings;
   autoSelectConverter: boolean;
+}
+
+export interface PenChangeSettings {
+  penChangeCommand: string;
+  penChangeParkGcode: string;
+  penChangeUnparkGcode: string;
 }
 
 export interface ConverterSettings {

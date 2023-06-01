@@ -52,7 +52,7 @@ export class SiteStateService {
   autoRouting: boolean = true;
 
   lastAppState: AppStates = 'idle';
-  serverOnline: boolean = true;
+  serverOnline: boolean = false;
 
   appState: StateResponse = {
     isDrawing: false,

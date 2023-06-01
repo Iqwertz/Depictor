@@ -41,15 +41,21 @@ const settings: Settings = {
     mirrorX: false,
     mirrorY: false,
   },
-  standardizeGcode: true,
   floatingPoints: 3,
+  standardizeGcode: true,
   standardizerSettings: {
     convertG0: true,
     removeUnsupportedCommands: true,
     removeUnusedParameter: true,
     scaleToDrawingArea: true,
     transfromToPositiveSpace: true,
-    supportedCommands: 'G1;G4;M3;M03;M5;M05;F;$',
+    supportedCommands: 'G1;G4;M3;M03;M5;M05;M226;F;$',
+  },
+  enablePenChange: true,
+  penChangeSettings: {
+    penChangeCommand: 'M226',
+    penChangeParkGcode: 'G01X0Y0;',
+    penChangeUnparkGcode: 'G01X0Y0;',
   },
   port: '',
   converter: {
