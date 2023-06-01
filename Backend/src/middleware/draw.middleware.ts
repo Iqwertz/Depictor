@@ -217,6 +217,7 @@ export function drawNextMultiToolGcode() {
     return;
   }
 
+  globalThis.multiToolState.state = "drawing";
   let gcodeFileName = globalThis.multiToolState.multiToolGcodes[globalThis.multiToolState.currentGcodeId - 1].gcodeName;
   let gcode = fse.readFileSync("assets/gcodes/multiTool/" + gcodeFileName + ".nc", "utf8");
   drawGcode(gcode, true);
