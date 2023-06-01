@@ -123,7 +123,7 @@ export function drawGcode(gcode: string, multiTool?: boolean) {
               //reset appstate and drawing progress
               if (multiTool) {
                 globalThis.multiToolState.currentGcodeId++;
-                if (globalThis.multiToolState.currentGcodeId >= globalThis.multiToolState.multiToolGcodes.length) {
+                if (globalThis.multiToolState.currentGcodeId > globalThis.multiToolState.multiToolGcodes.length) {
                   globalThis.multiToolState.state = "finished";
                   globalThis.multiToolState.active = false;
                   globalThis.appState = "idle";
@@ -181,7 +181,11 @@ function startMultiToolGcode(gcode: string) {
     let gcodeName: string = "tool" + i;
     let color: string = firstLine.split(" ")[0];
     let messageWords = firstLine.split(" ");
-    messageWords.shift();
+    if (color.startsWith("#")) {
+      messageWords.shift();
+    } else {
+      color = "#000000";
+    }
     let message: string = messageWords.join(" ");
 
     globalThis.multiToolState.multiToolGcodes.push({

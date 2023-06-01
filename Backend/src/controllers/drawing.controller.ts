@@ -117,10 +117,14 @@ returns:
 async function stop(req: Request, res: Response) {
   logger.http("post: stop");
   globalThis.drawingProgress = 0; //reset drawing progress
+  globalThis.multiToolState.state = "finished";
+  globalThis.multiToolState.active = false;
+
   kill(globalThis.currentDrawingProcessPID); //kill the drawing process
   setTimeout(() => {
     //Home after some timeout because kill() needs some time
     globalThis.appState = "idle"; //reset appState
+    globalThis.isDrawing = false;
     disconnectTerminal();
     exec("./scripts/home.sh", function (err: any, data: any) {
       if (err) {
