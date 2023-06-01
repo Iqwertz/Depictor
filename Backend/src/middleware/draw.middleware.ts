@@ -82,6 +82,9 @@ export function drawGcode(gcode: string, multiTool?: boolean) {
           if (!isNaN(currentToolDrawingProgress + multiToolDrawingProgressModifier)) {
             globalThis.drawingProgress = currentToolDrawingProgress + multiToolDrawingProgressModifier;
           }
+          console.log("Progress:");
+          console.log(currentToolDrawingProgress);
+          console.log(multiToolDrawingProgressModifier);
           console.log(globalThis.drawingProgress);
         });
 
