@@ -78,7 +78,10 @@ export function drawGcode(gcode: string, multiTool?: boolean) {
         tail.on("line", function (data: any) {
           //update progress when a new line is drawen
           data = data.trim();
-          globalThis.drawingProgress = parseInt(data.replace(/[^\d].*/, "")) + multiToolDrawingProgressModifier;
+          let progress = parseInt(data.replace(/[^\d].*/, "")) + multiToolDrawingProgressModifier;
+          if (!isNaN(progress)) {
+            globalThis.drawingProgress = progress;
+          }
           console.log(globalThis.drawingProgress);
         });
 
