@@ -115,7 +115,7 @@ export function drawGcode(gcode: string, multiTool?: boolean) {
               globalThis.drawingProgress = 0;
               if (multiTool) {
                 globalThis.multiToolState.currentGcodeId++;
-                if (globalThis.multiToolState.currentGcodeId > globalThis.multiToolState.multiToolGcodes.length) {
+                if (globalThis.multiToolState.currentGcodeId >= globalThis.multiToolState.multiToolGcodes.length) {
                   globalThis.multiToolState.state = "finished";
                   globalThis.multiToolState.active = false;
                   globalThis.appState = "idle";
@@ -209,6 +209,11 @@ function startMultiToolGcode(gcode: string) {
 export function drawNextMultiToolGcode() {
   if (globalThis.multiToolState.currentGcodeId == 0) {
     console.error("Cant draw initial gcode with drawNextMultiToolGcode()");
+    return;
+  }
+
+  if (globalThis.multiToolState.currentGcodeId > globalThis.multiToolState.multiToolGcodes.length) {
+    console.error("Cant draw next gcode because there are no more gcodes");
     return;
   }
 
