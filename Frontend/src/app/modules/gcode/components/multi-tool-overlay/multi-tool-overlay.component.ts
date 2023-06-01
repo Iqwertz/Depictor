@@ -14,14 +14,33 @@ export class MultiToolOverlayComponent implements OnInit {
 
   constructor(private backendConnectService: BackendConnectService) {}
 
-  ngOnInit(): void {
-    let id = this.multiToolState?.currentGcodeId;
-    if (id && id > 0) {
-      this.toolMessage = this.multiToolState?.multiToolGcodes[id - 1].message;
-    }
-  }
+  ngOnInit(): void {}
 
   continueDrawing() {
     this.backendConnectService.continueMultiTool();
+  }
+
+  getToolMessage(multiToolState: MultiToolState | null): string {
+    if (!multiToolState) return '';
+    let id = multiToolState?.currentGcodeId;
+    let toolMessage = '';
+
+    if (id && id > 0) {
+      toolMessage = multiToolState?.multiToolGcodes[id - 1].message;
+    }
+
+    return toolMessage;
+  }
+
+  getColor(multiToolState: MultiToolState | null): string {
+    if (!multiToolState) return '';
+    let id = multiToolState?.currentGcodeId;
+    let color = '';
+
+    if (id && id > 0) {
+      color = multiToolState?.multiToolGcodes[id - 1].color;
+    }
+
+    return color;
   }
 }

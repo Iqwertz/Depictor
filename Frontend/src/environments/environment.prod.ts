@@ -55,7 +55,7 @@ const settings: Settings = {
   penChangeSettings: {
     penChangeCommand: 'M226',
     penChangeParkGcode: 'G01X0Y0;',
-    penChangeUnparkGcode: 'G01X0Y0;',
+    penChangeUnparkGcode: '$X\nG92X0Y0Z0\nF4000\nG21\nG90\nM05\nG4P0.5;',
   },
   port: '',
   converter: {

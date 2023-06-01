@@ -276,6 +276,8 @@ export class SettingsComponent implements OnInit {
   getIniSettings() {
     this.backendConnectService.getSettings().subscribe((res: any) => {
       this.settingsBefore = res;
+      console.log('settings before');
+      console.log(this.settingsBefore);
     });
   }
 

@@ -336,11 +336,14 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
       ) {
         this.ctx.stroke();
         let color = command.split(' ')[1];
-        console.log(color);
+        if (!color.startsWith('#')) {
+          color = '#FFFFFF';
+        }
+        //console.log(color);
         this.ctx.beginPath();
         this.ctx.strokeStyle = color;
       } else {
-        console.log(command);
+        //console.log(command);
       }
     }
     this.ctx.stroke();

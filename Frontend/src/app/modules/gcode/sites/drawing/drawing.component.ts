@@ -95,7 +95,6 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
       if (res.multiToolState) {
         this.multiToolState = res.multiToolState;
-        console.log(this.multiToolState);
       }
     });
 

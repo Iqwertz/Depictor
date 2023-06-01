@@ -4,4 +4,27 @@
   padding: 40px 30px;
   border-radius: 5px;
   border: 1px solid #000000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .message {
+    font-size: 0.8em;
+    font-style: italic;
+    margin: 10px 0 0 0;
+  }
+
+  .color-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    margin: 10px 0 15px 0;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .container {
+    font-size: 1.6em;
+    width: 70vw;
+  }
 }
