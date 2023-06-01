@@ -12,7 +12,7 @@ import { Store, Select } from '@ngxs/store';
 import { LoadingService } from '../modules/shared/services/loading.service';
 import { AppState } from '../store/app.state';
 import { Observable } from 'rxjs';
-import { StateResponse } from './site-state.service';
+import { MultiToolState, StateResponse } from './site-state.service';
 import { environment } from '../../environments/environment';
 import {
   ConverterConfig,
@@ -133,7 +133,7 @@ export class BackendConnectService {
   /**
    *sends a post request to check the current backend server state
    *
-   * @return {*}  {Observable<StateResponse>}
+   * @return {*}  {data: number}
    * @memberof BackendConnectService
    */
   checkProgress(): Observable<StateResponse> {
@@ -149,7 +149,7 @@ export class BackendConnectService {
    * @memberof BackendConnectService
    */
   checkDrawingProgress(): Observable<any> {
-    return this.http.post<StateResponse>(
+    return this.http.post<{ data: number; multiToolState?: MultiToolState }>(
       'http://' + this.ip + '/getDrawingProgress',
       {}
     );

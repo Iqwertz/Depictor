@@ -91,6 +91,13 @@ export class DrawingComponent implements OnInit, AfterViewInit {
         }
         this.drawingProgress = res.data;
       }
+
+      console.log(res);
+
+      if (res.multiToolState) {
+        this.multiToolState = res.multiToolState;
+        console.log(this.multiToolState);
+      }
     });
 
     setTimeout(() => {

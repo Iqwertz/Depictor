@@ -70,7 +70,7 @@ export class GcodeViewerService {
     }
     this.gcodeType = gcodeType;
     this.gcodeFile = file;
-    this.maxLines = this.gcodeFile.split(/\r?\n/).length;
+    this.maxLines = this.gcodeFile.split(/\r?\n/).length - 1;
     this.editorTransformationMatrix = [
       [1, 0],
       [0, 1],

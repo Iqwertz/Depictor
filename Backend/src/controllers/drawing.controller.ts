@@ -33,13 +33,18 @@ returns:
    successful:
     {
       data: number [amount of gcode lines]
+      multiToolState?: MultiToolState
     }
 */
 async function getDrawingProgress(req: Request, res: Response) {
   logger.http("post: getDrawingProgress");
   if (globalThis.isDrawing) {
     //check if drawing
-    res.json({ data: globalThis.drawingProgress }); //return progress
+    if (globalThis.multiToolState.active) {
+      res.json({ data: globalThis.drawingProgress, multiToolState: globalThis.multiToolState }); //return progress
+    } else {
+      res.json({ data: globalThis.drawingProgress }); //return progress
+    }
   } else {
     res.json({ err: "not_drawing", data: globalThis.drawingProgress }); //return notdrawing error
   }
