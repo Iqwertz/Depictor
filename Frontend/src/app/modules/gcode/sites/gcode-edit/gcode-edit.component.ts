@@ -138,8 +138,25 @@ export class GcodeEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
     let gcodeArray: string[] = serverGcode.split('\n');
 
-    let fullTransformation = this.gcodeFunctions.multiplyMatrix(
+    // This applys the transformation matrix like displayed in the editor
+    let displayTransformMatrix =
+      this.gcodeFunctions.generateTransformationMatrix(
+        this.settings.displayDefaultTransform
+      );
+
+    let displayedTransformation = this.gcodeFunctions.multiplyMatrix(
       this.gcodeViewerService.editorTransformationMatrix,
+      displayTransformMatrix
+    );
+
+    let displayDefaultTransform = this.gcodeFunctions.multiplyMatrix(
+      this.gcodeFunctions.invertTransformationMatrix(displayTransformMatrix),
+      displayedTransformation
+    );
+    ////////////////////////////////
+
+    let fullTransformation = this.gcodeFunctions.multiplyMatrix(
+      displayDefaultTransform,
       this.gcodeFunctions.generateTransformationMatrix(
         this.settings.gcodeDefaultTransform
       )

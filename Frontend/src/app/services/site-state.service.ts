@@ -116,11 +116,10 @@ export class SiteStateService {
     this.backendConnectService.checkProgress().subscribe(
       (res: StateResponse) => {
         this.appState = res;
-
+        this.serverOnline = true;
         if (!this.autoRouting) {
           return;
         }
-        this.serverOnline = true;
 
         if (res.state == 'idle') {
           if (this.lastAppState == 'updating') {

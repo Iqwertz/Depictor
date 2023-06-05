@@ -178,6 +178,8 @@ export class SettingsComponent implements OnInit {
       this.settings = settings;
     });
 
+    this.siteStateService.checkServerState();
+
     this.getIniSettings();
   }
 
