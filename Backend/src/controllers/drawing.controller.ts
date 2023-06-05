@@ -76,7 +76,7 @@ async function getDrawenGcode(req: Request, res: Response) {
   if (globalThis.isDrawing) {
     //check if maschine is drawing
     let rawGcode = "";
-    if (multiToolState.active) {
+    if (globalThis.multiToolState.active) {
       rawGcode = fs.readFileSync("assets/gcodes/multiTool/original.nc", "utf8"); //read gcode
     } else {
       rawGcode = fs.readFileSync("assets/gcodes/gcode.nc", "utf8"); //read gcode
@@ -117,8 +117,10 @@ returns:
 async function stop(req: Request, res: Response) {
   logger.http("post: stop");
   globalThis.drawingProgress = 0; //reset drawing progress
-  globalThis.multiToolState.state = "finished";
-  globalThis.multiToolState.active = false;
+  if (globalThis.multiToolState) {
+    globalThis.multiToolState.state = "finished";
+    globalThis.multiToolState.active = false;
+  }
 
   kill(globalThis.currentDrawingProcessPID); //kill the drawing process
   setTimeout(() => {
