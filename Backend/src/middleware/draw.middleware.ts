@@ -162,6 +162,18 @@ export function drawGcode(gcode: string, multiTool?: boolean) {
   );
 }
 
+/**
+ * simple function that resets the drawing progress
+ * this is used when a new drawing is started
+ * @export
+ * @returns {void}
+ */
+
+export function resetDrawingProgress() {
+  globalThis.drawingProgress = 0;
+  multiToolDrawingProgressModifier = 0;
+}
+
 function startMultiToolGcode(gcode: string) {
   globalThis.multiToolState = {
     active: true,
@@ -171,7 +183,7 @@ function startMultiToolGcode(gcode: string) {
     currentGcodeId: 0,
     multiToolGcodes: [],
   };
-  multiToolDrawingProgressModifier = 0;
+  resetDrawingProgress();
 
   let gcodes: string[] = gcode.split("M226");
 

@@ -15,7 +15,7 @@ import { Request, Response } from "express";
 import { enviroment } from "../config/enviroment";
 import { removeBg, skipRemoveBg } from "../middleware/removeBG.middleware";
 import { convertBase64ToGcode } from "../middleware/converter.middleware";
-import { drawGcode } from "../middleware/draw.middleware";
+import { drawGcode, resetDrawingProgress } from "../middleware/draw.middleware";
 
 //interfaces
 interface GalleryEntryUpload {
@@ -145,6 +145,7 @@ async function postGcode(req: Request, res: Response) {
   if (!globalThis.isDrawing && globalThis.appState != "error") {
     //check if maschine is not drawing and maschine is ready
     let gcode: string = req.body.gcode;
+    resetDrawingProgress(); //reset printing progress
     drawGcode(gcode); //draw gcode
 
     res.json({ appState: globalThis.appState });
