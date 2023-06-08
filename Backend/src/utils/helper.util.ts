@@ -50,3 +50,19 @@ export function chmodConverters() {
     logger.error("no config found - chmoding converters canceled");
   }
 }
+
+/**
+ * loadSettings
+ * loads the settings.json file and returns it if it exists
+ * @returns {any | undefined} - the settings file or undefined if it doesnt exist
+ */
+export function loadSettings(): any | undefined {
+  if (fs.existsSync("data/settings.json")) {
+    logger.info("found settings");
+    let settings = JSON.parse(fs.readFileSync("data/settings.json", "utf8"));
+    return settings;
+  } else {
+    logger.error("couldnt find settings");
+    return undefined;
+  }
+}

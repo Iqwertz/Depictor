@@ -1,4 +1,11 @@
-import { Component, OnInit, forwardRef, Input } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  forwardRef,
+  Input,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
@@ -22,8 +29,11 @@ export class SettingsCheckboxComponent implements OnInit {
 
   // Allow the input to be disabled.
   @Input() disabled = false;
+  @Output() change = new EventEmitter<Boolean>();
 
-  onChange = (checked: boolean) => {};
+  onChange = (checked: boolean) => {
+    this.change.emit(checked);
+  };
 
   // Function to call when the input is touched.
   onTouched = () => {};
