@@ -26,6 +26,14 @@ globalThis.currentDrawingProcessPID = 0; //used to stop the drawing process
 globalThis.lastGeneratedGcode = ""; //used to store the last generated gcode
 globalThis.isLinux = process.platform === "linux";
 globalThis.httpServer = require("http").createServer(app); //create new http server
+globalThis.multiToolState = {
+  active: false,
+  currentColor: "",
+  currentGcodeId: 0,
+  currentMessage: "",
+  multiToolGcodes: [],
+  state: "finished",
+}; //var to track the current multitool state
 iniTerminalSocket(); //initialize socket.io
 
 //configure express

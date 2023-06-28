@@ -59,6 +59,7 @@ import { SimpleLoaderComponent } from './components/simple-loader/simple-loader.
     TerminalButtonComponent,
     DragndropComponent,
     SimpleLoaderComponent,
+    SettingsUiButtonComponent,
   ],
 })
 export class SharedModule {}

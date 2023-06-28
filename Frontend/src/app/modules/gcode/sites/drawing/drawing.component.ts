@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import {
+  MultiToolState,
   SiteStateService,
   StateResponse,
 } from '../../../../services/site-state.service';
@@ -30,6 +31,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     | undefined;
 
   isDrawing: boolean = false;
+  multiToolState: MultiToolState | null = null;
   drawingProgress: number = 0;
 
   ngOnInit(): void {
@@ -69,9 +71,15 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     this.backendConnectService
       .checkProgress()
       .subscribe((res: StateResponse) => {
+        console.log(res);
         this.isDrawing = res.isDrawing;
         if (!this.isDrawing) {
           this.drawingProgress = 0;
+        }
+        if (res.multiTool) {
+          this.multiToolState = res.multiTool;
+        } else {
+          this.multiToolState = null;
         }
       });
   }
@@ -83,6 +91,10 @@ export class DrawingComponent implements OnInit, AfterViewInit {
           this.renderer?.updateDrawingGcode(res.data);
         }
         this.drawingProgress = res.data;
+      }
+
+      if (res.multiToolState) {
+        this.multiToolState = res.multiToolState;
       }
     });
 

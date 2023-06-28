@@ -138,8 +138,25 @@ export class GcodeEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
     let gcodeArray: string[] = serverGcode.split('\n');
 
-    let fullTransformation = this.gcodeFunctions.multiplyMatrix(
+    // This applys the transformation matrix like displayed in the editor
+    let displayTransformMatrix =
+      this.gcodeFunctions.generateTransformationMatrix(
+        this.settings.displayDefaultTransform
+      );
+
+    let displayedTransformation = this.gcodeFunctions.multiplyMatrix(
       this.gcodeViewerService.editorTransformationMatrix,
+      displayTransformMatrix
+    );
+
+    let displayDefaultTransform = this.gcodeFunctions.multiplyMatrix(
+      this.gcodeFunctions.invertTransformationMatrix(displayTransformMatrix),
+      displayedTransformation
+    );
+    ////////////////////////////////
+
+    let fullTransformation = this.gcodeFunctions.multiplyMatrix(
+      displayDefaultTransform,
       this.gcodeFunctions.generateTransformationMatrix(
         this.settings.gcodeDefaultTransform
       )
@@ -217,6 +234,10 @@ export class GcodeEditComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
 
+      if (this.settings.enablePenChange) {
+        strippedGcode = this.modifyForPenChange(strippedGcode);
+      }
+
       strippedGcode =
         this.settings.startGcode +
         '\n' +
@@ -260,5 +281,36 @@ export class GcodeEditComponent implements OnInit, AfterViewInit, OnDestroy {
       );
     }
     return resultMatrix;
+  }
+
+  modifyForPenChange(gcode: string): string {
+    let gcodeArray: string[] = gcode.split('\n');
+    let searchedAllLines: boolean = false; //need to it this way since the array is modified while iterating over it
+
+    let i = 0;
+    while (!searchedAllLines) {
+      let line = gcodeArray[i];
+      if (line.startsWith(this.settings.penChangeSettings.penChangeCommand)) {
+        //insert pen change park command
+        gcodeArray.splice(
+          i,
+          0,
+          this.settings.penChangeSettings.penChangeParkGcode
+        );
+        i++;
+        //insert pen change unpark command
+        gcodeArray.splice(
+          i + 1,
+          0,
+          this.settings.penChangeSettings.penChangeUnparkGcode
+        );
+        i++;
+      }
+      i++;
+      if (i >= gcodeArray.length) {
+        searchedAllLines = true;
+      }
+    }
+    return gcodeArray.join('\n');
   }
 }
