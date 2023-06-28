@@ -288,6 +288,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit, OnDestroy {
     let searchedAllLines: boolean = false; //need to it this way since the array is modified while iterating over it
 
     let i = 0;
+    console.time('modifyForPenChange');
     while (!searchedAllLines) {
       let line = gcodeArray[i];
       if (line.startsWith(this.settings.penChangeSettings.penChangeCommand)) {
@@ -311,6 +312,7 @@ export class GcodeEditComponent implements OnInit, AfterViewInit, OnDestroy {
         searchedAllLines = true;
       }
     }
+    console.timeEnd('modifyForPenChange');
     return gcodeArray.join('\n');
   }
 }
