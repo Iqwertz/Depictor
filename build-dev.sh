@@ -3,8 +3,6 @@
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd "$parent_path"
 
-vn="v0.0.0 dev"
-
 echo "Building Frontend"
 cd Frontend
 npm install
@@ -26,7 +24,7 @@ rm -rf node_modules
 rm -rf data
 
 cat > ./src/version.ts << ENDOFFILE
-export const version = { tag: "$vn", production: true };
+export const version = { tag: "$1", production: true };
 ENDOFFILE
 
 cd ../
