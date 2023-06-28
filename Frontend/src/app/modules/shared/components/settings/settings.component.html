@@ -258,6 +258,66 @@
     </div>
 
     <div class="divider" *ngIf="siteStateService.serverOnline">
+      <div class="label">Pen change</div>
+    </div>
+
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">
+        Enable pen change
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            When this is enabled, the gcode will be checked for a pen change
+            command and Depictor will handle the pen change sequence. This
+            feature is inteded for systems like grbl that don't support pen
+            change commands natively.
+          </div>
+        </div>
+      </div>
+      <app-settings-checkbox
+        [(ngModel)]="settings.enablePenChange"
+      ></app-settings-checkbox>
+    </div>
+
+    <div
+      class="setting-line indent"
+      *ngIf="siteStateService.serverOnline && settings.enablePenChange"
+    >
+      <div class="label small">
+        Pen change command
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            This command indicates a pen change in the gcode.
+          </div>
+        </div>
+      </div>
+      <app-settings-textinput
+        [(ngModel)]="settings.penChangeSettings.penChangeCommand"
+      ></app-settings-textinput>
+    </div>
+
+    <div
+      class="setting-line indent"
+      *ngIf="siteStateService.serverOnline && settings.enablePenChange"
+    >
+      <div class="label small">Park gcode</div>
+      <app-settings-textarea
+        [(ngModel)]="settings.penChangeSettings.penChangeParkGcode"
+      ></app-settings-textarea>
+    </div>
+
+    <div
+      class="setting-line indent"
+      *ngIf="siteStateService.serverOnline && settings.enablePenChange"
+    >
+      <div class="label small">Unpark gcode</div>
+      <app-settings-textarea
+        [(ngModel)]="settings.penChangeSettings.penChangeUnparkGcode"
+      ></app-settings-textarea>
+    </div>
+
+    <div class="divider" *ngIf="siteStateService.serverOnline">
       <div class="label">Drawing area</div>
     </div>
 
@@ -316,6 +376,14 @@
       <app-settings-checkbox
         [(ngModel)]="settings.traverseBoundingBox"
       ></app-settings-checkbox>
+    </div>
+
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">Traverse bounds speed</div>
+      <app-settings-textinput
+        [type]="'number'"
+        [(ngModel)]="settings.traverseBoundingBoxSpeed"
+      ></app-settings-textinput>
     </div>
 
     <div class="divider" *ngIf="siteStateService.serverOnline">
@@ -414,6 +482,22 @@
         [(ngModel)]="settings.gcodeDefaultTransform.mirrorY"
       >
       </app-settings-checkbox>
+    </div>
+
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">
+        Enable Hardware Flow Control
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            Disable this settings if your plotter does not support hardware flow
+            control
+          </div>
+        </div>
+      </div>
+      <app-settings-checkbox
+        [(ngModel)]="settings.enableHardwareControlflow"
+      ></app-settings-checkbox>
     </div>
 
     <div class="divider" *ngIf="siteStateService.serverOnline">

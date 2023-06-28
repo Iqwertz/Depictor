@@ -238,6 +238,24 @@ export class GcodeFunctionsService {
     return transformationMatrix;
   }
 
+  invertTransformationMatrix(matrix: number[][]): number[][] {
+    let determinant = this.determinant(matrix);
+    let inverse = [
+      [matrix[1][1], -matrix[0][1]],
+      [-matrix[1][0], matrix[0][0]],
+    ];
+    for (let i = 0; i < inverse.length; i++) {
+      for (let j = 0; j < inverse[i].length; j++) {
+        inverse[i][j] = inverse[i][j] / determinant;
+      }
+    }
+    return inverse;
+  }
+
+  determinant(matrix: number[][]): number {
+    return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+  }
+
   getBiggestValues(gcode: string): number[][] {
     //determins the farthest and closest coordinates
     let commands: string[] = gcode.split(/\r?\n/);

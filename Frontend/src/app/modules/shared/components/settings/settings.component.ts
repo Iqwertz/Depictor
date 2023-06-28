@@ -52,16 +52,26 @@ export interface Settings {
   maxImageFileSize: number;
   centerOnDrawingArea: boolean;
   traverseBoundingBox: boolean;
+  traverseBoundingBoxSpeed: number;
   paperProfiles: PaperProfile[];
   selectedPaperProfile: PaperProfile;
   gcodeDefaultTransform: Transformation; //Default Transform applied to all gcodes
   displayDefaultTransform: Transformation; //Default Transdorm applied to The gcode Renderer
   standardizeGcode: boolean;
   standardizerSettings: StandartizerSettings;
+  enablePenChange: boolean;
+  penChangeSettings: PenChangeSettings;
   floatingPoints: number;
   port: string;
   converter: ConverterSettings;
   autoSelectConverter: boolean;
+  enableHardwareControlflow: boolean;
+}
+
+export interface PenChangeSettings {
+  penChangeCommand: string;
+  penChangeParkGcode: string;
+  penChangeUnparkGcode: string;
 }
 
 export interface ConverterSettings {
@@ -169,6 +179,8 @@ export class SettingsComponent implements OnInit {
       this.settings = settings;
     });
 
+    this.siteStateService.checkServerState();
+
     this.getIniSettings();
   }
 
@@ -267,6 +279,8 @@ export class SettingsComponent implements OnInit {
   getIniSettings() {
     this.backendConnectService.getSettings().subscribe((res: any) => {
       this.settingsBefore = res;
+      console.log('settings before');
+      console.log(this.settingsBefore);
     });
   }
 

@@ -22,6 +22,22 @@ export interface StateResponse {
   isDrawing: boolean;
   removeBG: boolean;
   data?: string;
+  multiTool?: MultiToolState;
+}
+
+export interface MultiToolState {
+  active: boolean;
+  state: 'drawing' | 'waiting' | 'finished' | 'failed';
+  currentMessage: string;
+  currentColor: string;
+  currentGcodeId: number;
+  multiToolGcodes: MultiToolGcode[];
+}
+
+interface MultiToolGcode {
+  gcodeName: string;
+  message: string;
+  color: string;
 }
 
 @Injectable({
@@ -36,7 +52,7 @@ export class SiteStateService {
   autoRouting: boolean = true;
 
   lastAppState: AppStates = 'idle';
-  serverOnline: boolean = true;
+  serverOnline: boolean = false;
 
   appState: StateResponse = {
     isDrawing: false,
@@ -94,14 +110,16 @@ export class SiteStateService {
   }
 
   checkServerState() {
+    if (!this.serverOnline) {
+      console.log('Server offline - checking availability');
+    }
     this.backendConnectService.checkProgress().subscribe(
       (res: StateResponse) => {
         this.appState = res;
-
+        this.serverOnline = true;
         if (!this.autoRouting) {
           return;
         }
-        this.serverOnline = true;
 
         if (res.state == 'idle') {
           if (this.lastAppState == 'updating') {

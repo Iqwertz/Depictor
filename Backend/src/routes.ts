@@ -36,6 +36,7 @@ router.post("/getDrawenGcode", drawingController.getDrawenGcode);
 router.post("/cancle", drawingController.cancle);
 router.post("/stop", drawingController.stop);
 router.post("/executeGcode", drawingController.executeGcode);
+router.post("/continueMultiTool", drawingController.continueMultiTool);
 
 //gallery routes
 router.post("/delete", galleryController.deleteEntry);

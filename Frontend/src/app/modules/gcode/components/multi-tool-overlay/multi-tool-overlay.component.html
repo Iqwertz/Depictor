@@ -1,0 +1,14 @@
+<div class="container" *ngIf="multiToolState?.state == 'waiting'">
+  Paused for tool change:
+  <p class="message">
+    {{ getToolMessage(multiToolState) }}
+  </p>
+  <div
+    class="color-circle"
+    [ngStyle]="{ 'background-color': getColor(multiToolState) }"
+  ></div>
+  <app-settings-ui-button
+    [name]="'Continue'"
+    (clicked)="continueDrawing()"
+  ></app-settings-ui-button>
+</div>
