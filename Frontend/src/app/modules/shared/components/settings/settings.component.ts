@@ -65,6 +65,7 @@ export interface Settings {
   port: string;
   converter: ConverterSettings;
   autoSelectConverter: boolean;
+  enableHardwareControlflow: boolean;
 }
 
 export interface PenChangeSettings {
@@ -255,6 +256,7 @@ export class SettingsComponent implements OnInit {
     this.http
       .get('https://api.github.com/repos/iqwertz/depictor/tags')
       .subscribe((res: any) => {
+        console.log(res);
         if (
           res[0].name != this.backendVersion.tag &&
           this.backendVersion.production

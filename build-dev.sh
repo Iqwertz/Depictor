@@ -3,7 +3,7 @@
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd "$parent_path"
 
-vn="v0.0.0 dev"
+vn=$1
 
 echo "Building Frontend"
 cd Frontend

@@ -484,6 +484,22 @@
       </app-settings-checkbox>
     </div>
 
+    <div class="setting-line" *ngIf="siteStateService.serverOnline">
+      <div class="label small">
+        Enable Hardware Flow Control
+        <div class="tooltip">
+          <fa-icon [icon]="faInfo"></fa-icon>
+          <div class="content">
+            Disable this settings if your plotter does not support hardware flow
+            control
+          </div>
+        </div>
+      </div>
+      <app-settings-checkbox
+        [(ngModel)]="settings.enableHardwareControlflow"
+      ></app-settings-checkbox>
+    </div>
+
     <div class="divider" *ngIf="siteStateService.serverOnline">
       <div class="label">Image Converter</div>
     </div>
