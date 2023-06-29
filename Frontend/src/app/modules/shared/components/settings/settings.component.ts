@@ -262,7 +262,6 @@ export class SettingsComponent implements OnInit {
     this.http
       .get('https://api.github.com/repos/iqwertz/depictor/tags')
       .subscribe((res: any) => {
-        console.log(res);
         if (
           res[0].name != this.backendVersion.tag &&
           this.backendVersion.production
@@ -324,10 +323,8 @@ export class SettingsComponent implements OnInit {
     this.http
       .get('https://api.github.com/repos/iqwertz/depictor/tags')
       .subscribe((res: any) => {
-        console.log(res);
         const betaTag = res.find((t: any) => t.name.startsWith('Beta'));
         if (betaTag) {
-          console.log(betaTag);
           this.latestBetaTag = betaTag.name;
         }
       });
