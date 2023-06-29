@@ -531,6 +531,21 @@
       ></app-settings-ui-button>
     </div>
 
+    <div
+      class="setting-line"
+      *ngIf="siteStateService.serverOnline && settings.enableBetaFeatures"
+    >
+      <div class="label small">Available beta release</div>
+      <div class="label small wide" *ngIf="latestBetaTag == ''">
+        <b>No Beta release found</b>
+      </div>
+      <app-settings-ui-button
+        *ngIf="latestBetaTag != ''"
+        [name]="latestBetaTag"
+        (clicked)="updateBeta()"
+      ></app-settings-ui-button>
+    </div>
+
     <div class="setting-line" *ngIf="siteStateService.serverOnline">
       <div class="label small">
         Download data
@@ -570,7 +585,7 @@
         (clicked)="showLogs = true"
       ></app-settings-ui-button>
     </div>
-    <div class="version">
+    <div class="version" (click)="versionNumberClicked()">
       Version: {{ backendVersion.tag }}
       {{ backendVersion.production ? "" : "Development" }}
     </div>

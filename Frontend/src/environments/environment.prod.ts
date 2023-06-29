@@ -72,6 +72,7 @@ const settings: Settings = {
   },
   autoSelectConverter: true,
   enableHardwareControlflow: true,
+  enableBetaFeatures: false,
 };
 
 export const environment = {
