@@ -2,7 +2,7 @@ name: build-dev
 on:
   push:
     branches:
-      - beta-release
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,7 +21,7 @@ jobs:
       - name: Install zip
         uses: montudor/action-zip@v1
       - name: Get latest Beta Tag
-        run: .scripts/getLatestBetaTag.sh >> $GITHUB_OUTPUT
+        run: . scripts/getLatestBetaTag.sh >> $GITHUB_OUTPUT
         id: latestBetaTag
       - name: running transform
         run: . build-dev.sh "beta build:" ${{ steps.date.outputs.date }}
