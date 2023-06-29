@@ -18,7 +18,7 @@ jobs:
       - name: Install zip
         uses: montudor/action-zip@v1
       - name: running transform
-        run: . build-dev.sh
+        run: . build-dev.sh "v0.0.0 dev"
       - uses: actions/upload-artifact@v3
         with:
           name: dev-build

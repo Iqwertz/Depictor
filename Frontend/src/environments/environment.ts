@@ -74,6 +74,7 @@ const settings: Settings = {
     selectedConverter: 'DrawbotV2',
   },
   autoSelectConverter: true,
+  enableHardwareControlflow: true,
 };
 
 export const environment = {

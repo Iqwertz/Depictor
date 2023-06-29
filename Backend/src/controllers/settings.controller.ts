@@ -21,7 +21,8 @@ import { execFile } from "child_process";
 import { disconnectTerminal } from "../middleware/terminal.middleware";
 import { version } from "../version";
 import { ConverterSettings } from "../middleware/converter.middleware";
-import { loadConfig } from "../utils/helper.util";
+import { loadConfig, loadSettings } from "../utils/helper.util";
+import e from "cors";
 const readLastLines = require("read-last-lines");
 const linesCount = require("file-lines-count");
 const { LinuxBinding, WindowsBinding } = require("@serialport/bindings-cpp");
@@ -204,10 +205,19 @@ function setSettings(settings: Object) {
         logger.error(err);
         return;
       } else {
+        applySettingsChange();
         logger.info("successfully saved settings");
       }
     });
   }
+}
+
+/*
+ *applySettingsChange()
+ *applies all settings that need to be applied immediately in the backend after settings change
+ */
+function applySettingsChange() {
+  applySerialPortChange();
 }
 
 function readSettingsFile(): Settings | null {
@@ -337,19 +347,40 @@ returns:
 async function setSerialPort(req: Request, res: Response) {
   //test this on linux
   logger.http("post: setSerialPort");
-  console.log("setting port to " + req.body.path);
+
   if (req.body.path) {
-    disconnectTerminal();
-    execFile("sudo", ["bash", "./scripts/changeSerialPort.sh", req.body.path], function (err: any, data: any) {
-      if (err) {
-        logger.error(err);
-      }
-    });
+    applySerialPortChange(req.body.path);
     res.json({});
   } else {
     logger.warn("setSerialPort: no path provided");
     res.json({ err: "no path provided" });
   }
+}
+
+function applySerialPortChange(port?: string) {
+  let eneableHardwareControlflow = "false";
+  let settings = loadSettings();
+
+  if (settings) {
+    if (settings.enableHardwareControlflow) {
+      eneableHardwareControlflow = "true";
+    }
+  } else {
+    logger.error("applySerialPortChange: no settings found");
+    return;
+  }
+  let serialPort = port || settings?.port;
+  console.log("setting port to " + port);
+  disconnectTerminal();
+  execFile(
+    "sudo",
+    ["bash", "./scripts/changeSerialPort.sh", serialPort, eneableHardwareControlflow],
+    function (err: any, data: any) {
+      if (err) {
+        logger.error(err);
+      }
+    }
+  );
 }
 
 /*

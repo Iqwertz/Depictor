@@ -65,6 +65,7 @@ export interface Settings {
   port: string;
   converter: ConverterSettings;
   autoSelectConverter: boolean;
+  enableHardwareControlflow: boolean;
 }
 
 export interface PenChangeSettings {
