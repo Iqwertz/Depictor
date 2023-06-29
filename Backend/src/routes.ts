@@ -51,6 +51,7 @@ router.post("/getGeneratedGcode", statusController.getGeneratedGcode);
 router.post("/setBGRemoveAPIKey", settingsController.setBGRemoveAPIKey);
 router.post("/shutdown", settingsController.shutdown);
 router.post("/update", settingsController.update);
+router.post("/updateBeta", settingsController.updateBeta);
 router.post("/getVersion", settingsController.getVersion);
 router.post("/changeSettings", settingsController.changeSettings);
 router.post("/changeConverterSettings", settingsController.changeConverterSettings);

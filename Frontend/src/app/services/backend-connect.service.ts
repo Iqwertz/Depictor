@@ -359,6 +359,22 @@ export class BackendConnectService {
   }
 
   /**
+   *sends a post request to update the system to a new Beta version. Will return a error if no update is available
+   *
+   * @memberof BackendConnectService
+   */
+  updateBeta(tag: string) {
+    this.snackbarService.notification(
+      'starting system update to beta version: ' + tag
+    );
+    this.http
+      .post('http://' + this.ip + '/updateBeta', {})
+      .subscribe((res: any) => {
+        //optional Error handling
+      });
+  }
+
+  /**
    *sends a post request to  shutdown the rpi
    *
    * @memberof BackendConnectService

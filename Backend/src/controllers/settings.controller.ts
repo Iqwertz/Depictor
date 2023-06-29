@@ -159,6 +159,40 @@ async function update(req: Request, res: Response) {
 }
 
 /*
+post: /updateBeta
+
+description: downloads and installs the latest beta version
+
+expected request: 
+  {tag: string} //the tag of the beta version
+  
+returns: 
+  unsuccessful 
+    {err: string}
+
+    successful
+    {}
+*/
+async function updateBeta(req: Request, res: Response) {
+  logger.http("post: updateBeta");
+
+  if (globalThis.appState == "updating") {
+    logger.warn("cant update - update is already in progress");
+    res.json({ err: "update_ongoing" });
+    return;
+  }
+  globalThis.appState = "updating";
+  execFile("sudo", ["./scripts/updateBeta.sh", req.body.tag], function (err: any, data: any) {
+    if (err) {
+      logger.error("Error " + err);
+      globalThis.appState = "error";
+      return;
+    }
+  });
+  res.json({});
+}
+
+/*
 post: /getVersion
 
 description: returns the version information of the backend
@@ -469,6 +503,7 @@ module.exports = {
   setBGRemoveAPIKey,
   shutdown,
   update,
+  updateBeta,
   getVersion,
   changeSettings,
   changeConverterSettings,

@@ -66,6 +66,7 @@ export interface Settings {
   converter: ConverterSettings;
   autoSelectConverter: boolean;
   enableHardwareControlflow: boolean;
+  enableBetaFeatures: boolean;
 }
 
 export interface PenChangeSettings {
@@ -142,6 +143,8 @@ export class SettingsComponent implements OnInit {
 
   updatesAvailable: boolean = false;
   availableUpdateVersion: string = '';
+  latestBetaTag: string = '';
+  versionNumberClicks: number = 0;
 
   showLogs: boolean = false;
 
@@ -163,6 +166,9 @@ export class SettingsComponent implements OnInit {
     this.backendConnectService.getBackendVersion().subscribe((v) => {
       this.backendVersion = v;
       this.checkForUpdates();
+      if (this.settings.enableBetaFeatures) {
+        this.getLatestBetaTag();
+      }
     });
 
     this.backendConnectService
@@ -305,6 +311,37 @@ export class SettingsComponent implements OnInit {
     this.backendConnectService.update();
     this.router.navigate(['']);
     this.close.emit();
+  }
+
+  updateBeta() {
+    this.backendConnectService.updateBeta(this.latestBetaTag);
+    this.router.navigate(['']);
+    this.close.emit();
+  }
+
+  getLatestBetaTag() {
+    this.http
+      .get('https://api.github.com/repos/iqwertz/depictor/tags')
+      .subscribe((res: any) => {
+        console.log(res);
+        const betaTag = res.find((t: any) => t.name.startsWith('Beta'));
+        if (betaTag) {
+          console.log(betaTag);
+          this.latestBetaTag = betaTag.name;
+        }
+      });
+  }
+
+  versionNumberClicked() {
+    this.versionNumberClicks++;
+    if (this.versionNumberClicks >= 5) {
+      this.versionNumberClicks = 0;
+      this.settings.enableBetaFeatures = !this.settings.enableBetaFeatures;
+      this.getLatestBetaTag();
+    }
+    setTimeout(() => {
+      this.versionNumberClicks = 0;
+    }, 10000);
   }
 
   resetSettings() {
