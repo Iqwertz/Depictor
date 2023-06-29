@@ -1,0 +1,67 @@
+name: build-dev
+on:
+  push:
+    branches:
+      - beta-release
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M')"
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+      - name: Install angular
+        run: npm install -g @angular/cli
+      - name: Install zip
+        uses: montudor/action-zip@v1
+      - name: Get latest Beta Tag
+        run: . scripts/getLatestBetaTag.sh >> $GITHUB_OUTPUT
+        id: latestBetaTag
+      - name: running transform
+        run: . build-dev.sh "beta build:" ${{ steps.date.outputs.date }}
+      - uses: dev-drprasad/delete-tag-and-release@v1.0
+        with:
+          tag_name: "${{ steps.latestBetaTag.outputs.TAG }}" # (required) tag name to be deleted
+          github_token: ${{ secrets.GITHUB_TOKEN }} # (required) a GitHub token with write access to the repo that needs to be modified
+          delete_release: true #(optional) default: true - delete release associated with the tag
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: Beta${{ steps.date.outputs.date }}
+          release_name: Beta Release (${{ steps.date.outputs.date }})
+          draft: false
+          prerelease: true
+          body: |
+            Beta Release (${{ steps.date.outputs.date }})
+            This is an auto generated release. From the latest update on the beta-release branch.
+            This release is for testing purposes only, and can contain buggy/non functional code.
+            To install it on your machin click the version number in the settings 5 times and then click the "Install Beta" button.
+      - name: Upload Release Asset Frontend
+        id: upload-release-asset-Frontend
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: Dev-Depictor-Frontend-Build.zip
+          asset_name: Depictor-Frontend-Build.zip
+          asset_content_type: application/zip
+      - name: Upload Release Asset Backend
+        id: upload-release-asset-Backend
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: Dev-Depictor-Backend.zip
+          asset_name: Depictor-Backend.zip
+          asset_content_type: application/zip
