@@ -5,12 +5,20 @@ OWNER="iqwertz"
 REPO="depictor"
 TAG=$1
 
+sudo apt-get install jq
+
 # GitHub API URL
 API_URL="https://api.github.com/repos/$OWNER/$REPO/releases/tags/$TAG"
 
 # Fetch release information
 response=$(curl -s "$API_URL")
 assets=$(echo "$response" | jq -r '.assets[] | .browser_download_url')
+
+# abort if no assets are found
+if [[ -z "$assets" ]]; then
+    echo "No assets found for tag $TAG"
+    exit 1
+fi
 
 echo start Backend Update
 

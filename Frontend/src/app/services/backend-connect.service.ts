@@ -368,7 +368,7 @@ export class BackendConnectService {
       'starting system update to beta version: ' + tag
     );
     this.http
-      .post('http://' + this.ip + '/updateBeta', {})
+      .post('http://' + this.ip + '/updateBeta', { tag: tag })
       .subscribe((res: any) => {
         //optional Error handling
       });
