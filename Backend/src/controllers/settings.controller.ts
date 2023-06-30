@@ -181,6 +181,11 @@ async function updateBeta(req: Request, res: Response) {
     res.json({ err: "update_ongoing" });
     return;
   }
+  if (!req.body.tag) {
+    logger.warn("no tag provided");
+    res.json({ err: "no_tag" });
+    return;
+  }
   globalThis.appState = "updating";
   execFile("sudo", ["./scripts/updateBeta.sh", req.body.tag], function (err: any, data: any) {
     if (err) {
