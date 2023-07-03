@@ -30,6 +30,7 @@ The image conversion is based on the [Drawbot_image_to_gcode_v2](https://github.
     - [Enable automatic background removal](#enable-automatic-background-removal)
 - [Supported Raspberry Pi models ](#supported-raspberry-pi-models)
 - [Adding Custom Image Converters ](#Adding-Custom-Image-Converters)
+- [Using muliple pens](#Using-muliple-pens)
 - [Acknowledgements](#acknowledgements)
 - [License](#license)
 - [Run Locally](#run-locally)
@@ -172,6 +173,23 @@ Currently Depictor supports the following image converters:
 There are plans to add more image converters in the future (suggestions are welcome :).
 
 Also in the far future there may be a option to add a custom image converter via the web interface. But for now you have to add a custom image converter manually: More information on how to do this can be found here: [CustomConverter.md](customConverter.md)
+
+# Using multiple pens
+
+With depictor you can use multiple pens to draw your images, even when your plotter controller, doesnt support it natively.
+
+To use this feature, make sure to enable pen change in the settings. Then you can add the pen change commands every time you want to change color to your gcode. By default, this command is _M226_ but you can change it in the settings. Now depictor will scan your gcode while printing and will halt the plotter when it encounters a pen change command. You can then swap the pen and afterwards continue the drawing process in the web interface.
+
+## Additional Settings
+
+In the settings you can also specify the park and unpark commands. These commands will be executed when the plotter is halted and when it continues. Adjust them so you can easily swap the pen. (Note: After parking the plotting process is stopped. So when unparking all settings have to be set again in the unpark gcode (feedrate, unlocking the printer, etc.))
+
+## Motor locking
+
+If you often accidentally move the pen while swapping and homing after every pen change isnt accurate enough, you can try to keep the steppers enabled while swapping the pen. In grbl this can be done with the command _$1=255_. However be careful since this can damage your motors if you leave them enabled for too long (So maybe add a _$1=0_ in the end gcode.). More info on this can be found here:
+[Grbl $1](https://github.com/gnea/grbl/wiki/Grbl-v1.1-Configuration#1---step-idle-delay-milliseconds)
+
+PS: If you have the DrawBot V1.1 from thingiverse, you can find a magnetic adapter to change pens easily here: [DrawBot V1.1 Pen Adapter](https://www.thingiverse.com/thing:6059876)
 
 # Acknowledgements
 
