@@ -5,6 +5,7 @@ import { AppState } from '../../../store/app.state';
 import { Settings } from '../../shared/components/settings/settings.component';
 import { environment } from 'src/environments/environment';
 import { GcodeFunctionsService } from './gcode-functions.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 export interface StandartizerSettings {
   convertG0: boolean;
@@ -52,7 +53,10 @@ export class GcodeViewerService {
   @Select(AppState.settings) settings$: any;
   settings: Settings = environment.defaultSettings;
 
-  constructor(private gcodeFunctionsService: GcodeFunctionsService) {
+  constructor(
+    private gcodeFunctionsService: GcodeFunctionsService,
+    private snackBarService: SnackbarService
+  ) {
     this.settings$.subscribe((settings: Settings) => {
       this.settings = settings;
     });
@@ -162,6 +166,7 @@ export class GcodeViewerService {
     let biggestNegativ: number[] = [0, 0];
     let biggest: number[] = [0, 0];
     let lastG1Index: number = 0;
+    let removedUnsopportedCommands: number = 0;
     const maxFloatingPoints: number = this.settings.floatingPoints;
 
     let settings: StandartizerSettings = this.settings.standardizerSettings;
@@ -245,6 +250,7 @@ export class GcodeViewerService {
           )
         ) {
           command = '';
+          removedUnsopportedCommands++;
         }
       }
       gcodeArray[i] = command;
@@ -317,6 +323,11 @@ export class GcodeViewerService {
     });
     console.log(gcodeArray);
     this.loading = false;
+    if (removedUnsopportedCommands > 0) {
+      this.snackBarService.notification(
+        'Removed ' + removedUnsopportedCommands + ' unsupported commands'
+      );
+    }
     return gcodeArray.join('\n');
   }
 
