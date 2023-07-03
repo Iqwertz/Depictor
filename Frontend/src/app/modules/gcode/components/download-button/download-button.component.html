@@ -8,7 +8,7 @@
   <li *ngIf="downloadableFileTypes.includes('jpg')">
     <a
       href="/downloadJPG"
-      [href]="'http://' + ip + '/downloadJPG?name=' + fileId"
+      [href]="'http://' + ip + '/downloadJPG?name=' + formatFileId(fileId)"
       download
     >
       .jpg
@@ -17,7 +17,7 @@
   <li *ngIf="downloadableFileTypes.includes('png')">
     <a
       href="/downloadPNG"
-      [href]="'http://' + ip + '/downloadPNG?name=' + fileId"
+      [href]="'http://' + ip + '/downloadPNG?name=' + formatFileId(fileId)"
     >
       .png
     </a>
@@ -25,7 +25,7 @@
   <li *ngIf="downloadableFileTypes.includes('svg')">
     <a
       href="/downloadSVG"
-      [href]="'http://' + ip + '/downloadSVG?name=' + fileId"
+      [href]="'http://' + ip + '/downloadSVG?name=' + formatFileId(fileId)"
     >
       .svg
     </a>
@@ -33,7 +33,7 @@
   <li *ngIf="downloadableFileTypes.includes('nc')">
     <a
       href="/downloadGcode"
-      [href]="'http://' + ip + '/downloadGcode?name=' + fileId"
+      [href]="'http://' + ip + '/downloadGcode?name=' + formatFileId(fileId)"
       download
     >
       .nc

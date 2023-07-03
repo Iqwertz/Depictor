@@ -30,7 +30,7 @@ The image conversion is based on the [Drawbot_image_to_gcode_v2](https://github.
     - [Enable automatic background removal](#enable-automatic-background-removal)
 - [Supported Raspberry Pi models ](#supported-raspberry-pi-models)
 - [Adding Custom Image Converters ](#Adding-Custom-Image-Converters)
-- [Using muliple pens](#Using-muliple-pens)
+- [Using muliple pens](#Using-multiple-pens)
 - [Acknowledgements](#acknowledgements)
 - [License](#license)
 - [Run Locally](#run-locally)

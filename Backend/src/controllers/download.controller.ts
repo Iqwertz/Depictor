@@ -79,7 +79,8 @@ description: reads an svg file and response with it
 */
 async function downloadSVG(req: any, res: any) {
   logger.http("get: downloadSVG");
-  var dirPath = "./data/savedGcodes/" + req.query.name + ".svg";
+  let fileName = req.query.name.replaceAll("H", "#");
+  var dirPath = "./data/savedGcodes/" + fileName + ".svg";
   if (fs.existsSync(dirPath)) {
     res.download(dirPath);
   } else {
@@ -95,7 +96,8 @@ description: reads an nc file and response with it
 */
 async function downloadGcode(req: any, res: any) {
   logger.http("get: downloadGcode");
-  var dirPath = "./data/savedGcodes/" + req.query.name + ".nc";
+  let fileName = req.query.name.replaceAll("H", "#");
+  var dirPath = "./data/savedGcodes/" + fileName + ".nc";
   if (fs.existsSync(dirPath)) {
     res.download(dirPath);
   } else {
@@ -111,7 +113,8 @@ description: reads an png file and response with it
 */
 async function downloadPNG(req: any, res: any) {
   logger.http("get: downloadPNG");
-  var dirPath = "./data/savedGcodes/" + req.query.name + ".png";
+  let fileName = req.query.name.replaceAll("H", "#");
+  var dirPath = "./data/savedGcodes/" + fileName + ".png";
   if (fs.existsSync(dirPath)) {
     res.download(dirPath);
   } else {

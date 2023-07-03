@@ -32,4 +32,17 @@ export class DownloadButtonComponent implements OnInit {
         this.downloadableFileTypes = res.fileTypes;
       });
   }
+
+  formatFileId(fileId: string): string {
+    fileId = this.replaceAll(fileId, '#', 'H');
+    return fileId;
+  }
+
+  escapeRegExp(string: string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+  }
+
+  replaceAll(str: string, find: string, replace: string) {
+    return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
+  }
 }
