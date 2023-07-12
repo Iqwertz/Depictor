@@ -13,6 +13,7 @@ import { AppState } from 'src/app/store/app.state';
 import { Settings } from '../../../shared/components/settings/settings.component';
 import { Select } from '@ngxs/store';
 import { GcodeFunctionsService } from '../../services/gcode-functions.service';
+let randomColor = require('randomcolor');
 
 export interface GcodeRendererConfigInput {
   strokeColor?: string;
@@ -336,14 +337,15 @@ export class CanvasGcodeRendererComponent implements OnInit, AfterViewInit {
       ) {
         this.ctx.stroke();
         let color = command.split(' ')[1];
-        if (!color.startsWith('#')) {
-          color = '#FFFFFF';
+        if (!color || !color.startsWith('#')) {
+          let randColor = randomColor();
+          color = randColor;
         }
         //console.log(color);
         this.ctx.beginPath();
         this.ctx.strokeStyle = color;
       } else {
-        //console.log(command);
+        console.log('unknown command:' + command);
       }
     }
     this.ctx.stroke();
