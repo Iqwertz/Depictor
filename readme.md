@@ -8,12 +8,14 @@
 ![release](https://img.shields.io/github/v/release/iqwertz/depictor)
 ![commits](https://img.shields.io/github/commit-activity/m/iqwertz/depictor)
 
-Depictor is a web app that runs on a Raspberry Pi. It provides a simple and clean web interface to easily generate and draw images with a 2d plotter.
-It features automatic background removal, custom gcode settings, print time estimates, gallery with previous prints and many more features. It is currently optimized for GRBL plotter, but the basic features should work with most plotter.
+**Depictor** is a web application designed to run on a Raspberry Pi, providing a straightforward and user-friendly interface for generating and drawing images with a 2D plotter. It offers features like automatic background removal, custom G-code settings, print time estimates, a gallery of previous prints, and much more.
 
-The image conversion is based on the [Drawbot_image_to_gcode_v2](https://github.com/Scott-Cooper/Drawbot_image_to_gcode_v2) project.
+Depictor is currently optimized for GRBL plotters, but the basic features should work with most plotters that support standard G-code.
 
-Although this project didnt have any commits for over a year I still use it and support it. The project isnt my main focus anymore, therefore I am currently not developing any new features, but if there are probems with the installation or bugs I am happy to help. 
+> **Note:** While this project is no longer under active development for new features, I still use and support it. If you encounter installation issues or bugs, feel free to reach out, and I'll be happy to help.
+
+The image conversion functionality is based on the [Drawbot_image_to_gcode_v2](https://github.com/Scott-Cooper/Drawbot_image_to_gcode_v2) project.
+
 
 # Table of contents
 
